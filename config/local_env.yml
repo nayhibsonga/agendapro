@@ -1,0 +1,46 @@
+# API Keys for Mandrill separetes in enviroments
+MANDRILL_API_KEY_PROD: 'UhM-Y7RNxHZJeJa4ajil6Q'
+
+# Session Store config/initializers/session_store.rb
+SESSION_STORE_URL: 'lvh.me'
+
+# Session Store config/environments/production.rb
+DEFAULT_URL_OPTIONS: 'lvh.me'
+
+# Marketplace URL
+MARKETPLACE_URL: 'localhost:3000'
+
+# Facebook & Google app ids
+FACEBOOK_APP_ID: '816999391668620'
+FACEBOOK_APP_SECRET: '5414c76fcfaaf68bc24158bbf25ef968'
+GOOGLE_APP_ID: '425201916080-vck1cfj94p68t6q3g22un918ifsqtfls.apps.googleusercontent.com'
+GOOGLE_APP_SECRET: 'hXZI5MKq9jYJd_7S1iIpF6X6'
+
+# HoraChic/MarketPlace Facebook & Google app ids
+MP_FACEBOOK_APP_ID: '816999391668620'
+MP_FACEBOOK_APP_SECRET: '5414c76fcfaaf68bc24158bbf25ef968'
+MP_GOOGLE_APP_ID: '425201916080-t3jpc4k3afqbm98uqojmo6mtl0sjro49.apps.googleusercontent.com'
+MP_GOOGLE_APP_SECRET: 'ety1x6onui6YeHSE1bn4IHco'
+
+# MP_FACEBOOK_APP_ID: '773355642790397'
+# MP_FACEBOOK_APP_SECRET: '781390f88c111ec58e92394cda4d3d0e'
+
+# Configuración de desfase de hora
+TIME_ZONE_OFFSET: 3.hours
+
+# Activación de monitores de uso
+MONITORING_ACTIVATION: 'FALSE'
+
+#AWS credentials (agendapro_test)
+S3_BUCKET: 'agendaprotest'
+AWS_ACCESS_KEY_ID: 'AKIAIL5IA6EDIQFFHNIQ'
+AWS_SECRET_ACCESS_KEY: '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'
+AWS_REGION: 'us-west-2'
+
+EMAIL_FILTER: 'nayhib@agendapro.cl'
+
+EMAIL_SENDING_DOMAIN: 'bambucalendar.cl'
+
+# SMTP Keys for SparkPost
+SPARKPOST_SMTP_KEY: 'ac704bc8659513a2ab977d995cb65c8e7eb80da8'
+IP_POOL: 'sp_shared'

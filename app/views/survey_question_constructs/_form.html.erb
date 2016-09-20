@@ -1,0 +1,12 @@
+<%= simple_form_for(@survey_question_construct) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.association :survey_question %>
+    <%= f.association :survey_construct %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

@@ -1,0 +1,303 @@
+<div class="container-fluid" style="margin-bottom: 65px;">
+  <div class="row" style="margin-top: 15px;">
+    <div class="col-md-3">
+      <div class="row">
+        <div class="col-xs-6 col-md-12" style="margin-bottom: 5px;">
+          <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, class: "btn btn-white btn-block" %>
+        </div>
+        <div class="col-xs-6 col-md-12">
+          <a id="import_clients" class="btn btn-white btn-block" type="button" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="well">
+        <div class="row">
+          <div class="col-xs-3 col-md-3">
+            <p><strong>Buscar Clientes</strong></p>
+          </div>
+          <div class="col-xs-6 col-md-7">
+            <%= text_field_tag :search_bar, params[:search], class: "form-control search-input", placeholder: "nombre, apellido, e-mail o RUT..." %>
+          </div>
+          <div class="col-xs-3 col-md-2">
+            <button class="btn btn-green" id="search_btn"><i class="fa fa-search"></i> Buscar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-bottom: 15px;">
+    <div class="col-sm-12">
+      <div class="pull-right">
+        <button class="btn btn-white inactive" id="toggleMerge"><i class="fa fa-compress"></i>&nbsp;Combinar clientes</button>
+        <% if @from_collection.first %>
+          <% if @monthly_mails_sent < @monthly_mails %>
+            <% if Rails.env === 'development' %>
+              <%= link_to '<i class="fa fa-envelope"></i> Email full (DEV)'.html_safe, send_mail_path(params.merge!(full: true)), class: "btn btn-white", id: 'sendMail' %>
+            <% end %>
+            <%= link_to '<i class="fa fa-envelope"></i> Enviar e-mail a este listado'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], attendance: params[:attendance], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-white", id: 'sendMail' %>
+          <% else %>
+            <button class="btn btn-white">Has alcanzado el limite de e-mails.</button>
+          <% end %>
+        <% else %>
+          <a id="sendMail" type="button" class="btn btn-white" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar e-mail a este listado</a>
+        <% end %>
+        <span class="text-green" data-toggle="tooltip" data-placement="bottom" title="Al hacer click en este botón podrás enviar un correo a todos los clientes previamente filtrados por el buscador y los filtros avanzados. En caso de que no selecciones ningún filtro, se le enviará a la lista completa de clientes.">&nbsp;<i class="fa fa-question-circle fa-lg"></i>&nbsp;</span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
+        <%= hidden_field_tag :search, params[:search] %>
+        <div class="filter-header">
+          <strong>Filtros Avanzados</strong>
+        </div>
+        <div class="filter-body">
+          <div class="form-group">
+            <label>Locales</label>
+            <% @locations.each do |location| %>
+              <div class="checkbox">
+                <label>
+                  <%= check_box_tag "locations[]", location.id, params[:locations] && params[:locations].include?(location.id.to_s) %> <%= location.name %>
+                </label>
+              </div>
+            <% end %>
+          </div>
+          <div class="form-group">
+            <label>Prestadores</label>
+            <% @service_providers.each do |provider| %>
+            <div class="checkbox">
+                <label>
+                  <%= check_box_tag "providers[]", provider.id, params[:providers] && params[:providers].include?(provider.id.to_s) %> <%= provider.public_name %>
+                </label>
+              </div>
+            <% end %>
+          </div>
+          <div class="form-group">
+            <label>Servicios</label>
+            <% @services.each do |service| %>
+              <div class="checkbox">
+                <label>
+                  <%= check_box_tag "services[]", service.id, params[:services] && params[:services].include?(service.id.to_s) %> <%= service.name %>
+                </label>
+              </div>
+            <% end %>
+          </div>
+          <div class="form-group">
+            <label>Estado de Reserva</label>
+            <% Status.all.each do |status| %>
+              <div class="checkbox">
+                <label>
+                  <%= check_box_tag "statuses[]", status.id, params[:statuses] && params[:statuses].include?(status.id.to_s) %> <%= status.name %>
+                </label>
+              </div>
+            <% end %>
+          </div>
+          <div class="form-group">
+            <label>Genero</label>
+            <div class="checkbox">
+              <label>
+                <%= check_box_tag "gender[]", 0, params[:gender] && params[:gender].include?("0") %> No Especificado
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <%= check_box_tag "gender[]", 1, params[:gender] && params[:gender].include?("1") %> Femenino
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <%= check_box_tag "gender[]", 2, params[:gender] && params[:gender].include?("2") %> Masculino
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Cumpleaños</label>
+            <%= text_field_tag :birth_from_display, params[:birth_from_display], class: "form-control", placeholder: "Desde" %>
+            <%= hidden_field_tag :birth_from, params[:birth_from], class: "form-control" %>
+            <%= text_field_tag :birth_to_display, params[:birth_to_display], class: "form-control", placeholder: "Hasta" %>
+            <%= hidden_field_tag :birth_to, params[:birth_to], class: "form-control" %>
+          </div>
+          <div class="form-group">
+            <label>Rango de Fecha</label>
+            <%= text_field_tag :range_from_display, params[:range_from_display], class: "form-control", placeholder: "Desde" %>
+            <%= hidden_field_tag :range_from, params[:range_from], class: "form-control" %>
+            <%= text_field_tag :range_to_display, params[:range_to_display], class: "form-control", placeholder: "Hasta" %>
+            <%= hidden_field_tag :range_to, params[:range_to], class: "form-control" %>
+          </div>
+          <div class="form-group">
+            <label>¿Ha Reservado?<span data-toggle="tooltip" data-placement="bottom" title="Este filtro permite buscar clientes que tienen o no tienen reserva de acuerdo a los demás filtros utilizados.">&nbsp;<i class="fa fa-question-circle fa-lg"></i></span></label>
+            <div class="radio">
+              <label>
+                <%= radio_button_tag "attendance", true, params[:attendance] && params[:attendance].include?("true") %> Tiene reserva según los filtros
+              </label>
+            </div>
+            <div class="radio">
+              <label>
+                <%= radio_button_tag "attendance", false, params[:attendance] && params[:attendance].include?("false") %> No tiene reserva según los filtros
+              </label>
+            </div>
+          </div>
+          <% if @custom_filters.count > 0 %>
+            <div class="form-group">
+              <label>Personalizados</label>
+              <% @custom_filters.each do |custom_filter| %>
+                <div class="checkbox">
+                  <label>
+                    <%= check_box_tag "custom_filters[]", custom_filter.id, params[:custom_filters] && params[:custom_filters].include?(custom_filter.id.to_s) %> <%= custom_filter.name %>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <div class="form-group filter-footer">
+          <%= link_to '<i class="fa fa-times"></i><span> Restablecer</span>'.html_safe, clients_path, class: 'btn btn-white btn-bloc' %>
+          <button class="btn btn-green btn-bloc pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-filter"></i><span> Filtrar</span></button>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-md-9">
+      <div class="row">
+        <div class="col-xs-12">
+          <table class="table table-bordered table-green">
+            <caption id="mails" data-monthly-mails="<%= @monthly_mails %>" data-monthly-mails-sent="<%= @monthly_mails_sent %>">E-mails enviados <%= number_with_delimiter(@monthly_mails_sent) %> de <%= number_with_delimiter(@monthly_mails) %></caption>
+            <thead>
+              <tr>
+                <th class="combination-td" hidden></th>
+                <th><%= sortable "first_name", 'Nombre <i class="fa indicator"></i>'.html_safe %></th>
+                <th><%= sortable "last_name", 'Apellido <i class="fa indicator"></i>'.html_safe %></th>
+                <th><%= sortable "email", 'E-mail <i class="fa indicator"></i>'.html_safe %></th>
+                <th><%= sortable "identification_number", ((I18n.t('ci')).capitalize + ' <i class="fa indicator"></i>').html_safe %></th>
+                <th>Opciones</th>
+                <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+                <th>¿Puede Reservar?</th>
+                <% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% @clients.each do |client| %>
+                <tr>
+                  <td class="combination-td" hidden><input type="checkbox" class="combination-checkbox" client_id="<%= client.id %>" value="0" /></td>
+                  <td><%= client.first_name %></td>
+                  <td><%= client.last_name %></td>
+                  <td><%= client.email %></td>
+                  <td><%= client.identification_number %></td>
+                  <td>
+                    <button class="btn btn-blue merge-btn" client_id="<%= client.id %>" style="display: none;"><i class="fa fa-compress"></i>&nbsp;Combinar hacia esta ficha</button>&nbsp;<span class="text-green combination-explanation" client_id="<%= client.id %>" data-toggle="tooltip" data-placement="bottom" title="Al hacer click en este botón, las reservas, pagos, archivos y otros elementos de los clientes seleccionados serán traspasados a este cliente. Los datos personales del cliente se mantendrán intactos, y los otros clientes se eliminarán.">&nbsp;<i class="fa fa-question-circle fa-lg"></i>&nbsp;</span>
+                    <%= link_to '<i class="fa fa-eye"></i> <span class="hidden-xs">Ver</span>'.html_safe, client_path(client), class: 'btn btn-sm btn-margin-bottom btn-green regular-btn' %>
+                    <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar</span>'.html_safe, edit_client_path(client), :class => "btn btn-sm btn-margin-bottom btn-orange regular-btn" %>
+                    <%= link_to '<i class="fa fa-trash-o"></i> <span class="hidden-xs">Eliminar</span>'.html_safe, client, :class => "btn btn-sm btn-margin-bottom btn-red regular-btn", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %>
+                  </td>
+                  <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+                  <td class="centered">
+                    <%= check_box_tag 'client_can_book'+client.id.to_s, client.id, client.can_book, class: 'client_can_book' %>
+                    <i class="fa fa-spin fa-spinner hidden" id="loader<%= client.id.to_s %>"></i>
+                  </td>
+                  <% end %>
+                </tr>
+               <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-8">
+          <%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
+        </div>
+        <div class="col-xs-12 col-sm-4">
+          <div class="clients-footer">
+            <span>Descargar este listado de clientes:&nbsp;&nbsp;</span><br />
+            <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", attendance: params[:attendance], search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], range_from: params[:range_from], range_to: params[:range_to], custom_filters: params[:custom_filters]), class: "btn btn-white", :target => "_blank" %>
+            <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_file_generation_path(format: "html", attendance: params[:attendance], search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], range_from: params[:range_from], range_to: params[:range_to], custom_filters: params[:custom_filters]), class: "btn btn-white", :target => "_blank" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :modals do %>
+  <% if !@from_collection.first %>
+  <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="mailModalLabel">No es posible Enviar E-mails</h4>
+        </div>
+        <ul>
+          <h4>Por favor confirme como mínimo una dirección de e-mail válida</h4>
+          <p>Para lo anterior, valide en <%= link_to "Configuración E-mails", edit_company_setting_path(id: Company.find(current_user.company_id).company_setting.id) %> algún e-mail.</p>
+        </ul>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% end %>
+
+  <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="importModalLabel">Importar Clientes</h4>
+        </div>
+        <%= form_tag import_clients_path, multipart: true, class: 'form-horizontal' do %>
+        <div class="modal-body">
+          <h4>Instrucciones:</h4>
+          <ul class="list-separate">
+            <li>Usar las plantillas de ejemplo como base para la importación. Todos los campos son opcionales.</li>
+            <li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li>
+            <li><strong>Los tipos de archivos permitidos son: Excel 2003 hacia adelante, OpenOffice, Csv. Esto incluye las extensiones .xls, .xlsx, .xml, .xlsm, .ods y .csv.</strong> No trates de importar otros formatos.</li>
+            <li>
+              El identificador único para los clientes es el <strong>e-mail</strong>:
+              <ul>
+                <li>Si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.</li>
+                <li>Si no existe el e-mail, se crea un cliente nuevo.</li>
+                <li>Para editar el e-mail de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li>
+              </ul>
+            </li>
+            <li>El email, <%= (I18n.t('ci')).capitalize %> y número de ficha de cada cliente debe ser <mark>único</mark>.</li>
+            <li>
+              Para ingresar el género de los clientes se debe utilizar:
+              <ul>
+                <li><mark>0</mark> si no se desea especificar.</li>
+                <li><mark>1</mark> si es Femenino.</li>
+                <li><mark>2</mark> si es Masculino.</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            Detalle de ingreso de datos:
+            <a target="_blank" href="/client_base_pdf.pdf" class="btn btn-white">Instrucciones</a>
+          </p>
+          <p>
+            Plantillas para importación:
+
+            <%= link_to '<i class="fa fa-download"></i> Plantilla Excel'.html_safe, '/company_clients_base.xls', :target => :blank, class: "btn btn-white" %>
+            <%= link_to '<i class="fa fa-download"></i> Plantilla CSV'.html_safe, '/company_clients_base.csv', :target => :blank, class: "btn btn-white" %>
+          </p>
+          <div class="form-group" id="file-group">
+            <label for="file" class="control-label col-md-3">Seleccionar Archivo</label>
+            <div class="col-md-9">
+              <%= file_field_tag :file, :class => 'form-control'  %>
+            </div>
+          </div>
+        </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <%= submit_tag "Importar", class: "btn btn-green", disabled: true, id: "import_button" %>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'admin/clients_mail' %>
+<% end %>

@@ -1,0 +1,16 @@
+<p id="notice"><%= notice %></p>
+
+<p>Nombre: <%= @service.name %></p>
+<p>Precio: <%= @service.price %></p>
+<p>Duración: <%= @service.duration %></p>
+<p>Descripción: <%= @service.description %></p>
+<p>Servicio de Grupo: <%= @service.group_service %></p>
+<p>Capacidad: <%= @service.capacity %></p>
+<p>Lista de Espera: <%= @service.waiting_list %></p>
+<p>Empresa: <%= @service.company.name %></p>
+<% if @service.service_category %>
+<p>Categoría: <%= @service.service_category.name %></p>
+<% end %>
+
+<%= link_to 'Editar', edit_service_path(@service) %> |
+<%= link_to 'Atrás', services_path %>

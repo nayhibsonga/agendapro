@@ -1,0 +1,78 @@
+<%= form_for @billing_wire_transfer, :html => {:class => 'company-form', :id => 'billing-wire-transfer-form'} do |f| %>
+
+	<%= hidden_field_tag :company_id, current_user.company_id %>
+
+	<div class="row">
+		<div class="col-md-12">
+			<p>
+				Si pagaste tu plan por medio de transferencia electrónica, llena este formulario con los datos de la transferencia. Una vez revisada, la aprobaremos y el estado de pago de tu cuenta se actualizará automáticamente.
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="form-group has-feedback">
+                <%= f.label :payment_date, 'Fecha', :class => 'col-md-5' %>
+                <div class="col-md-3">
+                	<%= f.text_field :payment_date, :class => 'form-control' %>
+                </div>
+                <div class="col-md-4">
+                	<%= time_select 'payment_date', 'time', {minute_step: 1}, {:class => 'form-control date-select', required: true} %>
+                </div>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <%= f.label :amount, 'Monto', :class => 'col-md-5' %>
+                <div class="col-md-7">
+                	<div class="input-group">
+                		<span class="input-group-addon">$</span>
+                    	<%= f.text_field :amount, :required => true, :class => 'form-control', :placeholder => '' %>
+                    </div>
+                    <span class="help-block"></span>
+                	<span class="form-control-feedback"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <%= f.label :receipt_number, 'N° de comprobante', :class => 'col-md-5' %>
+                <div class="col-md-7">
+                	<%= f.text_field :receipt_number, :required => true, :class => 'form-control', :placeholder => '' %>
+                	<span class="help-block"></span>
+                	<span class="form-control-feedback"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <%= f.label :account_name, 'Nombre titular', :class => 'col-md-5' %>
+                <div class="col-md-7">
+	                <%= f.text_field :account_name, :required => true, :class => 'form-control', :placeholder => '' %>
+	                <span class="help-block"></span>
+	                <span class="form-control-feedback"></span>
+	            </div>
+            </div>
+            <div class="form-group has-feedback">
+                <%= f.label :account_bank, 'Banco', :class => 'col-md-5' %>
+               	<div class="col-md-7">
+	                <%= f.text_field :account_bank, :required => true, :class => 'form-control', :placeholder => '' %>
+	                <span class="help-block"></span>
+	                <span class="form-control-feedback"></span>
+	            </div>
+            </div>
+            <div class="form-group has-feedback">
+                <%= f.label :account_number, 'N° de cuenta (rut o similar)', :class => 'col-md-5' %>
+                <div class="col-md-7">
+	                <%= f.text_field :account_number, :required => true, :class => 'form-control', :placeholder => '' %>
+	                <span class="help-block"></span>
+	                <span class="form-control-feedback"></span>
+	            </div>
+            </div>
+            <div class="form-group has-feedback">
+                <div class="col-md-4">
+                	<button type="submit" class="btn btn-green">Guardar</button>
+                </div>
+                <div class="col-md-8">
+	            </div>
+            </div>
+		</div>
+	</div>
+	
+<% end %>

@@ -1,0 +1,1 @@
+json.extract! @country, :id, :name, :locale, :flag_photo, :currency_code, :latitude, :longitude, :formatted_address, :domain, :sales_tax

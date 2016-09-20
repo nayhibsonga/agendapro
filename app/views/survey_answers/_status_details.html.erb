@@ -1,0 +1,20 @@
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="image_average col-md-2">
+      <%= image_tag(@image_average) %>
+      <h4>Valoración Promedio <%= @average %></h4>
+      <span>*Escala del 1 al 5</span>
+    </div>
+    <div class="char_average">
+      <%= column_chart  appreciation_survey(current_user.company_id) %>
+      <div class="container_ranking">
+        <div class="image_ranking_appreciation"><%= image_tag("appreciation_1.png") %></div>
+        <div class="image_ranking_appreciation"><%= image_tag("appreciation_2.png") %></div>
+        <div class="image_ranking_appreciation"><%= image_tag("appreciation_3.png") %></div>
+        <div class="image_ranking_appreciation"><%= image_tag("appreciation_4.png") %></div>
+        <div class="image_ranking_appreciation"><%= image_tag("appreciation_5.png") %></div>
+      </div>
+    </div>
+  </div>
+</div>

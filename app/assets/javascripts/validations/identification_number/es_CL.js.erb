@@ -1,0 +1,24 @@
+function rut_clear(value) {
+	return value.replace(/[\.\-]/g, "");
+}
+
+function rut_split(value) {
+	var cValue = rut_clear(value);
+	if(cValue.length == 0) return [null, null];
+	if(cValue.length == 1) return [cValue, null];
+	var cDv = cValue.charAt(cValue.length - 1);
+	var cRut = cValue.substring(0, cValue.length - 1);
+	return [cRut, cDv];
+};
+
+function identification_number_format(value) {
+	rutAndDv = rut_split(value);
+	var cRut = rutAndDv[0]; var cDv = rutAndDv[1];
+	if(!(cRut && cDv)) return cRut || value;
+	var rutF = "";
+	while(cRut.length > 3) {
+		rutF = "." + cRut.substr(cRut.length - 3) + rutF;
+		cRut = cRut.substring(0, cRut.length - 3);
+	}
+	return cRut + rutF + "-" + cDv;
+};

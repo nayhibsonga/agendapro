@@ -1,0 +1,15 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Edición de Categorías de Servicios</h2>
+      <p>Modifica la categoría seleccionada.</p>
+    </div>
+  </div>
+</div>
+
+<%= render 'form' %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/service-category' %>
+<% end %>

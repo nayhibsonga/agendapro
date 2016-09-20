@@ -1,0 +1,75 @@
+<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
+	<div class="col-md-12 payment_summary_col">
+		<div class="payment_summary_title">
+			Resumen de traspaso
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="row">
+			<label class="control-label col-md-5">
+				Fecha
+			</label>
+			<div class="col-md-7">
+				<%= @sales_cash_transaction.date.strftime('%d/%m/%Y %R') %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Autor
+			</label>
+			<div class="col-md-7">
+				<%= @sales_cash_transaction.user.first_name + " " + @sales_cash_transaction.user.last_name %>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="row">
+			<label class="control-label col-md-5">
+				Monto
+			</label>
+			<div class="col-md-7">
+				<%= number_to_currency(@sales_cash_transaction.amount.to_s, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Destino
+			</label>
+			<div class="col-md-7">
+				<% if @sales_cash_transaction.is_internal_transaction %>
+					A caja chica
+				<% else %>
+					Externo
+				<% end %>
+			</div>
+		</div>
+		<% if !@sales_cash_transaction.is_internal_transaction %>
+			<div class="row">
+				<label class="control-label col-md-5">
+					N° de comprobante
+				</label>
+				<div class="col-md-7">
+					<%= @sales_cash_transaction.receipt_number.to_s %>
+				</div>
+			</div>
+		<% end %>
+	</div>
+</div>
+
+
+<div class="row" style="margin-top: 15px; margin-bottom: 5px;">
+	<div class="col-md-12 payment_summary_col">
+		<div class="payment_summary_title">
+			Comentarios
+		</div>
+	</div>
+</div>
+
+<div class="row" style="margin-top: 15px; margin-bottom: 5px;">
+	<div class="col-md-12">
+		<%= @sales_cash_transaction.notes %>
+	</div>
+</div>

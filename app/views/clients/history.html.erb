@@ -1,0 +1,35 @@
+<div class="container-fluid">
+
+  <%= render 'client_layout' %>
+
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-green">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Servicio</th>
+            <th>Prestador</th>
+            <th>Estado</th>
+            <th>Nota Cliente</th>
+            <th>Nota Interna</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @bookings.each do |booking| %>
+            <tr>
+              <td><%= l booking.start, format: :long %></td>
+              <td><%= booking.service.name %></td>
+              <td><%= booking.service_provider.public_name %></td>
+              <td>
+                <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+              </td>
+              <td><%= booking.notes %></td>
+              <td><%= booking.company_comment %></td>
+            </tr>
+           <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

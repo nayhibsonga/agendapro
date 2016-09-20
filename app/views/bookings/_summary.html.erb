@@ -1,0 +1,93 @@
+<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
+	<div class="col-md-12 payment_summary_col">
+		<div class="payment_summary_title">
+			Resumen de reserva
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="row">
+			<label class="control-label col-md-5">
+				Fecha de realización
+			</label>
+			<div class="col-md-7">
+				<%= @booking.start.strftime('%d/%m/%Y %R') %>
+			</div>
+		</div>
+    <div class="row">
+      <label class="control-label col-md-5">
+        Fecha de creación
+      </label>
+      <div class="col-md-7">
+        <%= (@booking.created_at + @booking.location.company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %>
+      </div>
+    </div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Servicio
+			</label>
+			<div class="col-md-7">
+				<%= @booking.service.name %>&nbsp;
+        <% if !@booking.session_booking.nil? %>
+          <% 
+            session_index = @booking.session_booking.bookings.where('start < ?', @booking.start).where(is_session_booked: true).count + 1
+          %>
+          (sesión <%= session_index.to_s %> de <%= @booking.session_booking.sessions_amount.to_s %>)
+        <% end %>
+			</div>
+		</div>
+    <div class="row">
+      <label class="control-label col-md-5">
+        Prestador
+      </label>
+      <div class="col-md-7">
+        <%= @booking.service_provider.public_name %>
+      </div>
+    </div>
+	</div>
+	<div class="col-md-6">
+		<div class="row">
+			<label class="control-label col-md-5">
+				Estado
+			</label>
+			<div class="col-md-7">
+				<%= @booking.status.name %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Pagado
+			</label>
+			<div class="col-md-7">
+        <% if @booking.payed && !@booking.payed_booking.nil? %>
+          Sí (pagado en línea)
+				<% elsif !@booking.payment.nil? %>
+          Sí (pago asociado)
+        <% elsif @booking.payed_state %>
+          Sí
+        <% else %>
+          No
+        <% end %>
+			</div>
+		</div>
+    <div class="row">
+      <label class="control-label col-md-5">
+        Comentario interno
+      </label>
+      <div class="col-md-7">
+        <%= @booking.company_comment %>
+      </div>
+    </div>
+    <div class="row">
+      <label class="control-label col-md-5">
+        Comentarios cliente
+      </label>
+      <div class="col-md-7">
+        <%= @booking.notes %>
+      </div>
+    </div>
+	</div>
+</div>
+

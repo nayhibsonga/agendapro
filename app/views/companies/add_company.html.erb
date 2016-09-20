@@ -1,0 +1,133 @@
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Agrega tu compañía a AgendaPro</h2>
+      <h2 class="section_header">¡Podrás tener el sistema AgendaPro para tu propio negocio!</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Inicio", root_path %> </li>
+            <li class="active">Agregar Compañía</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
+
+<div class="container">
+	<div class="row well">
+		<div class="col-sm-8 col-md-9">
+			<%= form_for @company, :html => { :class => 'form-horizontal', :multipart => true } do |f| %>
+				<% if @company.errors.any? %>
+          <% content_for :scripts do %>
+            <% message = '' %>
+            <% @company.errors.full_messages.each do |msg| %>
+              <% message += '* ' + msg + '\n' %>
+            <% end %>
+            <script type="text/javascript">
+              swal({
+                title: "Error al guardar la empresa",
+                text: "<%= message %>",
+                type: "error"
+              });
+            </script>
+          <% end %>
+				<% end %>
+				<!-- start: Company -->
+				<!-- start: Company Setting -->
+				<%= f.fields_for :company_setting_attributes do |builder| %>
+					<%= builder.hidden_field :before_booking, :value => 24 %>
+					<%= builder.hidden_field :after_booking, :value => 6 %>
+				<% end %>
+				<!-- end: Company Setting -->
+				<%= f.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => 'Trial').first.id %>
+				<%= f.hidden_field :plan_id, :value => Plan.find_by(:name => 'Trial').id %>
+				<div class="form-group">
+					<%= f.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.text_field :name, :required => true, :class => 'form-control', placeholder: 'AgendaPro SpA' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :country_id, 'País de la Compañía', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.select :country_id, options_for_select(Country.all.map{ |c| [c.name, c.id, {'data-domain'=>c.domain}] }, selected_key = Country.find_by(locale: I18n.locale.to_s).id), { }, { class: "form-control" } %>
+					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :web_address, 'Dirección Web', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<div class="input-group">
+								<%= f.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio' %>
+								<span class="input-group-addon">.agendapro<%= I18n.t 'country.domain' %></span>
+							</div>
+						</div>
+					<div class="col-sm-offset-4 col-sm-8">
+						<span class="help-block"></span>
+					</div>
+				</div>
+
+				<!-- end: Company -->
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-sm-8">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.co/Term_y_Cond_AgendaPro122014.pdf" target="_balnk">Términos y Condiciones</a>.
+								<span class="help-block"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-sm-8">
+						<%= f.submit 'Regístrate', :class => 'btn btn-orange' %>
+					</div>
+				</div>
+			<% end %>
+		</div>
+	</div>
+</div>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag 'validations/validate' %>
+	<%= javascript_include_tag 'validations/home/add-company' %>
+<% end %>
+
+<script type="text/javascript">
+
+	$(function () {
+		$('#company_name').on('change', function() {
+			var tmp = $('#company_name').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[áäâà]/gi, 'a');	//special a
+			tmp = tmp.replace(/[éëêè]/gi, 'e');	//Special e
+			tmp = tmp.replace(/[íïîì]/gi, 'i');	//Special i
+			tmp = tmp.replace(/[óöôò]/gi, 'o');	//Special o
+			tmp = tmp.replace(/[úüûù]/gi, 'u');	//Special u
+			tmp = tmp.replace(/ñ/gi, 'n');	//Special ñ*/
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#company_web_address').val(tmp);
+		});
+
+		$('#company_web_address').on('change', function() {
+			var tmp = $('#company_web_address').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[áäâà]/gi, 'a');	//special a
+			tmp = tmp.replace(/[éëêè]/gi, 'e');	//Special e
+			tmp = tmp.replace(/[íïîì]/gi, 'i');	//Special i
+			tmp = tmp.replace(/[óöôò]/gi, 'o');	//Special o
+			tmp = tmp.replace(/[úüûù]/gi, 'u');	//Special u
+			tmp = tmp.replace(/ñ/gi, 'n');	//Special ñ*/
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#company_web_address').val(tmp);
+		});
+
+		$('#company_country_id').change(function() {
+			$('span.input-group-addon').html('.agendapro' + $('#company_country_id option:selected').data("domain"));
+		});
+	});
+
+</script>

@@ -1,0 +1,374 @@
+<style type="text/css">
+
+.discounts-table{
+  border: 1px solid #e3e3e3;
+  width: 60%;
+  margin-bottom: 10px;
+  margin-top: 7px;
+}
+
+.discounts-table th{
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: #f5f5f5;
+  width: 11%;
+}
+
+.discounts-table .first-cell{
+  width: 23% !important;
+}
+
+.discounts-table th,
+.discounts-table td{
+  border: 1px solid #e3e3e3;
+  text-align: center;
+}
+
+.discounts-table td{
+  color: #22c488;
+}
+
+.discounts-table td.first-cell{
+  padding-left: 15px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  color: #505050;
+  font-size: 15px;
+  text-align: left;
+}
+
+.discounts-table td.first-cell .hours{
+  color: #949292;
+  font-size: 13px;
+}
+
+.discounts-table .promotions-input{
+  color: #22c488 !important;
+}
+</style>
+
+
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Editar promoción</h2>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid tab-margin">
+
+  <div class="row">
+    <div class="col-md-10">
+      <h3>Descuentos por horario</h3>
+    </div>
+    <div class="col-md-2">
+
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col-md-1">
+
+    </div>
+    <div class="col-md-9">
+
+      <%
+
+          promo_time = @service.company.company_setting.promo_time
+          promos = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id)
+
+      %>
+          
+      <table class="discounts-table">
+        <tr>
+          <th class="first-cell">
+
+          </th>
+          <th>
+            Lun
+          </th>
+          <th>
+            Mar
+          </th>
+          <th>
+            Mié
+          </th>
+          <th>
+            Jue
+          </th>
+          <th>
+            Vie
+          </th>
+          <th>
+            Sáb
+          </th>
+          <th>
+            Dom
+          </th>
+        </tr>
+        <tr>
+
+          <td class="first-cell">
+            <span>Mañana</span><br />
+            <span class="hours"><%= promo_time.morning_start.strftime "%H:%M" %> - <%= promo_time.morning_end.strftime "%H:%M" %></span>
+          </td>
+
+          <%
+            for i in 1..7
+            promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id, :day_id => i).first
+          %>
+
+            <td>
+              <% if promo.morning_discount > 0 %>
+                <% if @service.discount < promo.morning_discount || !@service.has_discount %>
+                  <%= promo.morning_discount %>%
+                <% else %>
+                  <%= @service.discount.round.to_s %>%
+                <% end %>
+              <% else %>
+                <% if @service.has_discount && @service.discount > 0 %>
+                  <%= @service.discount.round.to_s %>%
+                <% else %>
+                  -
+                <% end %>
+              <% end %>
+            </td>
+
+          <% end %>               
+
+        </tr>
+        <tr>
+          <td class="first-cell">
+            <span>Tarde</span><br />
+            <span class="hours"><%= promo_time.afternoon_start.strftime "%H:%M" %> - <%= promo_time.afternoon_end.strftime "%H:%M" %></span>
+          </td>
+
+          <%
+            for i in 1..7
+            promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+          %>
+
+            <td>
+              <% if promo.afternoon_discount > 0 %>
+                <% if @service.discount < promo.afternoon_discount || !@service.has_discount %>
+                  <%= promo.afternoon_discount %>%
+                <% else %>
+                  <%= @service.discount.round.to_s %>%
+                <% end %>
+              <% else %>
+                <% if @service.has_discount && @service.discount > 0 %>
+                  <%= @service.discount.round.to_s %>%
+                <% else %>
+                  -
+                <% end %>
+              <% end %>
+            </td>
+
+          <% end %>
+
+        </tr>
+        <tr>
+          <td class="first-cell">
+            <span>Noche</span><br />
+            <span class="hours"><%= promo_time.night_start.strftime "%H:%M" %> - <%= promo_time.night_end.strftime "%H:%M" %></span>
+          </td>
+          
+          <%
+            for i in 1..7
+            promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+          %>
+
+            <td>
+              <% if promo.night_discount > 0 %>
+                <% if @service.discount < promo.night_discount || !@service.has_discount %>
+                  <%= promo.night_discount %>%
+                <% else %>
+                  <%= @service.discount.round.to_s %>%
+                <% end %>
+              <% else %>
+                <% if @service.has_discount && @service.discount > 0 %>
+                  <%= @service.discount.round.to_s %>%
+                <% else %>
+                  -
+                <% end %>
+              <% end %>
+            </td>
+
+          <% end %>
+
+        </tr>
+      </table>
+
+
+
+    </div> 
+  </div>
+
+  <%= form_for @service, :html => {:class => 'form-horizontal'} do |f| %>
+  <div class="row">
+    <div class="col-md-10">
+
+      <div class="form-group">
+        <label class="col-md-2 control-label">
+          Dscto. por horario:
+        </label>
+        <div class="col-md-10" style="padding-top: 7px;">
+          <% if @service.has_time_discount %>
+            Sí
+          <% else %>
+            No
+          <% end %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-md-2 control-label">
+          Precio normal:
+        </label>
+        <div class="col-md-10" style="padding-top: 7px;">
+          <%= @service.price %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-md-2 control-label">
+          Locales:
+        </label>
+        <div class="col-md-10" style="padding-top: 7px;">
+          <%
+
+            locations = []
+
+            service_promo = ServicePromo.find(@service.active_service_promo_id)
+            location_ids = service_promo.promos.pluck(:location_id).uniq
+
+            location_ids.each do |l_id|
+              location = Location.find(l_id)
+              locations << location
+            end
+          %>
+          <% locations.each do |loc| %>
+            <%= loc.name %><br />
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @service.has_last_minute_discount %> 
+    <div class="row">
+      <div class="col-md-10">
+      <h3>Promociones de último minuto</h3>
+
+        <div class="form-group">
+          <label class="col-md-2 control-label">
+            Dscto. de último minuto:
+          </label>
+          <div class="col-md-10" style="padding-top: 7px;">
+            <% if @service.has_last_minute_discount %>
+              Sí
+            <% else %>
+              No
+            <% end %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-2 control-label">
+            Precio normal:
+          </label>
+          <div class="col-md-10" style="padding-top: 7px;">
+            <%= @service.price %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-2 control-label">
+            Locales:
+          </label>
+          <div class="col-md-10" style="padding-top: 7px;">
+            <% @last_minute_promo.locations.each do |loc| %>
+              <%= loc.name %><br />
+            <% end %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-2 control-label">
+            Descuento:
+          </label>
+          <div class="col-md-10" style="padding-top: 7px;">
+            <%= @last_minute_promo.discount.to_s %> %
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-2 control-label">
+            Horas:
+          </label>
+          <div class="col-md-10" style="padding-top: 7px;">
+            <%= @last_minute_promo.hours.to_s %>
+          </div>
+        </div>
+
+      </div> 
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-10">
+        <input type="hidden" name="promo_update" value="1" />
+        <div class="form-group">
+          <%= f.label :time_promo_active, "Activar: ", class: "col-md-2 control-label" %>
+          <div class="col-md-4">
+            <span style="padding-top: 7px;">
+            <%= f.check_box :time_promo_active, :autofocus => true %>
+            </span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :time_promo_photo, "Foto: ", class: "col-md-2 control-label" %>
+          <div class="col-md-4">
+            <%= f.file_field :time_promo_photo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-4">
+            <% if @service.time_promo_photo.url.nil? %>
+              No se ha subido foto
+            <% else %>
+              Foto actual: <%= image_tag @service.time_promo_photo.url.to_s, :alt => "Sin foto", :class => "img-responsive" %>
+            <% end %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :promo_description, "Descripción: ", class: "col-md-2 control-label" %>
+          <div class="col-md-6">
+            <%= f.text_area :promo_description, :class => "form-control", :rows => "7" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="actions col-md-offset-2 col-md-4">
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+            <%= link_to 'Cancelar', manage_promotions_path, class: "btn btn-default" %>
+          </div>
+        </div>
+      
+    </div>
+  </div>
+  <% end %>
+</div>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "ckeditor/init" %>
+  <script type="text/javascript">
+    CKEDITOR.replace(service_promo_description);
+  </script>
+<% end %>
+

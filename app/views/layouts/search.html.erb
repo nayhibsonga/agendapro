@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+	<head>
+    <title><%= @page_title.present? ? @page_title : 'AgendaPro' %></title>
+    <!-- start: Meta -->
+    <%= render 'layouts/meta_tags' %>
+		<!-- end: Meta -->
+
+		<!-- start: Mobile Specific -->
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- end: Mobile Specific -->
+
+    <!-- start: CSS -->
+    <%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
+    <%= stylesheet_link_tag "home" %>
+		<%= yield :stylesheets %>
+    <!-- end: CSS -->
+
+    <!-- start: JavaScript-->
+    <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+    <!-- Begin Inspectlet Embed Code -->
+    <script type="text/javascript" id="inspectletjs">
+      window.__insp = window.__insp || [];
+      __insp.push(['wid', 1883420541]);
+      (function() {
+      function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+      if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+      else window.addEventListener('load', __ldinsp, false);
+      })();
+    </script>
+    <!-- End Inspectlet Embed Code -->
+		<!-- start: Facebook Tracker-->
+		<%= render 'layouts/facebook_tracker' %>
+		<!-- end: Facebook Tracker-->
+    <% end %>
+
+		<%= javascript_include_tag "home-head" %>
+		<%= yield :head_scripts %>
+    <!-- end: JavaScript-->
+
+		<%= render 'layouts/icons' %>
+	</head>
+
+	<body>
+    <%= render 'layouts/modals' %>
+
+		<header>
+			<nav class="navbar navbar-default navbar-agendapro navbar-fixed-top" role="navigation" id="main-navbar">
+				<div class="container">
+					<!-- Brand and toggle get grouped for better mobile display -->
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+							<i class="fa fa-bars"></i>
+						</button>
+            <%= link_to localized_root_url(subdomain: false), class: 'navbar-brand', id: 'agendapro-brand' do %>
+							<%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '127x43' %>
+						<% end %>
+					</div>
+					<!-- Collect the nav links, forms, and other content for toggling -->
+					<div class="collapse navbar-collapse" id="navbar" aria-expanded="false" style="height: 0px important!;">
+						<ul class="nav navbar-nav navbar-right" id="menu">
+							<li><%= link_to "Buscador", "/#buscador" %></li>
+							<li><%= link_to "Servicios", "/#servicios" %></li>
+							<li><%= link_to "Qué Hacemos", "/#quehacemos" %></li>
+							<li><%= link_to "Contacto", "/#contacto" %></li>
+							<li><%= link_to "Promociones", get_promotions_path, :class => "nav-bar-orange" %></li>
+							<% if user_signed_in? %>
+							<%= render 'layouts/home_dropdown' %>
+							<% else %>
+							<li><a href="#" data-toggle="modal" data-target="#signin-modal" class="menu-green"><i class="fa fa-user"></i> Inicia Sesión</a></li>
+							<li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
+							<% end %>
+							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
+							<%= render 'layouts/flag_dropdown' %>
+						</ul>
+					</div>
+				</div>
+			</nav>
+		</header>
+		<!-- end: Header -->
+
+		<!-- start: content -->
+		<%= yield %>
+		<!-- end: content -->
+
+		<!-- start: JavaScript-->
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+		<%= javascript_include_tag "search" %>
+		<%= render 'layouts/alerts' %>
+		<%= yield :scripts %>
+		<script type="text/javascript">
+			$('a').click(function() {
+				$('.alert').hide();
+			});
+		</script>
+		<!--Start of Zopim Live Chat Script-->
+		<%= javascript_include_tag 'zopim' %>
+		<!--End of Zopim Live Chat Script-->
+
+		<!--Start of Crazy Egg Script-->
+		<%= javascript_include_tag 'crazy_egg' %>
+		<!--End of Crazy Egg Script-->
+
+    <!--Start of Hubspot Script-->
+    <%= javascript_include_tag 'hubspot' %>
+    <!--End of Hubspotg Script-->
+		<!-- end: JavaScript-->
+	</body>
+</html>

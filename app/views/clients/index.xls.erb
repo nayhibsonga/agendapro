@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Clientes">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">E-mail</Data></Cell>
+        <Cell><Data ss:Type="String">Nombre</Data></Cell>
+        <Cell><Data ss:Type="String">Apellido</Data></Cell>
+        <Cell><Data ss:Type="String"><%= (I18n.t('ci')).capitalize %></Data></Cell>
+        <Cell><Data ss:Type="String">Teléfono</Data></Cell>
+        <Cell><Data ss:Type="String">Dirección</Data></Cell>
+        <Cell><Data ss:Type="String">Comuna</Data></Cell>
+        <Cell><Data ss:Type="String">Fecha Nacimiento</Data></Cell>
+        <Cell><Data ss:Type="String">Edad</Data></Cell>
+        <Cell><Data ss:Type="String">Género</Data></Cell>
+        <Cell><Data ss:Type="String">Fecha Creación</Data></Cell>
+        <% 
+          company = current_user.company
+          attributes = company.custom_attributes.joins(:attribute_group).order('attribute_groups.order asc').order('attributes.order asc').order('name asc')
+          attributes.each do |attribute|
+            if attribute.datatype != "file"
+              if attribute.datatype != "categoric" || (attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0)
+                %>
+                  <Cell><Data ss:Type="String"><%= attribute.name %></Data></Cell>
+                <%
+              end
+            end
+          end 
+        %>
+      </Row>
+    <% @clients_export.each do |client| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= client.email %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.first_name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.last_name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.identification_number %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.phone %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.address %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.district %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.birth_day %>-<%= client.birth_month %>-<%= client.birth_year %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.age %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= if client.gender == 1 then "Femenino" elsif client.gender == 2 then "Masculino" end %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= l client.created_at, format: :short %></Data></Cell>
+        <%
+          attributes.each do |attribute|
+            if attribute.datatype != "file"
+              if attribute.datatype == "float"
+                float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+                float_attribute_value = ""
+                if !float_attribute.nil? && !float_attribute.value.nil?
+                  float_attribute_value = float_attribute.value
+                end
+                %>
+                  <Cell><Data ss:Type="String"><%= float_attribute_value.to_s %></Data></Cell>
+                <%
+              elsif attribute.datatype == "integer"
+                integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+                integer_attribute_value = ""
+                if !integer_attribute.nil? && !integer_attribute.value.nil?
+                  integer_attribute_value = integer_attribute.value
+                end
+                %>
+                  <Cell><Data ss:Type="String"><%= integer_attribute_value.to_s %></Data></Cell>
+                <%
+              elsif attribute.datatype == "text"
+                text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+                text_attribute_value = ""
+                if !text_attribute.nil? && !text_attribute.value.nil?
+                  text_attribute_value = text_attribute.value
+                end
+                %>
+                  <Cell><Data ss:Type="String"><%= text_attribute_value %></Data></Cell>
+                <%
+              elsif attribute.datatype == "textarea"
+                textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+                textarea_attribute_value = ""
+                if !textarea_attribute.nil? && !textarea_attribute.value.nil?
+                  textarea_attribute_value = textarea_attribute.value
+                end
+                %>
+                  <Cell><Data ss:Type="String"><%= textarea_attribute_value %></Data></Cell>
+                <%
+              elsif attribute.datatype == "boolean"
+                boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+                boolean_attribute_value = ""
+                if !boolean_attribute.nil? && !boolean_attribute.value.nil?
+                  if boolean_attribute.value == true
+                    boolean_attribute_value = "Sí"
+                  else
+                    boolean_attribute_value = "No"
+                  end
+                end
+                %>
+                  <Cell><Data ss:Type="String"><%= boolean_attribute_value %></Data></Cell>
+                <%
+              elsif attribute.datatype == "date"
+                date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+                date_attribute_value = ""
+                if !date_attribute.nil? && !date_attribute.value.nil?
+                  date_attribute_value = date_attribute.value.strftime('%d/%m/%Y')
+                end
+                %>
+                  <Cell><Data ss:Type="String"><%= date_attribute_value %></Data></Cell>
+                <%
+              elsif attribute.datatype == "datetime"
+                date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+                date_time_attribute_date = ""
+                date_time_attribute_hour = "00"
+                date_time_attribute_minute = "00"
+                if !date_time_attribute.nil? && !date_time_attribute.value.nil?
+                  date_time_attribute_value = date_time_attribute.value.strftime("%d/%m/%Y %R")
+                end
+                %>
+                  <Cell><Data ss:Type="String"><%= date_time_attribute_value %></Data></Cell>
+                <%
+              elsif attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0
+                categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+                category_value = ""
+                if !categoric_attribute.attribute_category.nil?
+                  category_value = categoric_attribute.attribute_category.category
+                end
+                %>
+                  <Cell><Data ss:Type="String"><%= category_value %></Data></Cell>
+                <%
+              end
+            end
+          end
+        %>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

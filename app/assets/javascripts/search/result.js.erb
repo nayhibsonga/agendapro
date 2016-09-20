@@ -1,0 +1,208 @@
+//====== Result ======//
+function loadSchedule(id) {
+  $('#schedule-body' + id).html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+  $.getJSON('/schedule', {local: id}, function (schedule) {
+    $('#schedule-body' + id).empty();
+    $.each(schedule, function (day, hour) {
+      if (hour.open) {
+        $('#schedule-body' + id).append(
+          '<tr>' +
+            '<td class="dark-gray">' + day + ':</td>' +
+            '<td class="light-gray">' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</td>' +
+          '</tr>'
+        );
+      }
+    });
+  });
+}
+
+function getHour(str) {
+  var index = str.indexOf('T'); //2000-1-1T08:00:00Z
+  str = str.substring(index + 1, index + 6); //08:00
+  return str;
+}
+
+//====== Search ======//
+function changeLocation (district_id) {
+  $('#search-bar').attr('disabled', true);
+  $.getJSON('/get_district', {id: district_id}, function (district) {
+    $('#span-location').html(district.name + ' <i class="fa fa-chevron-right"></i>');
+    $('#district').val(district.id);
+    $('#search-bar').removeAttr('disabled');
+
+    //changeLatLong(district.id);
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.district = district.id;
+    }
+  });
+}
+
+function changeLatLong (district_id) {
+  /*$.getJSON('/get_direction', {id: district_id}, function (address) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode( { 'address' : address[0] }, function (results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        $('#latitude').val(results[0].geometry.location.lat());
+        $('#longitude').val(results[0].geometry.location.lng());
+        alert("changeLatLong " + $('#latitude').val() + " " + $('#longitude').val());
+      }
+    });
+  });*/
+}
+
+//====== Geolocation ======//
+function decode (position) {
+  var geocoder = new google.maps.Geocoder();
+  var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  geocoder.geocode({'latLng': latlng}, function (results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      if (results[1]) {
+        var address = results[1].formatted_address;
+        var district = address.substring(0, address.indexOf(','));
+        $('#search-bar').attr('disabled', true);
+        $.getJSON('/district_by_name', {name: district}, function (district) {
+          if (district) {
+            $('#span-location').html(district.name + ' <i class="fa fa-chevron-right"></i>');
+            $('#district').val(district.id);
+
+            $('#latitude').val(position.coords.latitude);
+            $('#longitude').val(position.coords.longitude);
+            //====== Session Storage
+            if (typeof(Storage) !== "undefined") {
+              sessionStorage.district = district.id;
+            }
+          }
+          else {
+            swal({
+              title: "Hubo un error en el proceso de localización",
+              text: "No te pudimos ubicar. Revisa que tengas señal GPS o que hayas dado permiso en el navegador.",
+              type: "error"
+            });
+          }
+        });
+      }
+    }
+    else {
+      swal({
+        title: "Hubo un error en el proceso de localización",
+        text: "No te pudimos ubicar. Revisa que tengas señal GPS o que hayas dado permiso en el navegador.",
+        type: "error"
+      });
+    }
+    $('#search-bar').removeAttr('disabled');
+  });
+}
+
+function locationError (error) {
+  if (typeof(Storage) !== "undefined") {
+    changeLocation(sessionStorage.district)
+    swal({
+      title: "Hubo un error en el proceso de localización",
+      text: "Se utilizará la última ubicación disponible.",
+      type: "error"
+    });
+  }
+  else {
+    swal({
+      title: "Hubo un error en el proceso de localización",
+      text: "Se utilizará la comuna de las Condes para realizar las búsquedas.",
+      type: "error"
+    });
+    changeLocation(1);
+  }
+}
+
+//====== Load ======//
+$(function() {
+  $('.title-local').each(function () {
+    var characters = $(this).text().length;
+    if (characters > 50) {
+      var porcentage = 0.25 * characters / 50.0;
+      var size = parseFloat($(this).css('font-size')) * (1 - porcentage);
+      $(this).css('font-size', (size < 14.0 ? 14 : size));
+    };
+  });
+
+  $('#save').on('click', function () {
+    var district = $('#location_autocomplete').val();
+    $.getJSON('/district_by_name', {name: district}, function (district) {
+      if (district) {
+        changeLocation(district.id);
+      }
+      else {
+        swal({
+          title: "Hubo un error en el proceso de localización",
+          text: "No fue posible encontrar tu comuna.",
+          type: "error",
+          confirmButtonText: "Buscar de nuevo"
+        },
+        function () {
+          $('#modalLocation').modal('show');
+        });
+      }
+    });
+    $('#modalLocation').modal('hide');
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.manual = true;
+    }
+  });
+
+  $('#geo').on('click', function() {
+    $('#modalLocation').modal('hide');
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(decode, locationError);
+    }
+    else {
+      swal({
+        title: "Hubo un error en el proceso de localización",
+        text: "Tu navegador no soporta geo-localización. Por favor actualízalo e intenta nuevamente.",
+        type: "error"
+      });
+    }
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.manual = null;
+    }
+  });
+
+  //Valor por defecto
+  if (typeof(Storage) !== "undefined") {
+    if (!sessionStorage.manual) {
+      sessionStorage.district = 1;
+    }
+    changeLocation(sessionStorage.district);
+  }
+
+	$('a.pin-link').click(function(){
+		if($(this).children(":first").hasClass("number-pin-gray"))
+		{
+			$(this).children(":first").removeClass("number-pin-gray");
+			$(this).children(":first").addClass("number-pin-green");
+		}
+	});
+
+	$('a.center-link').click(function(){
+		var tab_id = $(this).attr("tab_id");
+		$('.number-pin[tab_id='+tab_id+']').removeClass("number-pin-green");
+		$('.number-pin[tab_id='+tab_id+']').addClass("number-pin-gray");
+    $('a.pin-link').each(function(e){
+      if($(this).attr("tab_id")!=tab_id)
+      {
+        $(this).trigger("click");
+      }
+    });
+	});
+
+  $('a.overlay').click( function () {
+    if ($(this).data('search')) {
+      $('#inputSearch').val($(this).data('search'));
+      $('button[type="submit"]').trigger('click');
+    };
+  });
+});

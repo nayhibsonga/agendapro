@@ -1,0 +1,145 @@
+<%
+	economic_sectors = EconomicSector.all
+%>
+<div class="container below-navbar">
+
+	<div id="economic-sectors-wrapper">
+		<div id="economic-sectors-row">
+			<% if @economic_sector_selected == 0 %>
+				<span class="economic-sector-span">
+					<a class="economic-sector-btn active" economic_sector_id="0" href="/get_promotions?economicSector=0">
+						Todos
+					</a>
+				</span>
+			<% else %>
+				<span class="economic-sector-span">
+					<a class="economic-sector-btn" economic_sector_id="0" href="/get_promotions?economicSector=0">
+						Todos
+					</a>
+				</span>
+			<% end %>
+			<% economic_sectors.each do |economic_sector| %>
+				<span class="economic-sector-span">
+					<% if @economic_sector_selected == economic_sector.id %>
+						<a class="economic-sector-btn active" economic_sector_id="<%= economic_sector.id %>" href="/get_promotions?economicSector=<%= economic_sector.id %>">
+							<%= economic_sector.name %>
+						</a>
+					<% else %>
+						<a class="economic-sector-btn" economic_sector_id="<%= economic_sector.id %>" href="/get_promotions?economicSector=<%= economic_sector.id %>">
+							<%= economic_sector.name %>
+						</a>
+					<% end %>
+				</span>
+			<% end %>
+		</div>
+		<div style="clear: both;">
+		</div>
+	</div>
+
+	<div id="promotions-div">
+		<% if @results.count > 0 %>
+			<% @results.each do |promo_detail| %>
+				<%
+					service = promo_detail[0]
+					location = promo_detail[1]
+				%>
+				<a href="show_time_promo?id=<%= service.id %>&location_id=<%= location.id %>" service_id="<%= service.id %>" location_id="<%= location.id %>" class="show-promo-link">
+				<div class="promo-box">
+					<div class="promo-photo">
+						<%= image_tag service.time_promo_photo.url.to_s, :class => "img-responsive promo-img" %>
+					</div>
+					<div class="promo-title">
+						<div class="col-xs-5 promo-company">
+							<%= service.company.name %>
+						</div>
+						<div class="col-xs-7 promo-discount">
+							Desde <%= service.get_max_time_discount %>% de dscto.
+						</div>
+						<div style="clear: both;"></div>
+					</div>
+					<div class="promo-detail">
+						<div class="col-xs-7" style="color: #636363;">
+							<%= service.name %> en <%= location.name %>
+						</div>
+						<div class="col-xs-5" style="text-align: right; border-left: 1px solid #b5b5b5;">
+							<span style="color: #b5b5b5; font-size: 14px; padding-top: 10px;"><strike><%= number_to_currency(service.price, unit: "$", delimiter: ".") %></strike></span><br />
+							<span style="color: #b5b5b5; font-size: 16px;">Desde</span> <span style="color: #22c488; font-size: 16px;"><%= number_to_currency(service.price*(100-service.get_max_time_discount)/100, unit: "$", delimiter: ".") %></span>
+						</div>
+						<div style="clear: both;"></div>
+					</div>
+				</div>
+				</a>
+			<% end %>
+		<% else %>
+			<p>
+				Lo sentimos, no hemos encontrado promociones.
+			</p>
+		<% end %>
+	</div>
+
+</div>
+<div id="inputLocalizationDiv">
+	<div class="row">
+		<div class="col-xs-12">
+			<div id="inputLocalizationMarker">
+				<%= image_tag 'search/location_icon.png', :size => '55x55' %>
+			</div>
+		</div>
+	</div>
+	<div id="inputLocalizationRow" style="display: none;">
+		<div class="row">
+			<div class="col-xs-12">
+				<span style="color: #fff" class="inputLocalizationElement">
+					Escribe la ubicación donde buscar:
+				</span>
+			</div>
+		</div>
+		<div class="row">
+	        <div class="col-xs-12">
+	            <%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "form-horizontal", id: "promotions-form") do %>
+	            	<% if params[:latitude] && params[:latitude] != "" %>
+	            		<input type="hidden" id="latitude" name="latitude" value="<%= params[:latitude] %>">
+	            	<% else %>
+	                	<input type="hidden" id="latitude" name="latitude" value="-33.413673">
+	                <% end %>
+	                <% if params[:longitude] && params[:longitude] != "" %>
+	                	<input type="hidden" id="longitude" name="longitude" value="<%= params[:longitude] %>">
+	                <% else %>
+	                	<input type="hidden" id="longitude" name="longitude" value="-70.573426">
+	                <% end %>
+	                <% if @economic_sector_selected == 0 %>
+	                	<input type="hidden" id="economicSector" name="economicSector" value="0" />
+	                <% else %>
+	                	<input type="hidden" id="economicSector" name="economicSector" value="<%= @economic_sector_selected %>" />
+	                <% end %>
+	                <div class="form-group">
+	                    <div class="col-xs-12">
+	                        <div class="input-group inputLocalizationElement">
+	                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control", placeholder: "Escribe tu dirección...", required: true %>
+	                            <span class="input-group-btn">
+	                                <button id="geolocate_btn" class="btn btn-search geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+	                            </span>
+	                        </div>
+	                    </div>
+	                </div>
+	            <% end %>
+	        </div>
+	    </div>
+	    <div class="row">
+		    <div class="col-xs-12">
+		    	<div id="inputLocalizationResults">
+
+		    	</div>
+		    </div>
+	    </div>
+	</div>
+</div>
+
+<% content_for :stylesheets do %>
+	<%= stylesheet_link_tag "mobile/mobile-promotions" %>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag "mobile/promotions" %>
+<% end %>
+

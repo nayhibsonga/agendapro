@@ -1,0 +1,30 @@
+es_PE:
+  number:
+    currency:
+      format:
+        delimiter: '.'
+        format: '%u %n'
+        precision: 0
+        separator: ','
+        significant: false
+        strip_insignificant_zeros: false
+        unit: S/
+  country:
+    name: 'Perú'
+    domain: '.pe'
+  district: 'comuna'
+  ditricts: 'comunas'
+  ci: 'RUT'
+  plans:
+    personal: 149
+    normal: 199
+    premium: 349
+    pro: 699
+  plan_extra_location:
+    personal: 149
+    normal: 99.5
+    premium: 174.5
+    pro: 349.5
+  phones:
+    sales: '+569 4271 7566'
+    support: '+569 4291 7498'

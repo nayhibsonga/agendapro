@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @custom_filter.company_id %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @custom_filter.name %>
+</p>
+
+<%= link_to 'Edit', edit_custom_filter_path(@custom_filter) %> |
+<%= link_to 'Back', custom_filters_path %>

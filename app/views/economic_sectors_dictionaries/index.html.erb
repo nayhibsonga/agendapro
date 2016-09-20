@@ -1,0 +1,29 @@
+<h1>Listing economic_sectors_dictionaries</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Economic sector</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @economic_sectors_dictionaries.each do |economic_sectors_dictionary| %>
+      <tr>
+        <td><%= economic_sectors_dictionary.name %></td>
+        <td><%= economic_sectors_dictionary.economic_sector %></td>
+        <td><%= link_to 'Show', economic_sectors_dictionary %></td>
+        <td><%= link_to 'Edit', edit_economic_sectors_dictionary_path(economic_sectors_dictionary) %></td>
+        <td><%= link_to 'Destroy', economic_sectors_dictionary, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Economic sectors dictionary', new_economic_sectors_dictionary_path %>

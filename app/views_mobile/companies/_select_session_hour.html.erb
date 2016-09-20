@@ -1,0 +1,118 @@
+<div class="row">
+	<div class="col-xs-12">
+		<% unless @available_time.length == 0 %>
+	        <div class="form-group">
+	          <% @available_time.each do |time| %>
+	          <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>" data-provider="<%= time[:provider] %>"><%= time[:hour][:start]  %></button>
+	          <% end %>
+	        </div>
+	        <!--<a type="button" class="btn btn-green btn-block" id="bookNewSession" disabled>Siguiente</a>-->
+        <% else %>
+	        <h3>¡Lo sentimos!</h3>
+	        <br />
+	        <p>No hay horarios disponibles para este día, intenta eligiendo otro día.<p/>
+	        <p>Puedes ponerte en contacto con la empresa si requieres más información al teléfono <%= @location.phone %><%= if @location.email && @location.email != "" then 'o al email ' + @location.email end %></p>
+        <% end %>
+	</div>
+</div>
+
+<input type="hidden" id="newSessionStart" value="" />
+<input type="hidden" id="newSessionEnd" value="" />
+<input type="hidden" id="newSessionProvider" value="" />
+<input type="hidden" id="newSessionId" value="<%= @booking.id %>" />
+
+<script type="text/javascript">
+
+	var selected = false;
+
+	$(document).ready(function(){
+		$("#nextButton").attr("disabled", true);
+	});
+
+	$('button[type="submit"]').click(function (event) {
+		event.preventDefault();
+		$('.btn-press').removeClass('btn-press').addClass('btn-default');
+		$(event.target).addClass('btn-press').removeClass('btn-default');
+		//$('a.btn-green').attr('disabled', false);
+		$("#nextButton").attr("disabled", false);
+		$("html, body").delay(500).animate({ scrollTop: $(document).height() }, 1000, "swing");
+
+		var date = $(event.target).data('date');
+		var start = $(event.target).data('start');
+		var end = $(event.target).data('end');
+		var provider = $(event.target).data('provider');
+		setBooking(date, start, end, provider, booking_id);
+    });
+
+    function setBooking(date, start, end, provider)
+    {
+		selected = true;
+		$('#newSessionStart').val(generateDate(date, start));
+		$('#newSessionEnd').val(generateDate(date, end));
+		$('#newSessionProvider').val(provider);
+    }
+
+	function generateDate(date, time) {
+		var year = date.substring(0, date.indexOf('-'));
+		var month = date.substring(date.indexOf('-') + 1, date.lastIndexOf('-'));
+		var day = date.substring(date.lastIndexOf('-') + 1);
+
+		time += ':00';
+
+		return year + '-' + month + '-' + day + ' ' + time;
+	}
+
+	$("#nextButton").click(function(e){
+
+		$("#nextButton").prop('disabled', true);
+
+		if(!selected)
+		{
+			return false;
+		}
+
+		selected = false;
+
+		var booking_id = $("#newSessionId").val();
+		var start = $("#newSessionStart").val();
+		var end = $("#newSessionEnd").val();
+		var provider_id = $("#newSessionProvider").val();
+
+		$.ajax({
+	        url: "update_book_session",
+	        type: "post",
+	        dataType: "json",
+	        data: {id: booking_id, start: start, end: end, service_provider_id: provider_id},
+	        success: function(response)
+	        {
+	            if(response[0].length == 0)
+	            {
+	                $("#bookModal").modal('hide');
+	                $('#bookModal').remove();
+	                //$("#session-booking-select").trigger("change");
+	                loadSessions();
+	            }
+	            else
+	            {
+	                $("#bookModal").modal('hide');
+	                $('#bookModal').remove();
+	                //$("#session-booking-select").trigger("change");
+	                swal({
+	                	title: "Error el reservar",
+	                	text: response[0][0],
+	                	type: "error"
+	                });
+	                loadSessions();
+	            }
+	        },
+	        error: function(xhr)
+	        {
+	            $("#bookModal").modal('hide');
+	            $('#bookModal').remove();
+	            swal("Error");
+	        }
+	    });
+	});
+
+
+</script>

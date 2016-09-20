@@ -1,0 +1,30 @@
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-12">
+      <%= form_for @receipt_type, :html => {:class => 'form-horizontal'} do |f| %>
+        <% if @receipt_type.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@receipt_type.errors.count, "error") %> prohibited this receipt type from being saved:</h2>
+            <ul>
+              <% @receipt_type.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        <div class="form-group">
+          <%= f.label :name, "Nombre: ", class: "col-md-2 control-label" %>
+          <div class="col-md-4">
+            <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="actions col-md-offset-2 col-md-4">
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+            <%= link_to 'Cancelar', receipt_types_path, class: "btn btn-default" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

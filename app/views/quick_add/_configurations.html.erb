@@ -1,0 +1,82 @@
+<fieldset class="content-fill" id="fieldset_step5" disabled hidden>
+  <%= form_for @company_setting, html: {multipart: true} do |f| %>
+    <section class="green-background">
+      <div class="container">
+        <div class="row">
+          <h2 class="text-center">Ingresa tus configuraciones básicas.</h2>
+          <p class="text-center text-dark-green">Determina los tiempos de recordatorios y reservas.</p>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <input type="hidden" name="id" id="company_setting_id" value="<%= @company_setting.id %>" />
+            <div class="form-group has-feedback">
+              <%= f.label :before_booking, 'Tiempo Mínimo de Reserva' %>
+              <span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
+              <div class="input-group">
+                <%= f.number_field :before_booking, :in => 1...169, :required => true, :class => 'form-control' %>
+                <span class="input-group-addon">Horas</span>
+              </div>
+              <span class="help-block"></span>
+            </div>
+            <div class="form-group">
+              <%= f.label :after_booking, 'Tiempo Máximo a Futuro' %>
+              <span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
+              <div class="input-group">
+                <%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
+                <span class="input-group-addon">Meses</span>
+              </div>
+              <span class="help-block"></span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= f.label :booking_confirmation_time, 'Recordatorios' %>
+              <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
+              <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
+            </div>
+            <div class="form-group">
+              <label>Modificaciones de reservas</label>
+            </div>
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
+                  <%= f.check_box :can_edit %> Reservas Editables
+                </label>
+                <span class="help-block">Habilita esta opción para que tu cliente pueda modificar las reservas que realiza.</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
+                  <%= f.check_box :can_cancel %> Reservas Cancelables
+                </label>
+                <span class="help-block">Habilita esta opción para que tu cliente pueda cancelar las reservas que realiza.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <div class="text-center">
+                <a id="update_configurations_button" class="btn btn-orange btn-lg next-button" data-loading-text="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class='fa fa-spinner fa-spin'></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>">Siguiente Paso</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>\
+    </section>
+  <% end %>
+</fieldset>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/quick_add/configurations" %>
+<% end %>

@@ -1,0 +1,26 @@
+angular.module('survey', ["checklist-model"])
+.controller('InvoiceController', function ($scope) {
+  $scope.model = {};
+  $scope.selected = [];
+  $scope.model.questions = [];
+  $scope.push = function(){
+    $scope.model.questions.push({ "key": this.$id, "value": this })
+  }
+  $scope.add_question = function(){
+    console.log(this);
+    $scope.selected = [];
+   // If any object type is not checked, then uncheck the "allItemsSelected" checkbox
+    for (var i = 0; i < $scope.model.questions.length; i++) {
+      if (!$scope.model.questions[i].isChecked) {
+         //$scope.selected.splice($scope.model.objectTypes[i].value);
+
+      }
+      else {
+       if($scope.selected.indexOf($scope.model.questions[i].value) == -1) {
+         $scope.selected.push($scope.model.questions[i].name);
+
+        }
+      }
+    }
+  }
+});

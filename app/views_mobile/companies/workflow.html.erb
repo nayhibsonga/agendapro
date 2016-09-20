@@ -1,0 +1,129 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-2">
+      <%= image_tag @company.logo.page.url.to_s, :alt => @company.name, class: 'company-logo' %>
+      <button class="btn btn-wide btn-green"><i class="fa fa-caret-left"></i> Información</button>
+      <button class="btn btn-wide btn-orange hidden">Reservar <i class="fa fa-caret-right"></i></button>
+    </div>
+    <div class="col-xs-12 col-sm-10">
+      <div id="reservar">
+        <%= form_tag("select_hour", method: "get", role: "form", id: "selectHourForm") do %>
+          <%= hidden_field_tag :location, @location.id %>
+          <div class="form-group">
+            <%= label_tag :service, 'Selecciona el servicio que quieres' %>
+            <%= select_tag :service, nil, :class => 'form-control', prompt: "Selecciona un Servicio" %>
+          </div>
+          <div class="form-group" id="serviceInfo" hidden>
+
+          </div>
+          <div class="form-group" <%= 'style="display:none;"'.html_safe if @company.company_setting.provider_preference == 2 %>>
+            <%= label_tag :provider, 'Selecciona al staff' %>
+            <%= select_tag :provider, nil, :disabled => true, :class => 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :datepicker, 'Selecciona una fecha' %>
+            <%= text_field_tag :datepicker, nil, :disabled => true, :placeholder => 'Selecciona fecha...', :class => 'form-control' %>
+          </div>
+          <input type="hidden" id="serviceStaff" name="serviceStaff" value="" />
+          <input type="hidden" id="hours_type" name="hours_type" value="workflow" />
+          <a id="selectHourNextBtn" class="btn btn-green btn-block btn-lg" disabled>Siguiente</a>
+        <% end %>
+      </div>
+      <div id="informacion" class="hidden">
+        <div class="panel panel-agendapro">
+          <div class="panel-heading">
+            <h3 class="panel-title">Información</h3>
+          </div>
+          <div class="panel-body">
+            <div class="panel-group" id="information" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-white">
+                <div class="panel-heading" role="tab" id="addressHeading">
+                    <a data-toggle="collapse" data-parent="#information" href="#address" aria-expanded="false" aria-controls="address">
+                      <h4 class="panel-title panel-title-caret">
+                        Descripción
+                      </h4>
+                    </a>
+                </div>
+                <div id="address" class="panel-collapse collapse" role="tabpanel" aria-labelledby="addressHeading">
+                  <div class="panel-body">
+                    <%= @company.description %>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-white">
+                <div class="panel-heading" role="tab" id="scheduleHeading">
+                  <a data-toggle="collapse" data-parent="#information" href="#schedule" aria-expanded="false" aria-controls="schedule">
+                    <h4 class="panel-title panel-title-caret">
+                      Horario
+                    </h4>
+                  </a>
+                </div>
+                <div id="schedule" class="panel-collapse collapse" role="tabpanel" aria-labelledby="scheduleHeading">
+                  <ul class="list-group" id="schedule-body">
+                  </ul>
+                </div>
+              </div>
+              <div class="panel panel-white">
+                <div class="panel-heading" role="tab" id="telefoneHeading">
+                  <a data-toggle="collapse" data-parent="#information" href="#phone" aria-expanded="false" aria-controls="phone">
+                    <h4 class="panel-title panel-title-caret">
+                      Teléfono
+                    </h4>
+                  </a>
+                </div>
+                <div id="phone" class="panel-collapse collapse" role="tabpanel" aria-labelledby="telefoneHeading">
+                  <div class="panel-body">
+                    <%= @location.phone %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-agendapro">
+          <div class="panel-heading">
+            <h3 class="panel-title">Dirección</h3>
+          </div>
+          <div class="panel-body">
+            <p><%= if !@location.outcall then @location.short_address_with_second_address else "A Domicilio" end %></p>
+            <% if @location.outcall %>
+            <p>Lugares que atiende:</p>
+            <pre><%= @location.outcall_places %></pre>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= content_tag "div", id: "timeInterval", data: {min: @before_now, max: @after_now} do %>
+<% end %>
+<%= content_tag "div", id: "providerPreference", data: {provider_preference: @company.company_setting.provider_preference } do %>
+<% end %>
+
+<% content_for :stylesheets do %>
+<%= stylesheet_link_tag "datepicker" %>
+<% end %>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag "mobile/workflow" %>
+<%= javascript_include_tag "datepicker" %>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.btn-wide').click(function () {
+      if ($(this).hasClass('btn-green')) {
+        $('.hidden').removeClass('hidden');
+        $('#reservar').addClass('hidden');
+        $(this).addClass('hidden');
+      } else if ($(this).hasClass('btn-orange')) {
+        $('.hidden').removeClass('hidden');
+        $('#informacion').addClass('hidden');
+        $(this).addClass('hidden');
+      }
+    });
+    loadServices(<%= @location.id %>);
+    loadSchedule(<%= @location.id %>);
+  });
+</script>
+<% end %>

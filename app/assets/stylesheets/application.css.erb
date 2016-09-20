@@ -1,0 +1,528 @@
+ /*
+ *= require bootstrap
+ * require bootstrap-theme
+ *= require font-awesome.min
+ *= require sweetalert
+ *= require toastr.min
+ */
+
+#toast-container>div {
+  opacity: 1;
+}
+.toast-success {
+  background-color: #5fd2a3;
+}
+.toast-error {
+  background-color: #f96d6d;
+}
+.toast-info {
+  background-color: #3a83cd;
+}
+.toast-warning {
+  background-color: #e2bc52;
+}
+
+/*
+  ==============================================================================
+  ========================== Seteo de Bootstrap ================================
+  ==============================================================================
+*/
+
+/*
+  ================================
+  =========== Panels =============
+  ================================
+*/
+.panel-title {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.panel-title > input[type="checkbox"] {
+	margin-right: 5px;
+}
+.panel-group > .panel > .panel-heading > .panel-title {
+	cursor: pointer;
+}
+.panel-group > .panel > .panel-heading > .panel-title > a:after,
+.panel-group > .panel > .panel-heading > .panel-title.collapsed > a:after,
+.panel-group > .panel > .panel-heading > .panel-title > a.collapsed:after {
+	float: right !important;
+	/* Font awesome style */
+	font-family: FontAwesome;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.panel-group > .panel > .panel-heading > .panel-title > a:after {
+	/* Font symbol */
+	content: "\f0d7";
+}
+.panel-group > .panel > .panel-heading > .panel-title.collapsed > a:after,
+.panel-group > .panel > .panel-heading > .panel-title > a.collapsed:after {
+	/* Font symbol */
+	content: "\f0d9";
+}
+
+#folders_accordion.panel-group > .panel > .panel-heading > .panel-title > a:before {
+  /* Font symbol */
+  content: "";
+}
+#folders_accordion.panel-group > .panel > .panel-heading > .panel-title.collapsed > a:before,
+#folders_accordion.panel-group > .panel > .panel-heading > .panel-title > a.collapsed:before {
+  /* Font symbol */
+  content: "";
+}
+
+#folders_accordion.panel-group > .panel > .panel-heading > .panel-title > a:after {
+  /* Font symbol */
+  content: "";
+}
+#folders_accordion.panel-group > .panel > .panel-heading > .panel-title.collapsed > a:after,
+#folders_accordion.panel-group > .panel > .panel-heading > .panel-title > a.collapsed:after {
+  /* Font symbol */
+  content: "";
+}
+
+#folders_accordion.panel-group > .panel > .panel-heading > .panel-title > a{
+  text-decoration: none;
+}
+
+#folders_accordion.panel-group > .panel > .panel-heading > .panel-title > a:hover{
+  text-decoration: none;
+}
+
+#folders_accordion.panel-group > .panel > .panel-heading{
+  border: none;
+  background-color: #fff;
+  color: #505050;
+}
+
+#folders_accordion.panel-group > .panel-default{
+  border: none;
+  background-color: #fff;
+  color: #505050;
+}
+
+
+
+#treatments_accordion.panel-group > .panel > .panel-heading > .panel-title > a:before {
+  /* Font symbol */
+  content: "";
+}
+#treatments_accordion.panel-group > .panel > .panel-heading > .panel-title.collapsed > a:before,
+#treatments_accordion.panel-group > .panel > .panel-heading > .panel-title > a.collapsed:before {
+  /* Font symbol */
+  content: "";
+}
+
+#treatments_accordion.panel-group > .panel > .panel-heading > .panel-title > a:after {
+  /* Font symbol */
+  content: "";
+}
+#treatments_accordion.panel-group > .panel > .panel-heading > .panel-title.collapsed > a:after,
+#treatments_accordion.panel-group > .panel > .panel-heading > .panel-title > a.collapsed:after {
+  /* Font symbol */
+  content: "";
+}
+
+#treatments_accordion.panel-group > .panel > .panel-heading > .panel-title > a{
+  text-decoration: none;
+}
+
+#treatments_accordion.panel-group > .panel > .panel-heading > .panel-title > a:hover{
+  text-decoration: none;
+}
+
+#treatments_accordion.panel-group > .panel > .panel-heading{
+  border: none;
+  background-color: #fff;
+  color: #505050;
+}
+
+#treatments_accordion.panel-group > .panel-default{
+  border: none;
+  background-color: #fff;
+  color: #505050;
+}
+
+
+
+/*
+  ================================
+  =========== Buttons ============
+  ================================
+*/
+.btn-agendapro-oscuro {
+  color: #fff;
+  background-color: #1B7370;
+  border-color: #186563;
+}
+.btn-agendapro-oscuro:hover,
+.btn-agendapro-oscuro:focus,
+.btn-agendapro-oscuro:active,
+.btn-agendapro-oscuro.active,
+.open > .dropdown-toggle.btn-agendapro-oscuro {
+  color: #fff;
+  background-color: #0F5250;
+  border-color: #104341;
+}
+.btn-agendapro-oscuro:active,
+.btn-agendapro-oscuro.active,
+.open > .dropdown-toggle.btn-agendapro-oscuro {
+  background-image: none;
+}
+.btn-agendapro-oscuro.disabled,
+.btn-agendapro-oscuro[disabled],
+fieldset[disabled] .btn-agendapro-oscuro,
+.btn-agendapro-oscuro.disabled:hover,
+.btn-agendapro-oscuro[disabled]:hover,
+fieldset[disabled] .btn-agendapro-oscuro:hover,
+.btn-agendapro-oscuro.disabled:focus,
+.btn-agendapro-oscuro[disabled]:focus,
+fieldset[disabled] .btn-agendapro-oscuro:focus,
+.btn-agendapro-oscuro.disabled:active,
+.btn-agendapro-oscuro[disabled]:active,
+fieldset[disabled] .btn-agendapro-oscuro:active,
+.btn-agendapro-oscuro.disabled.active,
+.btn-agendapro-oscuro[disabled].active,
+fieldset[disabled] .btn-agendapro-oscuro.active {
+  background-color: #1B7370;
+  border-color: #186563;
+}
+.btn-agendapro-oscuro {
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+}
+.btn-agendapro-oscuro:active,
+.btn-agendapro-oscuro.active {
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+          box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+}
+.btn-agendapro-oscuro {
+  background-image: -webkit-linear-gradient(top, #1B7370 0%, #0E4D4B 100%);
+  background-image:      -o-linear-gradient(top, #1B7370 0%, #0E4D4B 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#1B7370), to(#0E4D4B));
+  background-image:         linear-gradient(to bottom, #1B7370 0%, #0E4D4B 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff1B7370', endColorstr='#ff0E4D4B', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  background-repeat: repeat-x;
+  border-color: #186563;
+}
+.btn-agendapro-oscuro:hover,
+.btn-agendapro-oscuro:focus {
+  background-color: #0E4D4B;
+  background-position: 0 -15px;
+}
+.btn-agendapro-oscuro:active,
+.btn-agendapro-oscuro.active {
+  background-color: #0E4D4B;
+  border-color: #186563;
+}
+.btn-agendapro-oscuro:disabled,
+.btn-agendapro-oscuro[disabled] {
+  background-color: #0E4D4B;
+  background-image: none;
+}
+
+.btn-agendapro-claro {
+  color: #fff;
+  background-color: #3D9A96;
+  border-color: #378581;
+}
+.btn-agendapro-claro:hover,
+.btn-agendapro-claro:focus,
+.btn-agendapro-claro:active,
+.btn-agendapro-claro.active,
+.open > .dropdown-toggle.btn-agendapro-claro {
+  color: #fff;
+  background-color: #2A7874;
+  border-color: #28615E;
+}
+.btn-agendapro-claro:active,
+.btn-agendapro-claro.active,
+.open > .dropdown-toggle.btn-agendapro-claro {
+  background-image: none;
+}
+.btn-agendapro-claro.disabled,
+.btn-agendapro-claro[disabled],
+fieldset[disabled] .btn-agendapro-claro,
+.btn-agendapro-claro.disabled:hover,
+.btn-agendapro-claro[disabled]:hover,
+fieldset[disabled] .btn-agendapro-claro:hover,
+.btn-agendapro-claro.disabled:focus,
+.btn-agendapro-claro[disabled]:focus,
+fieldset[disabled] .btn-agendapro-claro:focus,
+.btn-agendapro-claro.disabled:active,
+.btn-agendapro-claro[disabled]:active,
+fieldset[disabled] .btn-agendapro-claro:active,
+.btn-agendapro-claro.disabled.active,
+.btn-agendapro-claro[disabled].active,
+fieldset[disabled] .btn-agendapro-claro.active {
+  background-color: #3D9A96;
+  border-color: #378581;
+}
+.btn-agendapro-claro {
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+}
+.btn-agendapro-claro:active,
+.btn-agendapro-claro.active {
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+          box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+}
+.btn-agendapro-claro {
+  background-image: -webkit-linear-gradient(top, #3D9A96 0%, #28736F 100%);
+  background-image:      -o-linear-gradient(top, #3D9A96 0%, #28736F 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#3D9A96), to(#28736F));
+  background-image:         linear-gradient(to bottom, #3D9A96 0%, #28736F 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff3D9A96', endColorstr='#ff28736F', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  background-repeat: repeat-x;
+  border-color: #378581;
+}
+.btn-agendapro-claro:hover,
+.btn-agendapro-claro:focus {
+  background-color: #28736F;
+  background-position: 0 -15px;
+}
+.btn-agendapro-claro:active,
+.btn-agendapro-claro.active {
+  background-color: #28736F;
+  border-color: #378581;
+}
+.btn-agendapro-claro:disabled,
+.btn-agendapro-claro[disabled] {
+  background-color: #28736F;
+  background-image: none;
+}
+
+.btn-agendapro-orange {
+	color: #fff;
+	background-color: #D55330;
+	border-color: #CA4824;
+}
+.btn-agendapro-orange:hover,
+.btn-agendapro-orange:focus,
+.btn-agendapro-orange:active,
+.btn-agendapro-orange.active,
+.open > .dropdown-toggle.btn-agendapro-orange {
+	color: #fff;
+	background-color: #B64121;
+	border-color: #A63C1E;
+}
+.btn-agendapro-orange:active,
+.btn-agendapro-orange.active,
+.open > .dropdown-toggle.btn-agendapro-orange {
+	background-image: none;
+}
+.btn-agendapro-orange.disabled,
+.btn-agendapro-orange[disabled],
+fieldset[disabled] .btn-agendapro-orange,
+.btn-agendapro-orange.disabled:hover,
+.btn-agendapro-orange[disabled]:hover,
+fieldset[disabled] .btn-agendapro-orange:hover,
+.btn-agendapro-orange.disabled:focus,
+.btn-agendapro-orange[disabled]:focus,
+fieldset[disabled] .btn-agendapro-orange:focus,
+.btn-agendapro-orange.disabled:active,
+.btn-agendapro-orange[disabled]:active,
+fieldset[disabled] .btn-agendapro-orange:active,
+.btn-agendapro-orange.disabled.active,
+.btn-agendapro-orange[disabled].active,
+fieldset[disabled] .btn-agendapro-orange.active {
+	background-color: #D55330;
+	border-color: #CA4824;
+}
+.btn-agendapro-orange {
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+}
+.btn-agendapro-orange:active,
+.btn-agendapro-orange.active {
+	-webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+	box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+}
+.btn-agendapro-orange {
+	background-image: -webkit-linear-gradient(top, #D55330 0%, #B13F20 100%);
+	background-image:      -o-linear-gradient(top, #D55330 0%, #B13F20 100%);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#D55330), to(#B13F20));
+	background-image:         linear-gradient(to bottom, #D55330 0%, #B13F20 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffD55330', endColorstr='#ffB13F20', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+	background-repeat: repeat-x;
+	border-color: #A63C1E;
+}
+.btn-agendapro-orange:hover,
+.btn-agendapro-orange:focus {
+	background-color: #B13F20;
+	background-position: 0 -15px;
+}
+.btn-agendapro-orange:active,
+.btn-agendapro-orange.active {
+	background-color: #B13F20;
+	border-color: #A63C1E;
+}
+.btn-agendapro-orange:disabled,
+.btn-agendapro-orange[disabled] {
+	background-color: #B13F20;
+	background-image: none;
+}
+
+/*
+  ================================
+  =========== Modals =============
+  ================================
+*/
+.modal-content{
+	background: #ffffff;
+}
+.modal-header{
+  background: #f5f5f5;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.modal-footer{
+	background: #f5f5f5;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/*
+  ================================
+  ======== Form Feedback =========
+  ================================
+*/
+.has-feedback .form-control-feedback.fa {
+  line-height: 34px;
+}
+.has-success .help-block,
+.has-success .control-label,
+.has-success .radio,
+.has-success .checkbox,
+.has-success .radio-inline,
+.has-success .checkbox-inline,
+.has-success.radio label,
+.has-success.checkbox label,
+.has-success.radio-inline label,
+.has-success.checkbox-inline label {
+  color: #22c488;
+}
+.has-success .form-control {
+  border-color: #22c488;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+}
+.has-success .form-control:focus {
+  border-color: #1ba970;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #4c8b6e;
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #4c8b6e;
+}
+.has-success .input-group-addon {
+  color: #22c488;
+  background-color: #adf0d1;
+  border-color: #22c488;
+}
+.has-success .form-control-feedback {
+  color: #22c488;
+}
+.has-error .help-block,
+.has-error .control-label,
+.has-error .radio,
+.has-error .checkbox,
+.has-error .radio-inline,
+.has-error .checkbox-inline,
+.has-error.radio label,
+.has-error.checkbox label,
+.has-error.radio-inline label,
+.has-error.checkbox-inline label {
+  color: #fd633f;
+}
+.has-error .form-control {
+  border-color: #fd633f;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+}
+.has-error .form-control:focus {
+  border-color: #e55938;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #a15240;
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #a15240;
+}
+.has-error .input-group-addon {
+  color: #fd633f;
+  background-color: #fbc1b3;
+  border-color: #fd633f;
+}
+.has-error .form-control-feedback {
+  color: #fd633f;
+}
+.has-feedback label ~ .form-control-feedback {
+  top: 30px;
+}
+
+/*
+  ================================
+  ========== Pagination ==========
+  ================================
+*/
+.pagination {
+  margin: initial;
+}
+.pagination > li > a,
+.pagination > li > span {
+	color: #22c488;
+}
+.pagination > li > a:hover,
+.pagination > li > span:hover,
+.pagination > li > a:focus,
+.pagination > li > span:focus {
+	color: #1ba970;
+}
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+	background-color: #22c488;
+	border-color: #1ba970;
+}
+
+/*
+  ================================
+  ============ Alert =============
+  ================================
+*/
+.alert {
+  position: fixed;
+  margin: 65px auto 10px;
+  width: 75%;
+  z-index: 10000;
+  left: 5%;
+  right: 5%;
+  padding: 10px 15px;
+  margin-bottom: 0px;
+  -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.3);
+  box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.3);
+}
+.alert .alert-agendapro {
+  position: absolute;
+}
+.alert-dismissable,
+.alert-dismissible {
+	padding-right: 35px;
+}
+
+/*
+  ================================
+  ========== Facebook ============
+  ================================
+*/
+span iframe {
+	width: 200px;
+	margin-top: 10px;
+}

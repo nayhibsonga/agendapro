@@ -1,0 +1,20 @@
+<div style="margin-top: 80px;">
+&nbsp;
+</div>
+<div style="margin: auto; height: 120px; width: 400px; text-align: center; background: #22c488; color: #fff; font-size: 28px; font-weight: bold; padding-top: 30px;">
+	<span id="file-loader-span"><%= image_tag 'loading4.gif', class: 'media-object media-image', id: 'file-loader-img', style: 'width: 70px !important; height: 70px !important;' %>&nbsp;&nbsp;Generando archivo</span>
+	<a href="#" class="btn btn-default" id="download-link" style="color: #22c488; display: none; width: 75%; padding-top: 10px; padding-bottom: 10px; font-size: 20px;">Descargar</a>
+</div>
+<div style="margin-top: 20px;">
+&nbsp;
+</div>
+<div style="margin: auto; width: 480px;">
+	<p style="text-align: center; font-size: 18px;" id="download-message">
+		El archivo se está generando. Una vez listo, aparecerá un enlace de descarga.
+	</p>
+</div>
+<%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_download_path(attendance: params[:attendance], search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], range_from: params[:range_from], range_to: params[:range_to], custom_filters: params[:custom_filters]), class: "btn btn-white", id: "file-generation-link", style: "display: none" %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'admin/clients_file_generation' %>
+<% end %>

@@ -1,0 +1,183 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="well">
+        <%= form_for @location, html: {class: "form-horizontal"} do |f| %>
+          <%= f.hidden_field :latitude %>
+          <%= f.hidden_field :longitude %>
+          <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+          <div class="form-group">
+            <%= f.label :company_id, "Empresa", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.collection_select :company_id, Company.where(owned: false).order(:name), :id, :name, {}, { class: "form-control", required: true} %>
+            </div>
+          </div>
+          <% end %>
+          <div class="form-group has-feedback">
+            <%= f.label :name, "Nombre", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_field :name, :autofocus => true, class: "form-control", placeholder: 'Nombre (requerido)' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <% if current_user.company.activate_i18n %>
+          <div class="form-group has-feedback">
+            <%= f.label :country_id, "País", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.collection_select :country_id, Country.where(id: CompanyCountry.where(company_id: current_user.company_id).pluck(:country_id)).order(:name), :id, :name, {}, {class: "form-control", required: true} %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <% else %>
+          <%= f.hidden_field :country_id, value: current_user.company.country_id %>
+          <% end %>
+          <div class="form-group has-feedback">
+            <%= f.label :address, "Dirección", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <div class="input-group" id="popover-link" tabindex="0" role="button" data-toggle="popover" data-trigger="manual" data-placement="bottom" data-html="true">
+                <%= text_field_tag :address, @location.try(:full_address), class: "form-control", placeholder: 'Dirección (requerido)' %>
+                <%= f.hidden_field :address %>
+                <span class="input-group-btn">
+                  <button class="btn btn-default" id="geolocate" type="button"><i class="fa fa-crosshairs"></i></button>
+                </span>
+              </div>
+              <span class="help-block"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <%= f.label :second_address, "Dirección Adicional", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_field :second_address, class: "form-control", placeholder: 'Oficina D, Local 22' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-9 col-md-offset-3">
+              <div class="checkbox">
+                <label>
+                  <%= f.check_box :outcall %> Sólo servicios a domicilio.
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group has-feedback" hidden="true">
+            <%= f.label :outcall_places, "Sectores de Atención", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_area :outcall_places, class: "form-control", placeholder: "Indica los sectores o lugares a los que se puede pedir los servicios a domicilio." %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <%= f.label :phone, "Teléfono", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_field :phone, class: "form-control", placeholder: 'Teléfono (requerido)' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <% if current_user.company.company_setting.activate_workflow %>
+          <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+              <div class="checkbox">
+                <label>
+                  <%= f.check_box :online_booking %> Este local acepta reservas Online
+                </label>
+              </div>
+            </div>
+          </div>
+          <% end %>
+          <div class="form-group has-feedback">
+            <%= f.label :email, "E-mail", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.email_field :email, class: "form-control", placeholder: "Email (requerido)", required: true %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+              <span class="help-block">En caso de que un cliente responda algún mensaje, la respuesta llegará a esta dirección</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="actions col-md-offset-3 col-md-9">
+              <button type="button" class="btn btn-green" id="saveLocation">Guardar</button>
+              <%= link_to 'Cancelar'.html_safe, locations_path, :class => "btn btn-white" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel panel-green">
+        <div class="panel-heading">
+          <h3 class="panel-title">Horario Local</h3>
+        </div>
+        <table class="table">
+          <tbody id="localTable">
+            <tr>
+              <th>Día</th>
+              <th>Apertura</th>
+              <th>Cierre</th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel panel-green">
+        <div class="panel-heading">
+          <h3 class="panel-title">Días abiertos</h3>
+        </div>
+        <table class="table">
+          <tbody id="openDaysTable" style="max-height: 350px; overflow-y: auto;">
+            <tr>
+              <th>Fecha</th>
+              <th>Apertura</th>
+              <th>Cierre</th>
+              <th>Opciones</th>
+            </tr>
+            <% @location.location_open_days.where('start_time >= ?', (DateTime.now + @location.company.country.timezone_offset.hours).beginning_of_day).order(:start_time).each do |open_day| %>
+              <tr class="open-day-tr" open_day_id="<%= open_day.id %>">
+                <td>
+                  <%= l open_day.start_time.to_date, format: :long %>
+                </td>
+                <td>
+                  <%= open_day.start_time.strftime('%H:%M') %>
+                </td>
+                <td>
+                  <%= open_day.end_time.strftime('%H:%M') %>
+                </td>
+                <td>
+                  <button class="btn btn-orange openDayEditBtn" open_day_id="<%= open_day.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+                  <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, "/delete_location_day?location_open_day_id=#{open_day.id}", method: :delete, :remote => true, data: { confirm: '¿Estás seguro de eliminar el horario seleccionado?', type: :json }, class: 'btn btn-red open-day-delete-btn' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div id="map-placement">
+        <div id="content-popover" class="no-show">
+          <p class="text-center">Puedes dar click en el mapa para cambiar la ubicación</p>
+          <div id="map"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "bootstrap-tagsinput" %>
+  <style type="text/css">
+    .popover {
+      max-width: 370px;
+    }
+    .pac-container {
+      z-index: 1061;
+    }
+  </style>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?libraries=places" %>
+  <%= javascript_include_tag "location" %>
+<% end %>

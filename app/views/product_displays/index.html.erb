@@ -1,0 +1,27 @@
+<h1>Listing product_displays</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @product_displays.each do |product_display| %>
+      <tr>
+        <td><%= product_display.name %></td>
+        <td><%= link_to 'Show', product_display %></td>
+        <td><%= link_to 'Edit', edit_product_display_path(product_display) %></td>
+        <td><%= link_to 'Destroy', product_display, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Product display', new_product_display_path %>

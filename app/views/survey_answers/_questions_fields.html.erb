@@ -1,0 +1,26 @@
+
+  <div class="form-group has-feedback">
+    <li class="col-md-12 nopadding" ><h2 ><%= f.object.question %></h2></li>
+  </div>
+  <div class="form-group has-feedback">
+    <p class="col-md-12 nopadding"><%= f.object.description %></p>
+  </div>
+  <div class="form-group has-feedback">
+    <div class="col-md-12 nopadding">
+      <%= fields_for @survey_answer do |a| %>
+        <% if f.object.type_question == 1 %>
+          <p class="clasificacion">
+            <% (1..5).each do |i| %>
+              <%= a.radio_button :answer, i.abs, :class => 'form-control', :id => "radio_#{@i}_#{@book.id.to_s}", :name => "survey_answer[][answer_#{@i}_#{@book.id.to_s}]" %>
+              <%= a.label "★", :for => "radio_#{@i}_#{@book.id.to_s}" %>
+              <% @i = @i + 1 %>
+            <% end %>
+          </p>
+        <% else %>
+          <%= a.text_area :answer, :autofocus => true, :required => true, :class => 'form-control comment', :placeholder => 'Comentario',:name => "survey_answer[][answer]" %>
+        <% end %>
+
+      <% end %>
+    </div>
+  </div>
+

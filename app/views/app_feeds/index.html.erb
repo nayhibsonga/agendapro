@@ -1,0 +1,46 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Avisos para App</h2>
+      <p>Estas son los Avisos para App tu app personalizada que has creado.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="pull-left" style="margin: 10px 0;">
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="pull-right" style="margin: 10px 0;">
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Aviso para App'.html_safe, new_app_feed_path, :class => "btn btn-green" %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-bordered table-green">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Fecha de Publicación</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @app_feeds.each do |app_feed| %>
+            <tr>
+              <td><%= app_feed.title %></td>
+              <td>Hace <%= time_ago_in_words(app_feed.created_at) %></td>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_app_feed_path(app_feed), :class => "btn btn-sm btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, app_feed, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el aviso seleccionado?' } unless cannot? :destroy, app_feed %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

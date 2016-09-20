@@ -1,0 +1,37 @@
+<h1>Listing deals</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Quantity</th>
+      <th>Active</th>
+      <th>Constraint option</th>
+      <th>Constraint quantity</th>
+      <th>Company</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @deals.each do |deal| %>
+      <tr>
+        <td><%= deal.code %></td>
+        <td><%= deal.quantity %></td>
+        <td><%= deal.active %></td>
+        <td><%= deal.constraint_option %></td>
+        <td><%= deal.constraint_quantity %></td>
+        <td><%= deal.company_id %></td>
+        <td><%= link_to 'Show', deal %></td>
+        <td><%= link_to 'Edit', edit_deal_path(deal) %></td>
+        <td><%= link_to 'Destroy', deal, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Deal', new_deal_path %>

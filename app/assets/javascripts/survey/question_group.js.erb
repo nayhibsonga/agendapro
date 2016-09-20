@@ -1,0 +1,232 @@
+var id_stars = 0;
+var offset = 0;
+var name_id = 0;
+$(window).load(function(){
+  $('.content_questions').sortable({
+    axis: 'y',
+    handle: '.fa-bars',
+    helper: function(e, tr) {
+      var $originals = tr.children();
+      var $helper = tr.clone();
+      $helper.children().each(function(index)
+      {
+        // Set helper cell sizes to match the original sizes
+        $(this).width($originals.eq(index).outerWidth());
+      });
+      return $helper;
+    },
+    revert: 300,
+    update: function (event, ui) {
+      //var tbody = $(event.target);
+      categoryNewOrder();
+    }
+  });
+  constructPreview();
+});
+function remove_fields(object,id) {
+  var checkbox = $(object).parents(".checkbox");
+  swal({
+    title: "Esta seguro de elimnar esta pregunta?",
+    text: "Se eliminara para todas las encuestas a partir de este momento.",
+    type: "warning",
+    showCancelButton: true,
+    confirmButtonClass: "btn-danger",
+    confirmButtonText: "Si, eliminar",
+    closeOnConfirm: false
+  },
+  function(){
+    swal("Eliminada!", "Tu pregunta ha sido eliminada.", "success");
+    $.ajax({
+      method: 'POST',
+      dataType: 'json',
+      url: '/survey_questions/'+id,
+      data: {_method:'delete'},
+      success: function(data){
+        checkbox.remove();
+        constructPreview();
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        console.log(XMLHttpRequest+":"+textStatus+":"+errorThrown)
+      }
+    })
+  });
+
+  return false
+}
+function constructPreview(){
+  $(".preview .content_all_question").html("");
+  $(document).find("#service-accordion input[type='checkbox']").each(function(index,value){
+    var isChecked = $(this)[0].checked;
+    if(isChecked == true){
+      $(".preview .content_all_question").append('<ol class="container_question col-md-12" data-service-id="'+$(this).attr("data-id")+'">'+
+                            '<h3>Con respecto a su cita '+$(this).parent().text().trim()+'</h3>'+
+                            '<div class="content_questions"></div>'+
+                            '</ol>');
+    }
+  })
+  $(document).find("#survey-accordion input[type='checkbox']").each(function(index,value){
+    var isChecked = $(this)[0].checked;
+    if(isChecked == true){
+      addQuestion($(this))
+    }
+  })
+}
+function addQuestionToSurveys(){
+  $.ajax({
+    method: "GET",
+    url: "/survey_questions/new",
+    success: function(data){
+      $("#modalQuestion .modal-content").html(data)
+      $("#modalQuestion").modal("show")
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      console.log(XMLHttpRequest+":"+textStatus+":"+errorThrown)
+    }
+  })
+  return false
+}
+function editQuestion(e){
+  swal({
+    title: "Esta seguro de editar esta pregunta?",
+    text: "Se editara para todas las encuestas a partir de este momento.",
+    type: "warning",
+    showCancelButton: true,
+    confirmButtonClass: "btn-danger",
+    confirmButtonText: "Si, editar",
+    closeOnConfirm: true
+  },
+  function(){
+    $.ajax({
+      method: "GET",
+      url: "/survey_questions/"+e+"/edit",
+      data: {id:e},
+      success: function(data){
+        $("#modalQuestion .modal-content").html(data)
+        $("#modalQuestion").modal("show")
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        console.log(XMLHttpRequest+":"+textStatus+":"+errorThrown)
+      }
+    })
+  });
+  return false
+}
+function addToPreviewService(button){
+  if($(button)[0].checked == true){
+    $(".preview").append('<ol class="container_question col-md-12" data-service-id="'+$(button).attr("data-id")+'">'+
+                          '<h3>Con respecto a su cita '+$(button).parent().text().trim()+'</h3>'+
+                          '<div class="content_questions"></div>'+
+                          '</ol>');
+    addPostService(button);
+  }else{
+    $(document).find("ol[data-service-id='"+$(button).attr("data-id")+"']").remove();
+  }
+}
+function addPostService(button){
+  var content = $(button).attr("data-id");
+  var content_questions = $("#survey-accordion input[type='checkbox']");
+  content_questions.each(function(index,value){
+    var isChecked = $(this)[0].checked;
+    if(isChecked == true){
+      id_stars = id_stars + 5;
+      var stars = "";
+      for (var i = offset; i < id_stars; i++) {
+        stars= stars +"<input type='radio' id='stars_"+i+"' name='stars_"+name_id+" value='"+i+"'><label for='stars_"+i+"'>★</label>";
+      }
+      $(document).find("ol[data-service-id='"+content+"']").find(".content_questions").append('<div data-question-id="'+$(this).attr("data-id")+'"><div class="form-group has-feedback" >'+
+                                      '<li class="col-md-12 nopadding" ><h2 >'+$(this).parent().children(".title_preview").text().trim()+'</h2></li>'+
+                                      '</div>'+
+                                      '<div class="form-group has-feedback">'+
+                                        '<p class="col-md-12 nopadding">'+$(this).parent().children('.description_preview').text().trim()+'</p>'+
+                                      '</div>'+
+                                      '<div class="form-group has-feedback">'+
+                                        '<div class="col-md-12 nopadding">'+
+                                            '<p class="clasificacion">'+stars+'</p>'+
+                                        '</div>'+
+                                      '</div></div>')
+      offset = offset + 5;
+      name_id = name_id + 1;
+    }
+  })
+}
+function addToPreviewQuestion(button){
+  if($(button)[0].checked == true){
+    addQuestion(button);
+  }else{
+    $(document).find("div[data-question-id='"+$(button).attr("data-id")+"']").remove();
+  }
+}
+
+$(document).on("submit","#new_survey_question, .edit_survey_question",function(form){
+  form.preventDefault();
+  var data = $(this).serialize();
+  var method = $(this).attr("method");
+  var url = $(this).attr("action")
+  $.ajax({
+    method: method,
+    url: url,
+    dataType: "JSON",
+    data: data,
+    success: function(data){
+      console.log(data)
+      var search = $(document).find("#survey_construct_survey_question_ids_"+data.id);
+      if(search.length > 0){
+        var base_service = "#survey-attribute"+data.survey_attribute_id;
+        var parent_service = search.parents(base_service);
+        if(parent_service.length == 0){
+          var parent_container = search.parents(".checkbox");
+          search.siblings(".description_preview").html(data.description);
+          search.siblings(".title_preview").html(data.question);
+          var clone = parent_container.clone();
+          $(document).find(base_service).children(".panel-body").append(clone);
+          parent_container.remove();
+        }else{
+          search.siblings(".description_preview").html(data.description);
+          search.siblings(".title_preview").html(data.question);
+
+        }
+      }else{
+        var base_service = "#survey-attribute"+data.survey_attribute_id;
+        $(document).find(base_service).children(".panel-body").append('<div class="checkbox">'+
+                                                                        '<label class="col-md-10">'+
+                                                                        '<input checked="checked" class="check_boxes" data-id="'+data.id+'" id="survey_construct_survey_question_ids_'+data.id+'" name="survey_construct[survey_question_ids][]" onclick="addToPreviewQuestion(this)" question_type="1" type="checkbox" value="'+data.id+'"> <div class="title_preview">'+data.question+'</div>'+
+                                                                          '<div class="description_preview">'+
+                                                                            data.description+
+                                                                          '</div>'+
+                                                                        '</label>'+
+                                                                        '<div class="col-md-2 inline-right"><a class="btn btn-red" href="#" onclick="remove_fields(this); return false;"><i class="fa fa-trash-o"></i> </a><a href="#" class="btn btn-orange" onclick="editQuestion('+data.id+')" style="margin-left:10px;"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>'+
+                                                                        '</div>');
+
+      }
+      constructPreview();
+      $("#modalQuestion").modal("hide");
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      console.log(XMLHttpRequest);
+      $("#modalQuestion").modal("hide");
+    }
+  })
+  return false
+  //$("#messageEmpty").hide();
+})
+
+function addQuestion(object){
+  id_stars = id_stars + 5;
+  var stars = "";
+  for (var i = offset; i < id_stars; i++) {
+    stars= stars +"<input type='radio' id='stars_"+i+"' name='stars_"+name_id+"' value='"+i+"'><label for='stars_"+i+"'>★</label>";
+  }
+  $(document).find(".content_questions").append('<div data-question-id="'+$(object).attr("data-id")+'"><div class="form-group has-feedback" >'+
+                                  '<li class="col-md-12 nopadding" ><h2>'+$(object).parent().children(".title_preview").text().trim()+'</h2></li>'+
+                                  '</div>'+
+                                  '<div class="form-group has-feedback">'+
+                                    '<p class="col-md-12 nopadding">'+$(object).parent().children('.description_preview').text().trim()+'</p>'+
+                                  '</div>'+
+                                  '<div class="form-group has-feedback">'+
+                                    '<div class="col-md-12 nopadding">'+
+                                        '<p class="clasificacion">'+stars+'</p>'+
+                                    '</div>'+
+                                  '</div></div>')
+  offset = offset + 5;
+  name_id = name_id + 1;
+}

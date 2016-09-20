@@ -1,0 +1,43 @@
+<!-- <div class="full_page_photo">
+
+</div> -->
+
+<section class="hgroup">
+    <div class="container text-center">
+        <h1>Contáctanos</h1>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="office_address col-md-6">
+                <iframe width="100%" height="400" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17"></iframe>
+            </div>
+            <div class="contact_form col-md-6">
+
+                <!--[if lte IE 8]>
+                <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+                <![endif]-->
+                <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+                <script>
+                  hbspt.forms.create({
+                    portalId: '2356021',
+                    formId: 'afddb68d-d1dd-4a4a-862a-79054b583931'
+                  });
+                </script>
+            </div>
+        </div>
+    </div>
+</section>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag 'validations/home/contact' %>
+<%= javascript_include_tag 'split-name' %>
+<script>
+    $(function() {
+        split_name('#full_name', '#inputName', '#inputLastname');
+        $("#c_contact").addClass("active")
+        $("body").addClass("collapsing_header")
+    });
+</script>
+<% end %>

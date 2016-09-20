@@ -1,0 +1,661 @@
+<!-- start: CSS -->
+<%= stylesheet_link_tag "home/characteristics.css" %>
+<% content_for :scripts do %>
+<script type="text/javascript">
+	$('.sector-tabs a.btn').click(function(){
+	  $('.sector-tabs a.btn').removeClass('active');
+	});
+</script>
+<% end %>
+<!-- end: CSS -->
+
+<div class="main">
+	<section class="sector-tabs">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12">
+					<h1 class="main-title">¡AgendaPro se <span>adapta</span> a tu negocio!</h1>
+				</div>
+			</div>
+			<div class="row row-padded no-mobile">
+				<div class="col-xs-12">
+					<div class="btn-group btn-group-justified" data-toggle="buttons">
+						<a class="btn btn-default <%= 'active' if params[:section] == 'spa' %>" data-toggle="tab" data-target="#spa" id="spa-btn"><%= image_tag "home/features/menu/spa.png", alt: "Spa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_spa.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Spa</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'belleza' %>" data-toggle="tab" data-target="#peluqueria" id="peluqueria-btn"><%= image_tag "home/features/menu/peluqueria.png", alt: "Peluqueria", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_peluqueria.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Salón</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'estetica' %>" data-toggle="tab" data-target="#estetica" id="estetica-btn"><%= image_tag "home/features/menu/estetica.png", alt: "Centro de Estetica", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_estetica.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro de Estética</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'medico' %>" data-toggle="tab" data-target="#medico" id="medico-btn"><%= image_tag "home/features/menu/medico.png", alt: "Centro Medico", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_medico.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro Médico</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'deportivo' %>" data-toggle="tab" data-target="#deportivo" id="deportivo-btn"><%= image_tag "home/features/menu/deportivo.png", alt: "Centro Deportivo", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_deportivo.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro Deportivo</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'alternativa' %>" data-toggle="tab" data-target="#alternativa" id="alternativa-btn"><%= image_tag "home/features/menu/alternativa.png", alt: "Medicina Alternativa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_alternativa.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Medicina Alternativa</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'more' %>" data-toggle="tab" data-target="#more" id="more-btn"><%= image_tag "home/features/menu/more.png", alt: "Spa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_more.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Y Muchos Más</p></a>
+					</div>
+				</div>
+			</div>
+			<div class="row row-padded only-mobile">
+				<div class="col-xs-12">
+					<div class="btn-group btn-group-justified" data-toggle="buttons">
+						<a class="btn btn-default <%= 'active' if params[:section] == 'spa' %>" data-toggle="tab" data-target="#spa" id="spa-btn"><%= image_tag "home/features/menu/spa.png", alt: "Spa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_spa.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Spa</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'belleza' %>" data-toggle="tab" data-target="#peluqueria" id="peluqueria-btn"><%= image_tag "home/features/menu/peluqueria.png", alt: "Peluqueria", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_peluqueria.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Salón</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'estetica' %>" data-toggle="tab" data-target="#estetica" id="estetica-btn"><%= image_tag "home/features/menu/estetica.png", alt: "Centro de Estetica", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_estetica.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro de Estética</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'medico' %>" data-toggle="tab" data-target="#medico" id="medico-btn"><%= image_tag "home/features/menu/medico.png", alt: "Centro Medico", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_medico.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro Médico</p></a>
+					 </div>
+				</div>
+				<div class="col-xs-12">
+					<div class="btn-group btn-group-justified" data-toggle="buttons">
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'deportivo' %>" data-toggle="tab" data-target="#deportivo" id="deportivo-btn"><%= image_tag "home/features/menu/deportivo.png", alt: "Centro Deportivo", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_deportivo.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro Deportivo</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'alternativa' %>" data-toggle="tab" data-target="#alternativa" id="alternativa-btn"><%= image_tag "home/features/menu/alternativa.png", alt: "Medicina Alternativa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_alternativa.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Medicina Alternativa</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'more' %>" data-toggle="tab" data-target="#more" id="more-btn"><%= image_tag "home/features/menu/more.png", alt: "Spa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_more.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Y Muchos Más</p></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<div class="tab-content">
+		<!-- Sección SPA -->
+		<div id="spa" class="tab-pane <%= 'active' if params[:section] == 'spa' %>">
+			<section class="tab">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-xs-12">
+							<div class="img-text-container">
+								<%= image_tag "home/features/spa/portada.png", class: "img-responsive img-center" %>
+								<p>Plataforma de Gestión para Spa</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-5">
+							<%= image_tag "home/features/spa/mockup_imac.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-7 feature-text">
+							<h2>Fideliza a tus clientes</h2>
+							<h3>Envía promociones o información dirigida al grupo indicado. Realiza un seguimiento de las campañas realizadas.</h3>
+							<p class="check-pointer">Forma un grupo de clientes mediante filtros.</p>
+							<p class="check-pointer">Selecciona tu planilla preferida para armar el correo.</p>
+							<p class="check-pointer">Descubre cuántos correos enviados fueron visualizados y cuántas personas clickearon un link en su interior.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="gray-background">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-9">
+							<h2>Revisa y modifica la agenda del día desde cualquier dispositivo</h2>
+							<h3>¡AgendaPro te permite manejar el calendario desde cualquier lugar!</h3>
+							<p class="check-pointer">Realiza citas de la misma manera como las ingresas desde un computador.</p>
+							<p class="check-pointer">¡Marca la asistencia de tus clientes! Realiza cambios de hora o servicio si es necesario.</p>
+							<p class="check-pointer">Bloquea horarios manualmente en caso de que los profesionales no estén disponibles.</p>
+						</div>
+						<div class="col-sm-3 col-md-2">
+							<%= image_tag "home/features/spa/mockup_iphone.png", class: "img-responsive" %>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-6">
+							<%= image_tag "home/features/spa/mockup_ipad.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-6">
+							<h2>Asigna las comisiones de tu personal</h2>
+							<h3>Al ingresar el porcentaje de comisión del profesional y registrar los pagos, el sistema automáticamente asignará la ganancia correspondiente.</h3>
+							<p class="check-pointer">Puedes asignar una comisión general al profesional por todos los servicios que realiza o incluir diversas comisiones por servicios.</p>
+							<p class="check-pointer">Obtén reportes de cuánto ha producido cada profesional, en el tramo de tiempo que tu quieras.</p>
+							<p class="check-pointer">Compara la venta realizada tanto de servicios ofrecidos como de productos vendidos.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- Sección PELUQUERIA -->
+		<div id="peluqueria" class="tab-pane <%= 'active' if params[:section] == 'belleza' %>">
+			<section class="tab">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-xs-12">
+							<div class="img-text-container">
+								<%= image_tag "home/features/peluqueria/portada.png", class: "img-responsive img-center" %>
+								<p>Plataforma de Gestión para Salón</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-5">
+							<%= image_tag "home/features/peluqueria/mockup_imac.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-7">
+							<h2>Publica tu link de reserva en línea en cualquier sitio o red social</h2>
+							<h3>¡Al crear tu cuenta AgendaPro automáticamente pasas a tener un mini sitio especial para que tus clientes realicen sus citas de acuerdo a la disponibilidad horaria de tu salón!</h3>
+							<p class="check-pointer">Pon un botón de reservas en tu sitio web y en tu fan page de facebook.</p>
+							<p class="check-pointer">Difunde tu link de reservas vía e-mail o whatsapp.</p>
+							<p class="check-pointer">Agiliza tu proceso de agendamiento brindando esta opción a tus clientes.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="gray-background">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-9">
+							<h2>Revisa, edita y aumenta tu base de datos de clientes en cualquier dispositivo</h2>
+							<h3>Puedes utilizar tu celular para ingresar o editar la ficha personal de cualquier cliente de tu lista.</h3>
+							<p class="check-pointer">Agrega clientes y llena su ficha de datos personales rápidamente.</p>
+							<p class="check-pointer">Busca el cliente que deseas visualizar para completar sus datos.</p>
+							<p class="check-pointer">Modifica los datos que quieras para actualizar tu base.</p>
+						</div>
+						<div class="col-sm-3 col-md-2">
+							<%= image_tag "home/features/peluqueria/mockup_iphone.png", class: "img-responsive" %>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-6">
+							<%= image_tag "home/features/peluqueria/mockup_ipad.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-6">
+							<h2>¡Ingresa y actualiza el stock de productos!</h2>
+							<h3>Con AgendaPro puedes importar y gestionar la lista de productos que utilizas y comercializas en tu peluquería.</h3>
+							<p class="check-pointer">Cambia el stock de manera interna para llevar el orden de uso de productos.</p>
+							<p class="check-pointer">Activa alarmas de stock, las cuales te notificarán al correo cuando te quedan pocas unidades.</p>
+							<p class="check-pointer">¡Agrega nuevos productos cuando quieras! Puedes importar y exportar tus productos desde y hacia distintos formatos.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- Sección CENTRO DE ESTETICA -->
+		<div id="estetica" class="tab-pane <%= 'active' if params[:section] == 'estetica' %>">
+			<section class="tab">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-xs-12">
+							<div class="img-text-container">
+								<%= image_tag "home/features/estetica/portada.png", class: "img-responsive img-center" %>
+								<p>Plataforma de Gestión para Centro de Estética</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-5">
+							<%= image_tag "home/features/estetica/mockup_imac.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-7">
+							<h2>Crea tu ficha de paciente a medida</h2>
+							<h3>Puedes añadir las categorías y campos que sean necesarios para llevar el registro de todos los antecedentes y la evolución de tus pacientes.</h3>
+							<p class="check-pointer">Puedes llevar registro de las medidas iniciales y finales del cliente.</p>
+							<p class="check-pointer">Crea distintas fichas por especialidad, todos los datos serán asociados al mismo cliente.</p>
+							<p class="check-pointer">AgendaPro te permite crear filtros especiales para facilitar la búsqueda de clientes con una característica en común.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="gray-background">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-9">
+							<h2>Revisa y modifica la agenda del día desde cualquier dispositivo</h2>
+							<h3>¡AgendaPro te permite manejar el calendario desde cualquier lugar!</h3>
+							<p class="check-pointer">Realiza citas de la misma manera como las ingresas desde un computador.</p>
+							<p class="check-pointer">¡Marca la asistencia de tus clientes! Realiza cambios de hora o servicio si es necesario.</p>
+							<p class="check-pointer">Bloquea horarios manualmente en caso de que los profesionales no estén disponibles.</p>
+						</div>
+						<div class="col-sm-3 col-md-2">
+							<%= image_tag "home/features/estetica/mockup_iphone.png", class: "img-responsive" %>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-6">
+							<%= image_tag "home/features/estetica/mockup_ipad.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-6">
+							<h2>Obtén reportes del estado de tu negocio, de manera inmediata</h2>
+							<h3>AgendaPro te entrega la información que necesitas para saber cómo va el centro de estética, lo cual te ayuda en la toma de decisiones.</h3>
+							<p class="check-pointer">Infórmate de cuántas atenciones realizas en un periodo de tiempo.</p>
+							<p class="check-pointer">Puedes saber del total de citas agendadas y cuántos clientes asistieron efectivamente.</p>
+							<p class="check-pointer">¡Conoce los tratamientos, días y horas de atención más populares de tu centro de estética!</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- Sección CENTRO MEDICO -->
+		<div id="medico" class="tab-pane <%= 'active' if params[:section] == 'medico' %>">
+			<section class="tab">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-xs-12">
+							<div class="img-text-container">
+								<%= image_tag "home/features/medico/portada.png", class: "img-responsive img-center" %>
+								<p>Plataforma de Gestión para Centro Médico</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-5">
+							<%= image_tag "home/features/medico/mockup_imac.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-7">
+							<h2>Crea tu ficha médica a medida</h2>
+							<h3>Crea las categorías y campos que sean necesarios para llevar el registro de todos los antecedentes y la evolución de tus pacientes.</h3>
+							<p class="check-pointer">Los campos creados pueden ser de cualquier tipo; texto, número, decimal, categorías, etc.</p>
+							<p class="check-pointer">Crea distintas fichas por especialidad, todos los datos serán asociados al mismo paciente.</p>
+							<p class="check-pointer">Cada profesional puede tener acceso a llenar la ficha del paciente que está atendiendo.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="gray-background">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-9">
+							<h2>Revisa, edita y aumenta tu base de datos de clientes en cualquier dispositivo</h2>
+							<h3>Puedes utilizar tu celular para ingresar o editar la ficha personal de cualquier cliente de tu lista.</h3>
+							<p class="check-pointer">Agrega clientes y llena su ficha de datos personales rápidamente.</p>
+							<p class="check-pointer">Busca el cliente que deseas visualizar para completar sus datos.</p>
+							<p class="check-pointer">Modifica los datos que quieras para actualizar tu base.</p>
+						</div>
+						<div class="col-sm-3 col-md-2">
+							<%= image_tag "home/features/medico/mockup_iphone.png", class: "img-responsive" %>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-6">
+							<%= image_tag "home/features/medico/mockup_ipad.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-6">
+							<h2>Visualiza todas las citas registradas de un paciente en particular</h2>
+							<h3>AgendaPro te permite consultar el historial de reservas de cualquier paciente con su respectivo estado de cita.</h3>
+							<p class="check-pointer">Puedes ver con qué frecuencia ha asistido el paciente.</p>
+							<p class="check-pointer">Si es un paciente que reserva y efectivamente asiste.</p>
+							<p class="check-pointer">Consultar historial de pagos asociados y de correos entregados.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- Sección CENTRO DEPORTIVO -->
+		<div id="deportivo" class="tab-pane <%= 'active' if params[:section] == 'deportivo' %>">
+			<section class="tab">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-xs-12">
+							<div class="img-text-container">
+								<%= image_tag "home/features/deportivo/portada.png", class: "img-responsive img-center" %>
+								<p>Plataforma de Gestión para Centro Deportivo</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-5">
+							<%= image_tag "home/features/deportivo/mockup_imac.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-7">
+							<h2>Ordena tus clases mediante horarios definidos</h2>
+							<h3>El sistema permite asignar horarios a los servicios creados como clases o tratamientos.</h3>
+							<p class="check-pointer">Traspasa tu horario del papel al sistema asignando horarios a las clases.</p>
+							<p class="check-pointer">Coordina los horarios establecidos con los profesionales disponibles.</p>
+							<p class="check-pointer">Controla los límites horarios que siempre quisiste establecer en agendamiento online.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="gray-background">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-9">
+							<h2>Revisa, edita y aumenta tu base de datos de clientes en cualquier dispositivo</h2>
+							<h3>Puedes utilizar tu celular para ingresar o editar la ficha personal de cualquier cliente de tu lista.</h3>
+							<p class="check-pointer">Agrega clientes y llena su ficha de datos personales rápidamente.</p>
+							<p class="check-pointer">Busca el cliente que deseas visualizar para completar sus datos.</p>
+							<p class="check-pointer">Modifica los datos que quieras para actualizar tu base.</p>
+						</div>
+						<div class="col-sm-3 col-md-2">
+							<%= image_tag "home/features/deportivo/mockup_iphone.png", class: "img-responsive" %>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-6">
+							<%= image_tag "home/features/deportivo/mockup_ipad.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-6">
+							<h2>Ordena tu espacio disponible</h2>
+							<h3>AgendaPro permite interesar todos los recursos existentes en tu centro deportivo y controlar su disponibilidad indistintamente del personal existente.</h3>
+							<p class="check-pointer">Puedes clasificar tus recursos como más te acomode.</p>
+							<p class="check-pointer">Asocia un recurso con los servicios para el que es utilizado.</p>
+							<p class="check-pointer">Indica cuantas unidades de cada recurso existe para establecer el límite de uso.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- Sección MEDICINA ALTERNATIVA -->
+		<div id="alternativa" class="tab-pane <%= 'active' if params[:section] == 'alternativa' %>">
+			<section class="tab">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-xs-12">
+							<div class="img-text-container">
+								<%= image_tag "home/features/alternativa/portada.png", class: "img-responsive img-center" %>
+								<p>Plataforma de Gestión para Medicina Alternativa</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-5">
+							<%= image_tag "home/features/alternativa/mockup_imac.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-7">
+							<h2>Configura el calendario como más te guste.</h2>
+							<h3>Puedes modificar el calendario de acuerdo a tus necesidades y funcionamiento de toma horaria, AgendaPro te permite:</h3>
+							<p class="check-pointer">Asignar el turno de cada terapeuta.</p>
+							<p class="check-pointer">Poner los bloques de horarios que más te acomoden.</p>
+							<p class="check-pointer">Ver la agenda de la semana de un profesional o las citas del día.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="gray-background">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-9">
+							<h2>Revisa y modifica la agenda del día desde cualquier dispositivo</h2>
+							<h3>¡AgendaPro te permite manejar el calendario desde cualquier lugar!</h3>
+							<p class="check-pointer">Realiza citas de la misma manera como las ingresas desde un computador.</p>
+							<p class="check-pointer">¡Marca la asistencia de tus clientes! Realiza cambios de hora o servicio si es necesario.</p>
+							<p class="check-pointer">Bloquea horarios manualmente en caso de que los profesionales no estén disponibles.</p>
+						</div>
+						<div class="col-sm-3 col-md-2">
+							<%= image_tag "home/features/spa/mockup_iphone.png", class: "img-responsive" %>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-6">
+							<%= image_tag "home/features/alternativa/mockup_ipad.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-6">
+							<h2>Administra tu carta de terapias y talleres para que tus pacientes vean lo que ofreces</h2>
+							<h3>Nuestra plataforma te permite configurar de manera simple todos los servicios que ofreces.</h3>
+							<p class="check-pointer">Asigna la duración, el precio y una descripción de lo que trata cada terapia.</p>
+							<p class="check-pointer">Puedes definir una cantidad de sesiones por cada tratamiento, el sistema llevará la cuenta automáticamente.</p>
+							<p class="check-pointer">Narra la evolución de tu paciente sesión a sesión, ¡te permitirá saber qué tan efectiva es tu atención!</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- Sección MAS -->
+		<div id="more" class="tab-pane <%= 'active' if params[:section] == 'more' || ['spa','belleza','estetica','medico','deportivo','alternativa'].exclude?(params[:section]) %>">
+			<section class="tab">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-xs-12">
+							<div class="img-text-container">
+								<%= image_tag "home/features/more.png", class: "img-responsive img-center" %>
+								<p>Plataforma de Gestión para <span>tu</span> Negocio</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="feature">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-5">
+							<%= image_tag "home/features/peluqueria/mockup_imac.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-7 feature-text">
+							<h2>Publica tu link de reserva <span>en línea</span> en cualquier sitio o red social</h2>
+							<h3>¡Al crear tu cuenta AgendaPro automáticamente pasas a tener un mini sitio especial para que tus clientes realicen sus citas de acuerdo a la disponibilidad horaria de tu salón!</h3>
+							<p class="check-pointer">Pon un botón de reservas en tu sitio web y en tu fan page de facebook.</p>
+							<p class="check-pointer">Difunde tu link de reservas vía e-mail o whatsapp.</p>
+							<p class="check-pointer">Agiliza tu proceso de agendamiento brindando esta opción a tus clientes.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="gray-background feature">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-9 feature-text">
+							<h2>Revisa y modifica la agenda del día desde cualquier dispositivo</h2>
+							<h3>¡AgendaPro te permite manejar el calendario desde cualquier lugar!</h3>
+							<p class="check-pointer">Realiza citas de la misma manera como las ingresas desde un computador.</p>
+							<p class="check-pointer">¡Marca la asistencia de tus clientes! Realiza cambios de hora o servicio si es necesario.</p>
+							<p class="check-pointer">Bloquea horarios manualmente en caso de que los profesionales no estén disponibles.</p>
+						</div>
+						<div class="col-sm-3 col-md-2">
+							<%= image_tag "home/features/spa/mockup_iphone.png", class: "img-responsive" %>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="feature">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-6">
+							<%= image_tag "home/features/peluqueria/mockup_ipad.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-6 feature-text">
+							<h2>¡Ingresa y actualiza el stock de productos!</h2>
+							<h3>Con AgendaPro puedes importar y gestionar la lista de productos que utilizas y comercializas en tu peluquería.</h3>
+							<p class="check-pointer">Cambia el stock de manera interna para llevar el orden de uso de productos.</p>
+							<p class="check-pointer">Activa alarmas de stock, las cuales te notificarán al correo cuando te quedan pocas unidades.</p>
+							<p class="check-pointer">¡Agrega nuevos productos cuando quieras! Puedes importar y exportar tus productos desde y hacia distintos formatos.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="gray-background feature">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-9 feature-text">
+							<h2>Revisa, edita y aumenta tu base de datos de clientes en cualquier dispositivo</h2>
+							<h3>Puedes utilizar tu celular para ingresar o editar la ficha personal de cualquier cliente de tu lista.</h3>
+							<p class="check-pointer">Agrega clientes y llena su ficha de datos personales rápidamente.</p>
+							<p class="check-pointer">Busca el cliente que deseas visualizar para completar sus datos.</p>
+							<p class="check-pointer">Modifica los datos que quieras para actualizar tu base.</p>
+						</div>
+						<div class="col-sm-3 col-md-2">
+							<%= image_tag "home/features/peluqueria/mockup_iphone.png", class: "img-responsive" %>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="feature">
+				<div class="container">
+					<div class="row row-padded">
+						<div class="col-sm-5">
+							<%= image_tag "home/features/spa/mockup_imac.png", class: "img-responsive" %>
+						</div>
+						<div class="col-sm-7 feature-text">
+							<h2>Fideliza a tus clientes</h2>
+							<h3>Envía promociones o información dirigida al grupo indicado. Realiza un seguimiento de las campañas realizadas.</h3>
+							<p class="check-pointer">Forma un grupo de clientes mediante filtros.</p>
+							<p class="check-pointer">Selecciona tu planilla preferida para armar el correo.</p>
+							<p class="check-pointer">Descubre cuántos correos enviados fueron visualizados y cuántas personas clickearon un link en su interior.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+	<section class="gray-background feature">
+		<div class="container">
+			<div class="marketing">
+				<div class="row row-padded">
+					<div class="col-sm-4">
+						<%= image_tag "home/features/icono1.png", class: "img-responsive", size: "66x65" %>
+						<h3>
+							Automatiza y simplifica la toma de citas de tu negocio.
+						</h3>
+						<p>Dale a tus clientes la posibilidad de agendar su próxima visita por su cuenta.</p>
+						<p>¡Ahorra tiempo! Activa recordatorios automáticos y no tendrás que llamar para confirmar su asistencia.</p>
+						<p>También puedes administrar las horas de manera interna y mantener tu agenda en orden sin dedicarle mucho tiempo -> Aumenta tus ingresos en más del 10% con sólo esta mejora de gestión.</p>
+					</div>
+					<div class="col-sm-4">
+						<%= image_tag "home/features/icono2.png", class: "img-responsive", size: "66x65" %>
+						<h3>
+							Guarda, actualiza y analiza la información de tus clientes, en el momento que quieras.
+						</h3>
+						<p>Consulta historiales de reservas, asistencias y pagos. ¡Cualquier cambio quedará registrado en el perfil del cliente!</p>
+						<p>Completa toda la información necesaria, usando fichas personalizadas a tus necesidades, y permite que otros profesionales de tu negocio te ayuden.</p>
+					</div>
+					<div class="col-sm-4">
+						<%= image_tag "home/features/icono3.png", class: "img-responsive", size: "66x65" %>
+						<h3>
+							Registra, controla y compara los ingresos de tu negocio a diario. Maneja el stock de tus productos.
+						</h3>
+						<p>Ingresa los pagos que realizan tus clientes, puedes ver  el historial  por día, semana o incluso un mes.</p>
+						<p>Lleva el control de stock de los productos en uso y en venta. ¡Activa alarmas que te notificarán cuando queden pocas unidades!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="feature">
+		<div class="container">
+			<div class="marketing">
+				<div class="row row-padded">
+					<div class="col-xs-12 text-center">
+						<%= image_tag "home/features/app.png", class: "img-responsive img-center no-mobile" %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section>
+		<div class="container">
+			<div class="marketing">
+				<div class="row row-padded">
+					<div class="contact_form col-md-6">
+						<h2>¡Solicita tu demo personalizada!</h2>
+
+						<!--[if lte IE 8]>
+						<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+						<![endif]-->
+						<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+						<script>
+						  hbspt.forms.create({
+						    portalId: '2356021',
+						    formId: '7acac227-a73f-45e8-8cdf-607f914d8d7a'
+						  });
+						</script>
+
+			    </div>
+			    <div class="col-md-6">
+			    	<h2>¿Listo para comenzar?</h2>
+			    	<p><%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:company => true), :class => "btn btn-lg btn-orange" %>
+              <br />No se requiere tarjeta de crédito</p>
+			    </div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- <section class="green-background">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-4">
+					<%= image_tag "home/features2/responsive.png", :alt => "Característica Responsiva", :class => "img-responsive center-block" %>
+				</div>
+				<div class="col-xs-4">
+					<%= image_tag "home/features2/support.png", :alt => "Característica Soporte", :class => "img-responsive center-block" %>
+				</div>
+				<div class="col-xs-4">
+					<%= image_tag "home/features2/bi_white.png", :alt => "Característica IN", :class => "img-responsive center-block" %>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-4">
+					<h2 class="featurette-heading">Para PCs, tablets y móviles<br><span class="text-muted">AgendaPro es 100% compatible con PCs, tablets y móviles</span></h2>
+				</div>
+				<div class="col-xs-4">
+					<h2 class="featurette-heading">Soporte personalizado<br><span class="text-muted">Comunícate con personas directamente, no con esas molestas contestadoras</span></h2>
+				</div>
+				<div class="col-xs-4">
+					<h2 class="featurette-heading">Inteligencia de Negocios<br><span class="text-muted">Obtén información importante para mejorar tu gestión</span></h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-4">
+					<p class="lead text-justify">Por medio del uso de la tecnología Responsive, AgendaPro es compatible con la gran mayoría de los dispositivos con acceso a Internet existentes. Tus clientes podrán reservar desde el dispositivo que ellos quieran y a la hora que quieran, lo que permite que tus ventas se incrementen desde el primer minuto.</p>
+				</div>
+				<div class="col-xs-4 text-justify">
+					<p class="lead">En AgendaPro damos el soporte directamente, sin intermediarios. Llámanos directamente o envíanos un Email, siempre tendrás una respuesta rápida de nuestra parte.</p>
+				</div>
+				<div class="col-xs-4 text-justify">
+					<p class="lead">Por medio de reportes personalizados y métricas pre-definidas, podrás ver el desempeño de tu negocio al instante, permitiéndote tomar decisiones más informadas e inteligentes.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section>
+		<div class="container">
+			<div class="row row-padded">
+				<div class="col-xs-4 vcenter">
+					<%= image_tag "home/features2/mobileview.png", :alt => "Característica Móvil", :class => "img-responsive center-block mobile-maxheight" %>
+				</div><div class="col-xs-8 vcenter">
+					<h2 class="featurette-heading text-justify">Recordatorios automáticos <span class="text-muted">Asegúrate que tus clientes lleguen a sus citas</span></h2>
+					<p class="lead text-justify">AgendaPro envía recordatorios automáticos a todos tus clientes para que nunca más se les olviden sus reservas. Elimina las inasistencias y aumenta tu productividad.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="green-background">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-8 col-xs-offset-2">
+					<h2 class="featurette-heading text-justify">Maneja tu Agenda <span class="text-muted">Gestiona tu empresa desde cualquier lugar</span></h2>
+					<p class="lead text-center">Con AgendaPro podrás gestionar todos tus locales, servicios y staffs desde cualquier lugar. Cambia o revisa que está ocurriendo en tus locales con tan sólo un click. Sólo necesitas una conexión a Internet y listo.</p>
+					<%= image_tag "home/features2/tabletview_half-2.png", :alt => "Característica Tablet", :class => "img-responsive center-block half-tablet-maxheight" %>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section></section>
+	<section></section> -->
+</div>

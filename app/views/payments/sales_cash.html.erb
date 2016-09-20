@@ -1,0 +1,56 @@
+<!-- Chartkick se usa antes de q se carge la pagina -->
+<script type="text/javascript">
+  var Chartkick = {"language": "es"};
+</script>
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+
+<div class="container-fluid">
+  <div class="row report-control-row" style="margin-top: 20px;">
+    <div class="col-sm-12">
+      <div class="form-group">
+        <div class="col-sm-3">
+          <select id="locationSelect" class="form-control">
+            <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) do %>
+              <option value="<%= location.id %>">
+                <%= location.name %>
+              </option>
+            <% end %>
+          </select>
+
+        </div>
+        <div class="col-sm-6">
+          <%= link_to '<i class="fa fa-dollar"></i> Pago'.html_safe, '#', class: "btn btn-green btn-sales-cash", id: "createPaymentBtn" %>
+          <%= link_to '<i class="fa fa-dollar"></i> Venta Interna'.html_safe, '#', class: "btn btn-green btn-sales-cash", id: "internalSaleBtn" %>
+          <%= link_to '<i class="fa fa-share"></i> Traspaso'.html_safe, '#', class: "btn btn-green btn-sales-cash", id: "salesCashTransactionBtn" %>
+          <%= link_to '<i class="fa fa-reply"></i> Ingreso'.html_safe, '#', class: "btn btn-green btn-sales-cash", id: "salesCashIncomeBtn" %>
+          <%= link_to '<i class="fa fa-money"></i> Caja Chica'.html_safe, '#', class: "btn btn-green btn-sales-cash", id: "pettyCashBtn" %>
+        </div>
+        <div class="col-sm-3" style="text-align: right;">
+          <%= link_to '<i class="fa fa-sign-out"></i> Cerrar'.html_safe, '#', class: "btn btn-orange btn-sales-cash", id: "salesCashCloseBtn" %>
+          <%= link_to '<i class="fa fa-cog"></i> Configurar'.html_safe, '#', class: "btn btn-orange btn-sales-cash", id: "salesCashConfigurationBtn" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="border-top: 1px solid #e3e3e3; margin-top: 10px;">
+    <div class="col-sm-12">
+      <div id='render_content'>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render :partial => 'payment_modals', :locals => {:company => current_user.company} %>
+
+<%= render :partial => 'petty_cash_modals', :locals => {:company => current_user.company} %>
+
+<%= render :partial => 'sales_cash_modals', :locals => {:company => current_user.company} %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "payments" %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "sales_cash" %>
+<% end %>

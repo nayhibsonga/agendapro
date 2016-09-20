@@ -1,0 +1,61 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+<% 3.times do |n| %>
+<% i = n %>
+  client_<%= i %>:
+    company_id: company_1
+    email: <%= "client#{i}@agendapro.cl" %>
+    first_name: <%= "Name#{i}" %>
+    last_name: <%= "LastName#{i}" %>
+    phone: +56993215098
+    address: 
+    district: 
+    city: 
+    age: 
+    gender: 
+    identification_number: 
+    can_book: true
+    birth_day: 
+    birth_month: 
+    birth_year:
+<% end %>
+
+<% 3.times do |n| %>
+<% i = n + 3 %>
+  client_<%= i %>:
+    company_id: company_2
+    email: <%= "client#{i}@agendapro.cl" %>
+    first_name: <%= "Name#{i}" %>
+    last_name: <%= "LastName#{i}" %>
+    phone: +56993215098
+    address: 
+    district: 
+    city: 
+    age: 
+    gender: 
+    identification_number: 
+    can_book: true
+    birth_day: 
+    birth_month: 
+    birth_year:
+<% end %>
+
+<% 4.times do |n| %>
+<% i = n + 6 %>
+  client_<%= i %>:
+    company_id: company_3
+    email: <%= "client#{i}@agendapro.cl" %>
+    first_name: <%= "Name#{i}" %>
+    last_name: <%= "LastName#{i}" %>
+    phone: +56993215098
+    address: 
+    district: 
+    city: 
+    age: 
+    gender: 
+    identification_number: 
+    can_book: true
+    birth_day: 
+    birth_month: 
+    birth_year:
+<% end %>

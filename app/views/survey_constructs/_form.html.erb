@@ -1,0 +1,352 @@
+<style type="text/css">
+  #add_question{
+    cursor: pointer;
+    font-size: 30px;
+    color: #22c488;
+  }
+  .content_questions {
+      border-top: 1px solid #d2d2d2;
+      padding-top: 15px;
+  }
+  .question {
+    background: #f5f5f5;
+    padding: 15px 20px 25px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  .editQuestion {
+
+  }
+  .fa-bars {
+    cursor: pointer;
+  }
+  .hidden_fields {
+    display: none !important;
+  }
+  .inline-right {
+    text-align: right !important;
+  }
+  .inline-left {
+    text-align: left !important;
+  }
+  .type {
+    font-size: 27px;
+  }
+  .checkbox {
+    min-height: 40px !important;
+  }
+</style>
+
+<style type="text/css">
+  .form_survey .nopadding {
+    padding: 0 !important;
+  }
+  .form_survey label{
+    color:#d2d2d2;
+    font-size: 35px;
+    margin: 10px 2px;
+  }
+  .form_survey input[type = "radio"]{
+    display:none;
+  }
+  .form_survey {
+    font-family: 'Roboto Condensed', sans-serif;
+    margin: 0 auto;
+  }
+  .form_survey p.clasificacion{
+    direction: rtl;
+    unicode-bidi: bidi-override;
+    margin-top: 10px !important;
+    text-align: left;
+  }
+  .form_survey label:hover{
+    color:#ffd865;
+  }
+  .form_survey label:hover ~ label{
+    color:#ffd865;
+  }
+  .form_survey input[type = "radio"]:checked ~ label{
+    color:#ffd865;
+  }
+  .form_survey .img_email {
+    width: 30px;
+    height: auto;
+    display: inline-block;
+    margin-right: 5px;
+  }
+  .form_survey .img_logo {
+    width: 165px;
+    height: auto;
+  }
+  .form_survey p{
+    font-size: 16px;
+    line-height: 16px;
+    margin: 0;
+    color: #666;
+    font-weight: normal;
+  }
+  .form_survey textarea{
+    height: 100px !important;
+    resize: none;
+  }
+  .form_survey .header p{
+    display: inline-block;
+  }
+  .form_survey .circles span{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #22c488;
+    border-radius: 100%;
+    margin: 4px;
+    float: right;
+  }
+  .form_survey .separator{
+    height: 1px;
+    background: #d2d2d2;
+    margin: 20px 0;
+  }
+  .form_survey ol {
+    color: #22c488;
+    font-weight: bold;
+    padding-left: 35px !important;
+    padding-right: 35px !important;
+    font-size: 20px;
+  }
+  .form_survey ol li {
+    margin-top: 10px;
+  }
+  .form_survey ol li p{
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 15px;
+  }
+
+  .form_survey .btn_green {
+    background-color: #22c488;
+    color: #fff;
+    width: 100%;
+    max-width: 100px;
+    margin-top: 10px;
+    display: inline-block;
+  }
+  .form_survey .button_right {
+    text-align: right;
+  }
+  .form_survey h1 {
+    font-size: 32px;
+    color: #000;
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+  .form_survey h1:after {
+    content: "";
+    height: 2px;
+    width: 30px;
+    background: #000;
+    margin-top: 10px;
+    display: block;
+  }
+  .form_survey h2 {
+    font-size: 24px;
+    color: #22c488;
+    font-weight: normal;
+  }
+  .form_survey h2 > span{
+    font-size: 24px;
+    color: #22c488;
+    font-weight: bold;
+  }
+  .form_survey .container_question {
+    border: 1px solid #d2d2d2;
+    float: left;
+    padding-top: 10px;
+    padding-bottom: 20px;
+  }
+  .form_survey .container_question h2{
+    color: #22c488;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 10px;
+  }
+  .form_survey .container_question h3{
+    color: #22c488;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 10px;
+    text-align: center;
+    font-weight: normal;
+    font-size: 30px;
+  }
+  .form_survey .container_question .comment{
+    margin-top: 20px;
+  }
+  .form_survey .invalid {
+    background-color: rgba(214,0,0,1);
+    height: 50px;
+    font-size: 20px;
+    display: block;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    margin: 30px auto;
+    line-height: 49px;
+    box-shadow: 1px 1px 2px #ccc;
+  }
+  .description_preview {
+    display: none !important;
+  }
+  .margin-bottom {
+    margin-bottom: 10px;
+  }
+</style>
+<div class="container-fluid" ng-app="survey" ng-controller="InvoiceController as invoice">
+  <div class="row">
+    <div class="col-md-6">
+        <%= form_for @survey_construct, :html => {:class => 'form-horizontal'} do |f| %>
+          <% if @survey_construct.errors.any? %>
+            <% content_for :scripts do %>
+              <% message = '' %>
+              <% @survey_construct.errors.full_messages.each do |msg| %>
+                <% message += '* ' + msg + '\n' %>
+              <% end %>
+              <script type="text/javascript">
+                swal({
+                  title: "Error al guardar la categoría",
+                  text: "<%= message %>",
+                  type: "error"
+                });
+              </script>
+            <% end %>
+          <% end %>
+          <div class="col-md-12">
+            <div class="form-group has-feedback">
+              <%= f.label :name, 'Nombre de la encuesta', :class => 'col-md-3 control-label inline-left' %>
+              <div class="col-md-12">
+                <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Nombre de la encuesta' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <%= f.label :service_ids, "Selecciona los servicios", class: "col-md-3" %>
+              <div class="col-md-12">
+                <div class="panel-group" id="service-accordion">
+                  <% @service_categories.each do |service_category| %>
+                    <% @service = Service.where(company_id: current_user.company_id, service_category_id: service_category.id, :active => true).order(:order, :name) %>
+                    <% if @service.length > 0 %>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" data-parent="#service-accordion" href="#service-category<%= service_category.id %>"><%= service_category.name %></a>
+                        </h4>
+                      </div>
+                      <div id="service-category<%= service_category.id %>" class="panel-collapse collapse<% if service_category == @service_categories.first%> in<% end %>">
+                        <div class="panel-body">
+                          <%= f.collection_check_boxes :service_ids, @service, :id, :name_with_small_outcall, {}, {class: "check_boxes"} do |b|%>
+                            <div class="checkbox">
+                              <label>
+                                <% if @survey_construct.service_survey_constructs.where(:service_id => b.object.id).count > 0  %>
+                                  <%= b.check_box(:"onclick" => "addToPreviewService(this)", :"data-id" => b.object.id) %> <%= b.object.name.html_safe %>
+                                <% else %>
+                                  <% if ServiceSurveyConstruct.where(:service_id => b.object.id).count > 0  %>
+                                    <%= b.check_box(:"onclick" => "addToPreviewService(this)", :"data-id" => b.object.id, :"readonly" => "readonly", :"disabled" => "disabled") %> <%= b.object.name.html_safe %>
+                                  <% else %>
+                                    <%= b.check_box(:"onclick" => "addToPreviewService(this)", :"data-id" => b.object.id) %> <%= b.object.name.html_safe %>
+                                  <% end %>
+                                <% end %>
+                              </label>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <%= f.label :survey_question_ids, "Selecciona las preguntas", class: "col-md-3" %>
+              <div class="col-md-9 inline-right margin-bottom"><a class="btn btn-sm btn-green" href="#" onclick="addQuestionToSurveys()">Agregar Pregunta <i class="fa fa-plus-circle" aria-hidden="true"></i></a></div>
+              <div class="col-md-12">
+                <div class="panel-group" id="survey-accordion">
+                  <% @survey_attributes.each do |survey_attribute| %>
+                    <% @question = SurveyQuestion.where(company_id: current_user.company_id, survey_attribute_id: survey_attribute.id, activate: true).order(:question) %>
+                    <% if @question.length > 0 %>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#attribute-accordion" href="#survey-attribute<%= survey_attribute.id %>"><%= survey_attribute.name %></a>
+                        </h4>
+                      </div>
+                      <div id="survey-attribute<%= survey_attribute.id %>" class="panel-collapse collapse<% if survey_attribute == @survey_attributes.first%> in<% end %>">
+                        <div class="panel-body">
+                          <%= f.collection_check_boxes :survey_question_ids, @question , :id, :name_with_initial, {}, {class: "check_boxes"} do |b|%>
+                            <div class="checkbox">
+                              <label class="col-md-10">
+                                <%= b.check_box(:"onclick" => "addToPreviewQuestion(this)", :"question_type" => b.object.type_question, :"data-id" => b.object.id)   %> <div class="title_preview"><%= b.object.question.html_safe %></div>
+                                <div class="description_preview">
+                                  <%= b.object.description.html_safe %>
+                                </div>
+                              </label>
+                              <div class="col-md-2 inline-right"><a class="btn btn-red" href="#" onclick="remove_fields(this,<%= b.object.id %>); return false;"><i class="fa fa-trash-o"></i> </a><a href="#" class="btn btn-orange" onclick="editQuestion(<%= b.object.id %>)" style="margin-left:10px;"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-offset-8 inline-right">
+            <%= link_to 'Cancelar', survey_constructs_path, class: "btn btn-white" %>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+          </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="container-fluid tab-margin form_survey">
+        <div class="row">
+          <div class="col-md-12 preview">
+            <div class="col-md-12 nopadding header">
+            <h1>Encuesta de servicio</h1>
+            </div>
+            <div class="col-md-12 separator"></div>
+            <div class="col-md-12">
+              <%= image_tag("#{@company.logo.url}", class:"col-md-3")%>
+              <h2 class="col-md-9">Encuesta de servicio <span><%= @company.name%></span></h2>
+              <p class="col-md-9">Texto para motivar a la gente a que conteste la encuesta.</p>
+            </div>
+            <div class="col-md-12 separator"></div>
+            <div class="content_all_question">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% end %>
+  </div>
+</div>
+<!-- Modal -->
+<div id="modalQuestion" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+
+    </div>
+  </div>
+</div>
+

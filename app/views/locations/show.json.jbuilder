@@ -1,0 +1,1 @@
+json.extract! @location, :id, :name, :address, :second_address, :phone, :outcall, :longitude, :latitude, :company_id, :online_booking, :email, :district_id, :image1, :image2, :image3, :location_times, :created_at, :updated_at

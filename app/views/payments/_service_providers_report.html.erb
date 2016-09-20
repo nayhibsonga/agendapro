@@ -1,0 +1,144 @@
+<div class="row">
+	<div class="col-md-1">
+	</div>
+	<div class="col-md-2">
+		<div class="well revenue">
+	      	<h4>Recaudación total:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@total_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+	<div class="col-md-2">
+		<div class="well revenue">
+	      	<h4>Recaudación por Servicios:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@services_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+	<div class="col-md-2">
+		<div class="well revenue">
+	      	<h4>Recaudación por Productos:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@products_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+	<div class="col-md-2">
+		<div class="well revenue">
+	      	<h4>Comisiones:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@commissions_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+	<div class="col-md-2">
+		<div class="well revenue">
+	      	<h4>Cobros por ventas internas:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@internal_sales_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+	<div class="col-md-1">
+	</div>
+</div>
+<div class="row" style="margin-top: 10px;">
+	<div class="col-md-6">
+
+	</div>
+	<div class="col-md-6" style="text-align: right; margin-bottom: 10px;">
+		<div style="color: #949292; font-size: 20px;">
+			Para ver el detalle de todas las operaciones, descarga el reporte:
+		</div>
+		<% 
+			sp_ids = @service_providers.pluck(:id).join(",")
+		%>
+		<a href="/service_providers_report_file.xls?from=<%= @from.to_s %>&to=<%= @to.to_s %>&service_provider_ids=<%= sp_ids %>" target="_blank"><button type="button" class="btn btn-green" class="getExcel" provider_ids="<%= @service_providers.pluck(:id).to_s %>">Descargar a Excel</button></a>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<table class="providers_report_table">
+			<tr>
+				<th class="provider_name_th">
+					Prestador
+				</th>
+				<th class="provider_name_th">
+					Recaudaciones
+				</th>
+				<th class="provider_name_th">
+					Comisiones
+				</th>
+				<th class="provider_name_th">
+					Ventas
+				</th>
+			</tr>
+			<% @service_providers.each do |service_provider| %>
+
+
+				<%
+
+					bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
+
+				    mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
+
+				    payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
+
+				    services_amount = bookings.sum(:price) + mock_bookings.sum(:price)
+				    products_amount = 0.0
+
+				    commissions_amount = 0.0
+
+				    bookings.each do |booking|
+				      commissions_amount += booking.get_commission
+				    end
+
+				    mock_bookings.where('service_id is not null').each do |mock_booking|
+				      commissions_amount += mock_booking.get_commission
+				    end
+
+				    payment_products.each do |payment_product|
+				      commissions_amount += payment_product.quantity * payment_product.product.get_commission
+				      products_amount += payment_product.quantity * payment_product.price
+				    end
+
+				    total_amount = products_amount + services_amount
+
+				    internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: @from.beginning_of_day..@to.end_of_day)
+
+				    internal_sales_amount = 0.0
+
+				    internal_sales.each do |internal_sale|
+				      internal_sales_amount += internal_sale.quantity * internal_sale.price
+				    end
+
+			    %>
+
+				<tr class="standard_row">
+					<td class="right_td">
+						<%= service_provider.public_name %>
+					</td>
+					<td class="right_td">
+						<%= number_to_currency(total_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+					</td>
+					<td class="right_td">
+						<%= number_to_currency(commissions_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+					</td>
+					<td>
+						<%= number_to_currency(internal_sales_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+					</td>
+				</tr>
+			<% end %>
+		</table>
+	</div>
+</div>
+
+<div class="row" style="margin-top: 35px;">
+	<div class="col-md-12">
+		<div class="content_header">Seguimiento de recaudación</div>
+		<%= line_chart (provider_sales(@service_providers.pluck(:id), @from, @to, @time_option)) %>
+	</div>
+</div>
+<div class="row" style="margin-top: 35px;">
+	<div class="col-md-12">
+	<div class="content_header">Recaudaciones y comisiones</div>
+	</div>
+  <div class="col-md-6">
+    <%= pie_chart provider_sales_type_pie(@service_providers.pluck(:id), @from, @to), library: { title: "Ranking de recaudaciones" } %>
+  </div>
+  <div class="col-md-6">
+  	<%= pie_chart provider_commissions_pie(@service_providers.pluck(:id), @from, @to), library: { title: "Ranking de comisiones" } %>
+  </div>
+</div>

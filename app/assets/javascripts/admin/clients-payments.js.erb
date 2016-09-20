@@ -1,0 +1,170 @@
+var ajax_name = "client_payments_list";
+function loadPayments()
+{
+  var items = [];
+  $('#itemsMultiSelect option').each(function(){
+    if($(this).is(':selected'))
+    {
+      items.push($(this).val());
+    }
+  });
+
+  if(items.length > 0)
+  {
+    $('#client_payments_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+    var client_id = $('#client_id').val();
+
+    var ajax_turn = requestAjaxTurn(ajax_name);
+
+    $.ajax({
+        url: '/clients/' + client_id + '/payments_content?&from=' + $('#from').val() + '&to=' + $('#to').val() + '&items=' + items,
+        cache: false,
+        success: function(html){
+          if(shouldDisplay(ajax_name, ajax_turn))
+          {
+            $('#client_payments_div').html(html);
+          }
+        }
+    });
+  }
+
+}
+
+function openPaymentSummary(payment_id)
+{
+  $.ajax({
+    url: '/payment_summary',
+    method: 'get',
+    data: {payment_id: payment_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#paymentSummaryModalBody').empty();
+      $('#paymentSummaryModalBody').append(response);
+      $('#paymentSummaryModal').modal('show');
+    }
+  });
+}
+
+/*
+function paginatedContent() {
+  $(document).on('click', 'ul.pagination a', function(e) {
+    e.preventDefault();
+    var $elem = $(this);
+    $('#client_bookings_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+    $.ajax({
+        url: $elem.attr('href'),
+        cache: false,
+        success: function(html){
+          $('#client_bookings_div').html(html);
+        }
+    });
+  });
+
+  return false;
+}
+*/
+
+$(function() {
+
+  registerModerator(ajax_name);
+
+  $('#itemsMultiSelect').multiselect({
+    includeSelectAllOption: true,
+    selectAllText: 'Todos',
+    buttonContainer: '<div></div>',
+    buttonText: function(options, select) {
+      //console.log(select);
+      if (options.length === 0) {
+          return 'Ninguno';
+      }
+      else if(options.length == select[0].length)
+      {
+        return "Todos";
+      }
+      else if(options.length > 3)
+      {
+        return options.length + " seleccionados";
+      }
+      else {
+        var labels = [];
+        options.each(function() {
+           if ($(this).attr('label') !== undefined) {
+               labels.push($(this).attr('label'));
+           }
+           else {
+               labels.push($(this).html());
+           }
+        });
+        return labels.join(', ') + '';
+      }
+    },
+    onChange: function(option, checked, select){
+      loadPayments();
+    },
+    onInitialized: function(select, container){
+      $('#itemsMultiSelect').show();
+    }
+
+  });
+
+
+  $("#from").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    prevText: 'Atrás',
+    nextText: 'Adelante',
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    today: 'Hoy',
+    clear: '',
+    defaultDate: "+1w",
+    changeMonth: true,
+    numberOfMonths: 3,
+    firstDay: 1,
+    onClose: function( selectedDate ) {
+      $("#to").datepicker( "option", "minDate", selectedDate );
+    }
+  });
+  $("#to").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    prevText: 'Atrás',
+    nextText: 'Adelante',
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    today: 'Hoy',
+    clear: '',
+    defaultDate: "+1w",
+    changeMonth: true,
+    numberOfMonths: 3,
+    firstDay: 1,
+    onClose: function( selectedDate ) {
+      $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+    }
+  });
+
+  $('.option_select').on('change', function(){
+    loadPayments();
+  });
+
+  //$("#to").datepicker('setDate', new Date());
+  //$("#from").datepicker('setDate', new Date());
+
+  $("#itemsMultiSelect").multiselect('selectAll', false);
+
+  $('#itemsMultiSelect').multiselect('updateButtonText');
+
+  loadPayments();
+  //paginatedContent();
+
+ });

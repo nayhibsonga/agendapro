@@ -1,0 +1,110 @@
+<div class="background-light-grey">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pull-center">
+                    <h1 class="text-grey">Tutoriales</h1>
+                    <p>Acá podrás encontrar videos explicativos de las principales opciones de AgendaPro.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-6">
+            <h2 class="text-green">Creación de Cuenta</h2>
+            <h3>Agrega tu Empresa fácilmente a AgendaPro.</h3>
+            <p>No pierdas más reservas y simplifica el manejo de tu negocio. En este video te mostramos como crear tu cuenta en AgendaPro.</p>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <iframe src="//player.vimeo.com/video/95302661" width="290" height="179" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6">
+            <h2 class="text-green">Primeros Pasos</h2>
+            <h3>Configura tu cuenta en 3 simples pasos.</h3>
+            <p>Agrega tu primer local, servicio y prestador. De forma sencilla y rápida inicia el proceso de configuración.</p>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <iframe src="//player.vimeo.com/video/95302663" width="290" height="179" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6">
+            <h2 class="text-green">Agrega un nuevo Local</h2>
+            <h3>Agrega todos tus locales a tu cuenta AgendaPro.</h3>
+            <p>Tu negocio crece, AgendaPro lo hace contigo. Apenas abras un nuevo Local, puedes agregarlo en tu cuenta AgendaPro.</p>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <iframe src="//player.vimeo.com/video/95302662" width="290" height="179" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6">
+            <h2 class="text-green">Agrega un nuevo Prestador</h2>
+            <h3>Agrega un nuevo recurso a tu empresa.</h3>
+            <p>Puedes agregar todos los Prestadores que necesites. Recuerda que los Prestadores pueden ser personas, salas o máquinas.</p>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <iframe src="//player.vimeo.com/video/95304989" width="290" height="179" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6">
+            <h2 class="text-green">Agrega un nuevo Servicio</h2>
+            <h3>Agrega Servicios a tu empresa.</h3>
+            <p>Sin límites, puedes agregar todos los Servicios que quieras a tu compañía.</p>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <iframe src="//player.vimeo.com/video/95304990" width="290" height="179" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6">
+            <h2 class="text-green">Configuración Avanzada</h2>
+            <h3>Edita la Descripción de tu empresa y el Período de Agendamiento.</h3>
+            <p>AgendaPro permite agregar un breve descripción de tu compañía la que aparecerá en el Buscador AgendaPro. Además, puedes configurar el tiempo mínimo y máximo para aceptar reservas.</p>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <iframe src="//player.vimeo.com/video/95304993" width="290" height="179" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6">
+            <h2 class="text-green">Agrega un Recepcionista</h2>
+            <h3>Crea una cuenta que pueda agendar y editar todas las reservas de un local.</h3>
+            <p>AgendaPro permite agregar un breve descripción de tu compañía la que aparecerá en el Buscador AgendaPro. Además, puedes configurar el tiempo mínimo y máximo para aceptar reservas.</p>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <iframe src="//player.vimeo.com/video/95304995" width="290" height="179" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<% content_for :scripts do %>
+<script type="text/javascript">
+    $(function() {
+        var $allVideos = $("iframe[src^='//player.vimeo.com']");
+        var $fluidEl = $(".col-sm-6");
+
+        $allVideos.each(function() {
+            $(this)
+                .data('aspectRatio', this.height / this.width)
+                .removeAttr('height')
+                .removeAttr('width');
+        });
+        $(window).resize(function() {
+            var newWidth = $fluidEl.width();
+        
+            $allVideos.each(function() {
+                var $el = $(this);
+                $el
+                    .width(newWidth)
+                    .height(newWidth * $el.data('aspectRatio'));
+            });
+        }).resize();
+    });
+</script>
+<% end %>

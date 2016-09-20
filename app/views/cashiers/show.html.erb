@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @cashier.company_id %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @cashier.name %>
+</p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @cashier.code %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @cashier.active %>
+</p>
+
+<%= link_to 'Edit', edit_cashier_path(@cashier) %> |
+<%= link_to 'Back', cashiers_path %>

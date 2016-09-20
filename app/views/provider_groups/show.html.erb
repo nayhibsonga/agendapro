@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @provider_group.company %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @provider_group.name %>
+</p>
+
+<p>
+  <strong>Order:</strong>
+  <%= @provider_group.order %>
+</p>
+
+<%= link_to 'Edit', edit_provider_group_path(@provider_group) %> |
+<%= link_to 'Back', provider_groups_path %>

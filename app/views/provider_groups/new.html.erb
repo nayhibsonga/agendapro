@@ -1,0 +1,15 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Nuevo Grupo de Prestadores</h2>
+      <p>Crea un nuevo grupo para ordenar tus prestadores.</p>
+    </div>
+  </div>
+</div>
+
+<%= render 'form' %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/provider-group' %>
+<% end %>

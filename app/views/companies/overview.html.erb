@@ -1,0 +1,189 @@
+<div class="workflow-header">
+  <div class="container">
+    <div class="row">
+      <% if !@company.description.blank? %>
+        <div class="col-xs-5 col-md-4 company-header-left company-header">
+          <div class="row">
+            <div class="col-xs-4 col-md-3">
+              <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
+            </div>
+            <div class="col-xs-8 col-md-9">
+              <div class="row">
+                <div class="col-md-12 company-name">
+                    <%= @company.name %>
+                </div>
+                <div class="col-md-12">
+                  <div class="header-btn active">
+                    <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
+                  </div>
+                  <div class="header-btn inactive" style="float: left;">
+                    <a href="#" id="boton-servicio" class="btn btn-default btn-green-wf">Servicios</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-4 col-md-4 company-header-center company-header">
+          <div class="header-description">
+            <%= @company.description %>
+          </div>
+        </div>
+        <div class="col-xs-3 col-md-4 company-header-right company-header">
+          <% if @selectedLocation %>
+            <div id="phone-info">
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @selectedLocation.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_second_address}" else "A Domicilio" end %>
+              </span>
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <script type="text/javascript">
+                $(".company-header-center").css("border-right", "0px");
+              </script>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% else %>
+        <div class="col-xs-5 col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
+          <div class="row">
+            <div class="col-xs-4 col-md-3">
+              <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
+            </div>
+            <div class="col-xs-8 col-md-9">
+              <div class="row">
+                <div class="col-md-12 company-name">
+                    <%= @company.name %>
+                </div>
+                <div class="col-md-12">
+                  <div class="header-btn active">
+                    <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
+                  </div>
+                  <div class="header-btn inactive" style="float: left;">
+                    <a href="#" id="boton-servicio" class="btn btn-default btn-green-wf">Servicios</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-7 col-md-8 company-header-center2 company-header">
+          <% if @selectedLocation %>
+            <div id="phone-info">
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @selectedLocation.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_second_address}" else "A Domicilio" end %>
+              </span>
+            </div>
+          <% else %>
+            <script type="text/javascript">
+            $(".company-header-left").css("border-right", "0px");
+            </script>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="overview-main">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-5">
+        <% if @has_images %>
+        <div id="carousel">
+          <%= image_tag @selectedLocation.image1.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' %>
+          <%= image_tag @selectedLocation.image2.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' %>
+          <%= image_tag @selectedLocation.image3.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' %>
+        </div>
+        <div class="carousel-pager"></div>
+        <% else %>
+        <div class="google-maps-empresa">
+          <div id="map"></div>
+        </div>
+        <div id="outcallDistricts" class="well">
+        </div>
+        <% end %>
+      </div>
+      <div class="col-xs-6 col-md-4">
+        <% if @has_images %>
+        <div class="google-maps-empresa">
+          <div id="map"></div>
+        </div>
+        <div id="outcallDistricts" class="well">
+        </div>
+        <% end %>
+        <h3 style="color: #505050; padding-top: 0px !important; margin-top: 0px !important;">Selecciona el lugar</h3>
+        <table class="table table-locals" id="locales-empresa">
+          <tbody>
+            <% @locations.each do |local| %>
+            <tr class="<%= 'local-seleccionado' if @selectedLocal.to_i == local.id %>">
+              <td>
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" data-outcall="<%= local.outcall %>" <%= "checked" if @selectedLocal.to_i == local.id %> >
+                    <p>
+                      <span class="local-name"><%= local.name %></span><br/>
+                      <span class="local-address" localid="<%= local.id %>"><%= if !local.outcall then "#{local.long_address_with_second_address}" else "A Domicilio" end %></span>
+                      <span class="local-phone" localid="<%= local.id %>" hidden><%= local.phone%></span>
+                    </p>
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-xs-6 col-md-3">
+        <div id="div-agendar">
+          <a href="#" class="" id="boton-agendar">
+            <i class="fa fa-calendar-o" style="font-size: 20px !important; margin-bottom: 3px !important;"></i>&nbsp;&nbsp;Agendar
+          </a>
+        </div>
+        <div class="schedule">
+          <div class="schedule-header">
+            <i class="fa fa-clock-o"></i>&nbsp;&nbsp;Horario
+          </div>
+          <div class="schedule-table">
+            <table class="table">
+              <tbody id="schedule-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<%= content_tag "div", id: "workflow_url", data: {url: @url} do %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
+  <%= javascript_include_tag "workflow/overview.js" %>
+<% end %>

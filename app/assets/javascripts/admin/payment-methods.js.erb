@@ -1,0 +1,414 @@
+/*
+var paymentModalState = '';
+var paymentAmount = 0;
+var paymentItems = [];
+var paymentPastBookings = []
+var paymentNewBookings = []
+var paymentProducts = []
+var paymentReceipts = []
+*/
+
+/*
+* Dummy function for compatibility with view of Caja
+*/
+function loadPayments()
+{
+
+}
+
+/*
+*	Legacy
+*/
+function destroyPayment() {
+	$.ajax({
+		type: 'DELETE',
+		url: '/payments/'+$('#payment_id').val() + '.json',
+		dataType: 'json',
+		success: function(payment){
+			// window.console.log(payment);
+			swal({
+				title: 'Pago eliminado exitosamente.',
+				type: 'success'
+			});
+			$("#delete_payment_button").html('Eliminar Pago');
+			$('#delete_payment_button').attr('disabled', false);
+			$('#bookingModal').modal('hide');
+		},
+		error: function(xhr){
+			var errors = $.parseJSON(xhr.responseText).errors;
+			var errores = '';
+			for (i in errors) {
+				errores += '*' + errors[i] + '\n';
+			}
+			swal({
+				title: "Error",
+				text: "Se produjeron los siguientes errores:\n" + errores,
+				type: "error"
+			});
+			$("#delete_payment_button").html('Eliminar Pago');
+			$('#delete_payment_button').attr('disabled', false);
+		}
+	});
+
+	return false;
+}
+
+/*
+*	Legacy
+*/
+var product_index = 0;
+function get_product_index() {
+	product_index += 1;
+	return product_index;
+}
+
+function checkBookingPayment(booking_id)
+{
+	$.ajax({
+		url: '/check_booking_payment',
+		type: 'get',
+		data: {booking_id: booking_id},
+		dataType: 'json',
+		error: function(response){
+			swal({
+				title: "Ocurrió un error inesperado al cargar la reserva.",
+				type: "error"
+			});
+		},
+		success: function(response){
+			if(response[0] == "yes")
+			{
+
+				$.ajax({
+				    url: '/payment_summary',
+				    method: 'get',
+				    data: {payment_id: response[1].id},
+				    error: function(response){
+
+				    },
+				    success: function(response){
+				      $('#bookingPaymentSummary').empty();
+				      $('#bookingPaymentSummary').append(response);
+				    }
+				});
+
+				$("#paymentBookingId").val(booking_id);
+				$("#bookingPaymentEdit").show();
+				$("#bookingPaymentCreate").hide();
+				$("#editPaymentId").val(response[1].id);
+			}
+			else
+			{
+				$("#paymentBookingId").val(booking_id);
+				$("#bookingPaymentCreate").show();
+				loadClientPastPayments(booking_id);
+				$("#bookingPaymentEdit").hide();
+				$("#editPaymentId").val("");
+			}
+		}
+	});
+}
+
+function loadClientPastPayments(booking_id)
+{
+	$.ajax({
+		url: '/clients_past_payments',
+		method: 'get',
+		data: {booking_id: booking_id},
+		error: function(response){
+			swal({
+				title: "Ocurrió un error inesperado al cargar los pagos anteriores.",
+				type: "error"
+			});
+		},
+		success: function(response){
+			$('#past-payments').html(response);
+		}
+	});
+}
+
+function loadBookingNewPayment(booking_id)
+{
+	$.ajax({
+		url: '/get_formatted_booking',
+		type: 'get',
+		data: {booking_id: booking_id},
+		dataType: 'json',
+		error: function(response){
+			swal({
+				title: "Ocurrió un error inesperado al cargar la reserva.",
+				type: "error"
+			});
+		},
+		success: function(response){
+
+			booking = response.booking;
+	        booking['item_id'] = paymentItems.length;
+	        booking['item_type'] = 'past_booking';
+
+	        paymentItems.push(booking);
+	        paymentPastBookings.push(booking);
+	        var item_id = paymentItems.length-1;
+	        var past_booking_index = paymentPastBookings.length-1;
+
+	        $("#paymentItemsTable").append(
+	          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' +
+	          '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+	          '<td style="width: 5%;">' + item_id + '</td>' +
+	          '<td style="width: 24%;"><span>Reserva existente</span></td>' +
+	          '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' +
+	          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' +
+	          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
+	          '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
+	          '</tr>'
+	        );
+
+			if(response.client != null)
+			{
+				$("#set_client").val("1");
+				$("#payment_client_id").val(response.client.id);
+				$("#payment_client_first_name").val(response.client.first_name);
+				$("#payment_client_last_name").val(response.client.last_name);
+				$("#payment_client_name").val(response.client.first_name + " " + response.client.last_name);
+				$("#payment_client_email").val(response.client.email);
+				$("#payment_client_phone").val(response.client.phone);
+				if(response.client.gender != null)
+		        {
+		          $("#payment_client_gender").val(response.client.gender);
+		        }
+		        else
+		        {
+		          $('#payment_client_gender').val("0");
+		        }
+				$("#payment_location").val(booking.location_id);
+				$(".client-option").show();
+			}
+			else
+			{
+				$("#set_client").val("0");
+			}
+
+			$("#paymentItemsTable").show();
+
+			calculatePaymentTotal();
+
+			$("#paymentItemsList").show();
+			$("#paymentSumDiv").show();
+
+		}
+	});
+}
+
+function associatePayment(booking_id, payment_id, mock_booking_id)
+{
+	$.ajax({
+		url: '/associate_payment',
+		method: 'post',
+		data: {booking_id: booking_id, payment_id: payment_id, mock_booking_id: mock_booking_id},
+		dataType: 'json',
+		error: function(response){
+			swal({
+				title: "Ocurrió un error inesperado al cargar los pagos anteriores.",
+				type: "error"
+			});
+			$('#past-payments').empty();
+			$("#bookingModal").modal('hide');
+		},
+		success: function(response){
+			if(response.status == "ok")
+			{
+				
+				booking = response.booking;
+
+				event = $('#calendar').fullCalendar('clientEvents', booking.id)[0];
+		        if (booking.status_id != 5) {
+		            var providerLock = '-unlock';
+		            if (booking.provider_lock) {
+		              providerLock = '-lock';
+		            };
+		            var originClass = 'origin-manual';
+		            if (booking.web_origin) {
+		              originClass = 'origin-web';
+		            };
+
+		            var payedState = '';
+		            var new_payed_state = "No";
+		            if (booking.payed_state)
+		            {
+		              payedState = ' payed';
+		              new_payed_state = "Sí";
+		            }
+
+		            var bundleState = '';
+		            if (booking.bundled)
+		            {
+		              bundleState = ' bundle';
+		            }
+
+		            if (booking.is_session && !booking.user_session_confirmed)
+		            {
+		              payedState += ' session';
+		            }
+
+		            originClass += providerLock + statusIcon[booking.status_id] + payedState + bundleState;
+		            event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
+		            event.start = booking.start;
+		            event.end = booking.end;
+		            event.resourceId = booking.service_provider_id;
+		            event.className = originClass;
+		            event.title_qtip = booking.first_name+' '+booking.last_name;
+		            event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
+		            event.service_qtip = booking.service_name;
+		            event.phone_qtip = booking.phone;
+		            event.email_qtip = booking.email;
+		            event.comment_qtip = booking.company_comment;
+		            event.prepayed_qtip = new_payed_state;
+		            event.is_session_qtip = booking.is_session_booked;
+		            event.sessions_ratio_qtip = booking.sessions_ratio;
+
+		            var selectedProvider = parseInt($("#providers-selector option:selected").val());
+		            var eventProvider = parseInt(booking.service_provider_id);
+
+
+		            if(booking.is_session)
+		            {
+		              if(booking.is_session_booked)
+		              {
+		                if(selectedProvider == 0 || (selectedProvider == eventProvider))
+		                {
+		                  $('#calendar').fullCalendar('updateEvent', event);
+		                }
+		                else
+		                {
+		                  $('#calendar').fullCalendar('removeEvents',booking.id);
+		                }
+		              }
+		              else
+		              {
+		                $('#calendar').fullCalendar('removeEvents',booking.id);
+		              }
+		            }
+		            else
+		            {
+		              if(selectedProvider == 0 || (selectedProvider == eventProvider))
+		              {
+		                $('#calendar').fullCalendar('updateEvent', event);
+		              }
+		              else
+		              {
+		                $('#calendar').fullCalendar('removeEvents',booking.id);
+		              }
+		            }
+		            if(booking.is_session && !booking.user_session_confirmed)
+		            {
+		              triggerInfo("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+		            }
+		        }
+		        else {
+		            $('#calendar').fullCalendar('removeEvents',booking.id);
+		        }
+		        $('#bookingAlerts').hide();
+		        if (booking.warnings.length > 0) {
+		            $('#bookingWarnings').empty();
+		            var warnings = '';
+		            for (i in booking.warnings) {
+		              warnings += booking.warnings[i] + '. ';
+		            }
+		            $('#bookingWarnings').append(warnings);
+		            $('#bookingAlerts').show();
+		        }
+		        triggerSuccess("Reserva actualizada exitosamente.");
+
+			}
+			else
+			{
+				swal({
+					title: "Ocurrió un error inesperado al cargar los pagos anteriores.",
+					type: "error"
+				});
+			}
+			$('#past-payments').empty();
+			$("#bookingModal").modal('hide');
+		}
+	});
+}
+
+$("#bookingPaymentCreateBtn").click(function(){
+    paymentItems = [];
+    paymentNewBookings = [];
+    paymentPastBookings = [];
+    paymentProducts = [];
+    loadPaymentIntro(0);
+    $("#bookingModal").modal('hide');
+    loadBookingNewPayment($("#paymentBookingId").val());
+});
+
+$("#bookingPaymentEditBtn").click(function(){
+	$("#bookingModal").modal('hide');
+	editPayment($("#editPaymentId").val());
+});
+
+$("#bookingPaymentDeleteBtn").click(function(){
+	$("#bookingModal").modal('hide');
+	deletePayment($("#editPaymentId").val());
+});
+
+$(function() {
+
+
+	/*
+	* Legacy
+	*/
+	$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+		var target = $(e.target).attr("href");
+		if ((target == '#payments-pane')) {
+			$('#save_booking_button').attr('disabled','disabled');
+		} else {
+			$('#save_booking_button').removeAttr('disabled');
+		}
+	});
+
+	/*
+	* Legacy
+	*/
+	$('#delete_payment_button').click(function() {
+		$('#delete_payment_button').attr('disabled', true);
+		$('#delete_payment_button').html('<i class="fa fa-spinner fa-spin"></i>');
+		destroyPayment();
+	});
+
+	$('body').on('click', '.associatePaymentBtn', function(){
+	    if($('input[name="mock-booking-choice"]:checked').length < 1)
+	    {
+	      swal({
+	        title: "Faltan datos.",
+	        text: "Elige el servicio a reemplazar antes de asociar la reserva al pago.",
+	        type: "warning"
+	      });
+	      return;
+	    }
+	    var booking_id = $(this).attr("booking_id");
+	    var payment_id = $(this).attr("payment_id");
+	    var mock_booking_id = $('input[name="mock-booking-choice"]:checked').val();
+	    associatePayment(booking_id, payment_id, mock_booking_id);
+	});
+
+	$('body').on('hide.bs.collapse', '.past-payment-collapsible', function(){
+	    $(this).parent().find('.fa-chevron-right').removeClass('hidden-caret');
+	    $(this).parent().find('.fa-chevron-down').addClass('hidden-caret');
+	    $(this).parent().find('.past-payment-title').css("color", "#505050");
+	    $('input[name="mock-booking-choice"]:checked').prop('checked', false)
+	});
+
+	  /*$('body').on('show.bs.collapse', '.past-payment-collapsible', function(){
+	    $('.past-payment-collapsible').collapse('hide');
+	  });*/
+
+	$('body').on('show.bs.collapse', '.past-payment-collapsible', function(){
+	    $(this).parent().find('.fa-chevron-down').removeClass('hidden-caret');
+	    $(this).parent().find('.fa-chevron-right').addClass('hidden-caret');
+	    $('.past-payment-collapsible.in').collapse('hide');
+	});
+
+
+});

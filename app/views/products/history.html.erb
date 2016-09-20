@@ -1,0 +1,132 @@
+<style type="text/css">
+.multiselect-container.dropdown-menu{
+  left: auto;
+}
+</style>
+<!-- <div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Historial de movimientos</h2>
+    </div>
+  </div>
+</div> -->
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="row" style="margin-top: 20px;">
+        <div class="col-xs-6 col-sm-1">
+          <label class="control-label">Desde:</label>
+        </div>
+        <div class="col-xs-6 col-sm-2">
+          <input type="text" class="form-control datepicker" id="from" value="<%= (DateTime.now - 1.months).strftime('%d/%m/%Y') %>" />
+        </div>
+        <div class="col-xs-6 col-sm-1">
+          <label class="control-label">Hasta:</label>
+        </div>
+        <div class="col-xs-6 col-sm-2">
+          <input type="text" class="form-control datepicker" id="to" value="<%= (DateTime.now).strftime('%d/%m/%Y') %>" />
+        </div>
+        <div class="col-xs-6 col-sm-1">
+          <label class="control-label">Orden:</label>
+        </div>
+        <div class="col-xs-6 col-sm-2">
+          <select id="order-select" class="form-control">
+            <option value="recent">Más reciente (todos)</option>
+            <option value="old">Más antiguo (todos)</option>
+            <option value="by_products_recent">Por productos (más reciente)</option>
+            <option value="by_products_old">Por productos (más antiguo)</option>
+          </select>
+        </div>
+        <div class="col-xs-6 col-sm-1">
+          <label class="control-label">Estado:</label>
+        </div>
+        <div class="col-xs-6 col-sm-2">
+          <select id="status-select" class="form-control">
+            <option value="active">Activos</option>
+            <option value="inactive">Inactivos</option>
+            <option value="all">Todos</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 20px;">
+        <div class="col-xs-6 col-sm-1">
+          <label class="control-label">Locales:</label>
+        </div>
+        <div class="col-xs-6 col-sm-2">
+          <select id="location-select" multiple="multiple" class="form-control" style="display: none;">
+            <optgroup label="Activos">
+              <% @locations.where(active: true).each do |location|
+              %>
+                <option value="<%= location.id %>" selected="selected">
+                  <%= location.name %>
+                </option>
+              <% end %>
+            </optgroup>
+            <optgroup label="Inactivos">
+              <% @locations.where(active: false).each do |location|
+              %>
+                <option value="<%= location.id %>">
+                  <%= location.name %>
+                </option>
+              <% end %>
+            </optgroup>
+          </select>
+        </div>
+        <div class="col-xs-6 col-sm-1">
+          <label class="control-label">Categoría(s):</label>
+        </div>
+        <div class="col-xs-6 col-sm-2">
+          <select id="category-select" multiple="multiple" class="form-control" style="display: none;">
+            <% @product_categories.each do |product_category|
+              if product_category.products.count == 0
+                next
+              end
+            %>
+              <option value="<%= product_category.id %>" selected="selected">
+                <%= product_category.name %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+        <div class="col-xs-6 col-sm-1">
+          <label class="control-label">Producto(s):</label>
+        </div>
+        <div class="col-xs-6 col-sm-2">
+          <select id="product-select" multiple="multiple" class="form-control" style="display: none;">
+            <% @product_categories.each do |product_category|
+                if product_category.products.count == 0
+                  next
+                end %>
+                <optgroup label="<%= product_category.name %>">
+              <% product_category.products.where(active: true).order(:name).each do |product| %>
+                    <option value="<%= product.id %>" selected="selected">
+                      <%= product.name %>
+                    </option>
+              <% end %>
+              </optgroup>
+            <% end %>
+          </select>
+        </div>
+        <div class="col-xs-6 col-sm-3">
+          <a href="" id="download-history-link" target="_blank"><button id="download_stats_btn" class="btn btn-green" style="display: none; width: 200px;"><i class="fa fa-file-excel-o"></i>&nbsp;Descargar</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="render_content">
+
+  </div>
+
+</div>
+
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/bootstrap-multiselect" %>
+  <%= javascript_include_tag "admin/products-history" %>
+<% end %>

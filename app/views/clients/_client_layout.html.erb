@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-5">
+        <h2 class="text-green">
+          <%= @client.first_name %> <%= @client.last_name %>
+          <small><%= @client.email %></small>
+        </h2>
+      </div>
+      <div class="col-md-7" style="text-align: right;">
+        <h2>
+          <%= link_to '<i class="fa fa-eye"></i> <span class="hidden-xs">Ver Cliente</span>'.html_safe, client_path(@client), :class => current_page?(client_path(@client)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
+          <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar Cliente</span>'.html_safe, edit_client_path(@client), :class => current_page?(edit_client_path(@client)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
+          <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Archivos</span>'.html_safe, get_client_files_path(client_id: @client.id), :class => current_page?(get_client_files_path(client_id: @client.id)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
+          <%= link_to '<i class="fa fa-money"></i> <span class="hidden-xs">Historial de pagos</span>'.html_safe, client_payments_path(@client), :class => current_page?(client_payments_path(@client)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
+          <%= link_to '<i class="fa fa-envelope-o"></i> <span class="hidden-xs">Historial de Emails</span>'.html_safe, client_emails_path(@client), :class => current_page?(client_emails_path(@client)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
+          <%= link_to '<i class="fa fa-calendar"></i> <span class="hidden-xs">Historial Completo</span>'.html_safe, client_history_path(@client), :class => current_page?(client_history_path(@client)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
+          <%= link_to '<i class="fa fa-file-text-o"></i> <span class="hidden-xs">Fichas</span>'.html_safe, client_charts_path(@client), :class => current_page?(client_charts_path(@client)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
+          <%= link_to '<i class="fa fa-print"></i> <span class="hidden-xs">Imprimir</span>'.html_safe, client_print_path(@client, format: "pdf"), :class => "btn btn-white btn-sm", :style => "min-width: 100px;" %>
+        </h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3 col-md-3">
+        <p><strong><%= (I18n.t('ci')).capitalize %>:&nbsp;</strong> <%= if !@client.identification_number.blank? then @client.identification_number else '---' end %></p>
+      </div>
+      <div class="col-sm-3 col-md-3">
+        <p><strong>Cumpleaños:&nbsp;</strong> <%= @client.get_birth_date %></p>
+      </div>
+      <div class="col-sm-3 col-md-3">
+        <p><strong>Teléfono 1:&nbsp;</strong> <%= if !@client.phone.blank? then @client.phone else '---' end %></p>
+      </div>
+      <div class="col-sm-3 col-md-3">
+        <p><strong>Teléfono 2:&nbsp;</strong> <%= if !@client.second_phone.blank? then @client.second_phone else '---' end %></p>
+      </div>
+    </div>
+
+  </div>
+</div>

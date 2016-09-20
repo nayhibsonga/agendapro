@@ -1,0 +1,132 @@
+<%= javascript_include_tag "mobile" %>
+<div class="container-fluid background-grey">
+    <div class="row">
+	    <div class="col-md-12">
+			<%= form_tag({ :controller => 'local_punto_pagos', :action => 'notify'}, method: "post", :id => "processForm") do %>
+				<input type="hidden" id="decision" name="decision" value="" />
+				<table>
+					<tr>
+						<td>
+							token:
+						</td>
+						<td>
+			    			<input name="token" value="<%= @token %>" /><br />
+			    		</td>
+			    		
+			    	</tr>
+			    	<tr>
+			    		<td>
+			    			trx_id:
+			    		</td>
+			    		<td>
+			    			<input name="trx_id" value="<%= @trx_id %>" />
+			    		</td>
+			    	</tr>
+			    	<tr>
+						<td>
+							medio de pago:
+						</td>
+						<td>
+			    			<input name="medio_pago" value="<%= @medio_pago %>" />
+			    		</td>			    		
+			    	</tr>
+			    	<tr>
+			    		<td>
+			    			monto:
+			    		</td>
+			    		<td>
+			    		<input name="monto" value="<%= @monto %>" />
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td>
+			    			fecha:
+			    		</td>
+			    		<td>
+			    		<input name="fecha" value="<%= DateTime.now.to_date %>" />
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td>
+			    			Número de tarjeta:
+			    		</td>
+			    		<td>
+			    		<input name="numero_tarjeta" value="6789" />
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td>
+			    			Número de cutoas:
+			    		</td>
+			    		<td>
+			    		<input name="numero_cuotas" value="0" />
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td>
+			    			Tipo cuotas:
+			    		</td>
+			    		<td>
+			    		<input name="tipo_cuotas" value="" />
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td>
+			    			Valor cuota:
+			    		</td>
+			    		<td>
+			    		<input name="valor_cuota" value="0" />
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td>
+			    			Primer vencimiento:
+			    		</td>
+			    		<td>
+			    		<input name="primer_vencimiento" value="" />
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td>
+			    			Número de operación:
+			    		</td>
+			    		<td>
+			    		<input name="numero_operacion" value="123456789" />
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td>
+			    			Código de autorización:
+			    		</td>
+			    		<td>
+			    		<input name="codigo_autorizacion" value="123456789" />
+			    		</td>
+			    	</tr>
+			    	<tr>
+				    	<td>
+				    		<input type="submit" id="acceptBtn" value="Aceptar" />
+				    	</td>
+				    	<td>
+				    		<input type="submit" id="rejectBtn" value="Rechazar" />
+				    	</td>
+			    	</tr>
+			    </table>
+			<% end %>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$('#acceptBtn').click(function(e){
+		e.preventDefault();
+		$('#decision').val("accept");
+		$('#processForm').submit();
+	});
+
+	$('#rejectBtn').click(function(e){
+		e.preventDefault();
+		$('#decision').val("reject");
+		$('#processForm').submit();
+	});
+</script>
+

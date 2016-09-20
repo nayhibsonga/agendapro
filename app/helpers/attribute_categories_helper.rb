@@ -1,0 +1,2 @@
+module AttributeCategoriesHelper
+end

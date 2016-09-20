@@ -1,0 +1,899 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">
+        <%= @company.name %>
+        <% if @company.payment_status_id != PaymentStatus.find_by_name('Inactivo').id %>
+          <%= form_tag({ :controller => 'companies', :action => 'deactivate_company'}, method: "post", class: "pull-right") do %>
+            <input type="hidden" name="id" value="<%= @company.id %>" />
+
+          <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+            <button class="btn btn-red" id="deactivateBtn">Desactivar</button>
+            <% end %>
+          <% end %>
+        <% end %>
+      </h2>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+    <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+      <ul class="nav nav-pills nav-stacked tab-margin">
+        <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+        <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+        <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+        <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+        <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+        <li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
+      </ul>
+      <% end %>
+    </div>
+    <!-- Panels -->
+    <div class="col-md-10 left-panel">
+      <div class="tab-margin">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="/manage_company/<%= @company.id %>">Ver/Manejar</a></li>
+          <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+          <li><a href="/companies/new_payment/<%= @company.id %>">Agregar pago</a></li>
+          <% end %>
+        </ul>
+        <div class="row">
+          <div class="col-md-2">
+            <ul id="myTab" class="nav nav-pills nav-stacked tab-margin" role="tablist">
+              <li class="active"><a href="#summary" role="tab" data-toggle="tab" class="tab_index">Resumen</a></li>
+              <li><a href="#incomes" role="tab" data-toggle="tab" class="tab_index">Ingresos</a></li>
+              <li><a href="#bookings" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
+              <li><a href="#payments" role="tab" data-toggle= "tab" class="tab_index">Pagos</a></li>
+              <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+              <li><a href="#edit" role="tab" data-toggle="tab" class="tab_index">Edición</a></li>
+              <% end %>
+              <li><a href="#billing-info" role="tab" data-toggle="tab" class="tab_index">Facturación</a></li>
+              <li><a href="#changes-logs" role="tab" data-toggle="tab" class="tab_index">Log de cambios</a></li>
+            </ul>
+          </div>
+          <div class="col-md-10 left-panel">
+            <div id="myTabContent" class="tab-content tab-margin">
+              <div class="tab-pane fade in active" id="summary">
+                <dl class="dl-horizontal">
+                  <dt>Administrador</dt>
+                  <dd>
+                    <%
+                      c_user = User.where(:company_id => @company.id, :role_id => Role.find_by_name('Administrador General').id).first
+                      if !c_user.nil?
+                    %>
+                      <%= c_user.first_name + " " + c_user.last_name %>
+                    <% end %>
+                  </dd>
+                  <dt>Email</dt>
+                  <dd>
+                    <% if !c_user.nil? %>
+                      <%= c_user.email %>
+                    <% end %>
+                  </dd>
+                  <dt>Teléfono</dt>
+                  <dd>
+                    <% if !c_user.nil? %>
+                      <%= c_user.phone %>
+                    <% end %>
+                  </dd>
+                  <dt>Fecha de ingreso</dt>
+                  <dd><%= @company.created_at.strftime('%d/%m/%Y %R') %></dd>
+                  <dt>Número de reservas</dt>
+                  <dd><%= @bookings.count %></dd>
+                  <dt>Estado</dt>
+                  <dd><%= @company.payment_status.name %></dd>
+                  <dt>Plan</dt>
+                  <dd><%= @company.plan.name %></dd>
+                  <% if @company.payment_status_id == PaymentStatus.find_by_name("Trial").id %>
+                    <dt>Plan post Trial</dt>
+                    <dd><%= @company.default_plan.name %></dd>
+                  <% end %>
+                  <dt>Costo (sin IVA)</dt>
+                  <dd><%= @company.company_plan_setting.base_price * @company.computed_multiplier %></dd>
+                  <dt>Locales</dt>
+                  <dd><%= @company.locations.where(:active => true).count %></dd>
+                  <dt>Última fecha de pago</dt>
+                  <dd>
+                    <%= @company.last_payment_detail[0] %>
+                  </dd>
+                  <dt>Último monto de pago</dt>
+                  <dd>
+                    <%= @company.last_payment_detail[1] %>
+                  </dd>
+                  <dt>Deuda actual</dt>
+                  <dd><%= @company.due_amount %></dd>
+                  <dt>Meses activos restantes</dt>
+                  <dd><%= @company.months_active_left %></dd>
+                </dl>
+                <div class="row">
+                  <h3>Simulador de Pago (IVA incluído), cálculo incluye deuda. La deuda del mes anterior es: <%= number_to_currency(@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></h3>
+                  <dl class="dl-horizontal">
+                    <dt><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %></dt>
+                    <dd value="1"><%= number_to_currency(@plan_1 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></dd>
+                    <dt>2 Meses</dt>
+                    <dd value="2"><%= number_to_currency(@plan_2 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></dd>
+                    <dt>3 Meses</dt>
+                    <dd value="3"><%= number_to_currency(@plan_3 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></dd>
+                    <dt>4 Meses</dt>
+                    <dd value="4"><%= number_to_currency(@plan_4 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_4 * 100, precision: 0) %>% dcto.)</dd>
+                    <dt>6 Meses</dt>
+                    <dd value="6"><%= number_to_currency(@plan_6 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_6 * 100, precision: 0) %>% dcto.)</dd>
+                    <dt>9 Meses</dt>
+                    <dd value="9"><%= number_to_currency(@plan_9 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_9 * 100, precision: 0) %>% dcto.)</dd>
+                    <dt>12 Meses</dt>
+                    <dd value="12"><%= number_to_currency(@plan_12 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_12 * 100, precision: 0) %>% dcto.)</dd>
+                  </dl>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="incomes">
+                <div class="form-group">
+                  <label class="col-md-2 control-label">Selecciona el año</label>
+                  <div class="col-md-2">
+                    <select id="year-select" name="year" class="form-control">
+                      <% current = DateTime.now.year.to_i %>
+                      <% for i in 2014..current do %>
+                        <% if i == current %>
+                          <option value="<%= i %>" selected><%= i.to_s %></option>
+                        <% else %>
+                          <option value="<%= i %>"><%= i.to_s %></option>
+                        <% end %>
+                      <% end %>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div id="year-incomes">
+                      <h3>Ingresos para el año <span id="selected-year"><%= current %></span></h3>
+                      <table class="table table-green"></table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="bookings">
+                <div class="form-group">
+                  <label class="col-md-2 control-label">Selecciona el año</label>
+                  <div class="col-md-2">
+                    <select id="bookings-year-select" name="year" class="form-control">
+                      <% current = DateTime.now.year.to_i %>
+                      <% for i in 2014..current do %>
+                        <% if i == current %>
+                          <option value="<%= i %>" selected><%= i.to_s %></option>
+                        <% else %>
+                          <option value="<%= i %>"><%= i.to_s %></option>
+                        <% end %>
+                      <% end %>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div id="year-bookings">
+                      <h3>Reservas para el año <span id="bookings-selected-year"><%= current %></span></h3>
+                      <table class="table table-green"></table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="changes-logs">
+
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Cambios internos</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Autor</th>
+                          <th>Detalle</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @company.super_admin_logs.order(created_at: :desc).each do |log| %>
+                          <tr>
+                            <td>
+                              <%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %>
+                            </td>
+                            <td>
+                              <%= log.user.full_name %> (<%= log.user.role.name %>)
+                            </td>
+                            <td>
+                              <%= log.detail %>
+                            </td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="panel panel-default">
+                  <ul class="list-inline">
+                    <li>Ref1: descuento normal de mes y pago emitido si corresponde</li>
+                    <li>Ref2: Pago Vencido</li>
+                    <li>Ref3: Bloqueo cuenta</li>
+                    <li>Ref4: Inactivación cuenta</li>
+                    <li>Ref5: Término periodo trial</li>
+                    <li>Ref6: Deuda a la fecha calculada</li>
+                    <li>Ref7: Llega pago y se consolida mes cuenta</li>
+                    <li>Ref8: Llega pago y se ejecuta cambio de plan</li>
+                  </ul>
+                </div>
+
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Cambios empresa</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Action Ref</th>
+                          <th>Detalle</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @company.company_cron_logs.order(created_at: :desc).each do |log| %>
+                          <tr>
+                            <td>
+                              <%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %>
+                            </td>
+                            <td>
+                              <%= log.action_ref.to_s %>
+                            </td>
+                            <td>
+                              <%= log.details %>
+                            </td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="billing-info">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Facturación</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+
+                    <% if @billing_info.company_id.nil? %>
+
+                      <%= form_for @billing_info, url: { controller: "billing_infos", action: "super_admin_create" }, :html => {:class => 'form-horizontal tab-margin', :multipart => true} do |f| %>
+                        <% if @billing_info.errors.any? %>
+                          <div id="error_explanation">
+                            <h2><%= pluralize(@billing_info.errors.count, "error") %> no permitió que sea creada:</h2>
+                            <ul>
+                              <% @billing_info.errors.full_messages.each do |msg| %>
+                                <li><%= msg %></li>
+                              <% end %>
+                            </ul>
+                          </div>
+                        <% end %>
+
+                        <input type="hidden" id="origin" name="origin" value="manage_company" />
+                        <input type="hidden" id="billing_info_company_id" name="billing_info[company_id]" value="<%= @company.id %>" />
+                        <input type="hidden" id="billing_info_active" name="billing_info[active]" value="1" />
+                        <input type="hidden" id="billing_info_accept" name="billing_info[accept]" value="1" />
+
+                        <div class="form-group">
+                          <%= f.label :name, 'Razón Social', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :name, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :rut, 'RUT Empresa', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :rut, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :sector, 'Giro', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :sector, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :contact, 'Nombre Responsable', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :contact, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :address, 'Dirección', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :address, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :phone, 'Teléfono', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :phone, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :email, 'E-Mail', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :email, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="col-md-5 col-md-offset-2">
+                            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                            <%= link_to 'Cancelar', companies_path, :class => "btn btn-default" %>
+                          </div>
+                        </div>
+                      <% end %>
+
+                    <% else %>
+
+                      <%= form_for @billing_info, url: { controller: "billing_infos", action: "super_admin_update" }, :html => {:class => 'form-horizontal tab-margin', :multipart => true} do |f| %>
+                        <% if @billing_info.errors.any? %>
+                          <div id="error_explanation">
+                            <h2><%= pluralize(@billing_info.errors.count, "error") %> no permitió que sea creada:</h2>
+                            <ul>
+                              <% @billing_info.errors.full_messages.each do |msg| %>
+                                <li><%= msg %></li>
+                              <% end %>
+                            </ul>
+                          </div>
+                        <% end %>
+
+                        <input type="hidden" id="origin" name="origin" value="manage_company" />
+                        <input type="hidden" id="id" name="id" value="<%= @billing_info.id %>" />
+                        <input type="hidden" id="billing_info_active" name="billing_info[active]" value="1" />
+                        <input type="hidden" id="billing_info_accept" name="billing_info[accept]" value="1" />
+
+                        <div class="form-group">
+                          <%= f.label :name, 'Razón Social', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :name, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :rut, 'RUT Empresa', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :rut, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :sector, 'Giro', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :sector, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :contact, 'Nombre Responsable', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :contact, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :address, 'Dirección', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :address, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :phone, 'Teléfono', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :phone, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :email, 'E-Mail', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :email, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="col-md-5 col-md-offset-2">
+                            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                            <%= link_to 'Cancelar', companies_path, :class => "btn btn-default" %>
+                          </div>
+                        </div>
+                      <% end %>
+
+                    <% end %>
+
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="payments">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Pagos en línea</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Monto</th>
+                          <th>Meses</th>
+                          <th>Número de cuotas</th>
+                          <th>Número de operación</th>
+                          <th>Código de autorización</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% logs = @company.billing_logs.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).order('created_at desc') %>
+                        <% logs.each do |log| %>
+                          <% punto_pago = PuntoPagosConfirmation.where(:trx_id => log.trx_id, :response => "00").first %>
+                          <% pay_u = PayUNotification.where(:reference_sale => log.trx_id, :state_pol => "4").first %>
+                          <% if punto_pago.blank? && pay_u.blank? %>
+                            <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
+                            <tr style="background-color: #fd633f;">
+
+                              <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.payment %></td>
+                              <td><%= log.amount %></td>
+                              <% if punto_pago_fail.nil? %>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                              <% else %>
+                                <td><%= punto_pago_fail.dues_number %></td>
+                                <td><%= punto_pago_fail.operation_number %></td>
+                                <td><%= punto_pago_fail.authorization_code %></td>
+                              <% end %>
+
+                            </tr>
+                          <% elsif punto_pago.present? %>
+                            <tr>
+
+                              <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.payment %></td>
+                              <td><%= log.amount %></td>
+                              <td><%= punto_pago.dues_number %></td>
+                              <td><%= punto_pago.operation_number %></td>
+                              <td><%= punto_pago.authorization_code %></td>
+
+                            </tr>
+                          <% elsif pay_u.present? %>
+                            <tr>
+
+                              <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.payment %></td>
+                              <td><%= log.amount %></td>
+                              <td></td>
+                              <td><%= pay_u.transaction_id %></td>
+                              <td><%= pay_u.reference_sale %></td>
+
+                            </tr>
+                          <% end %>
+                        <% end %>
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Cambios de plan en línea</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Monto</th>
+                          <th>Número de cuotas</th>
+                          <th>Número de operación</th>
+                          <th>Código de autorización</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+
+                        <% plan_logs = @company.plan_logs.where.not(trx_id: nil).where.not(trx_id: "").where('amount > 0').order('created_at desc') %>
+                        <% plan_logs.each do |log| %>
+                          <% punto_pago = PuntoPagosConfirmation.where(:trx_id => log.trx_id, :response => "00").first %>
+                          <% if punto_pago.nil? %>
+                            <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
+                            <tr style="background-color: #fd633f;">
+
+                              <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.amount.to_s %></td>
+                              <% if punto_pago_fail.nil? %>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                              <% else %>
+                                <td><%= punto_pago_fail.dues_number %></td>
+                                <td><%= punto_pago_fail.operation_number %></td>
+                                <td><%= punto_pago_fail.authorization_code %></td>
+                              <% end %>
+
+                            </tr>
+                          <% else %>
+                            <tr>
+
+                              <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.amount.to_s %></td>
+                              <td><%= punto_pago.dues_number %></td>
+                              <td><%= punto_pago.operation_number %></td>
+                              <td><%= punto_pago.authorization_code %></td>
+
+                            </tr>
+                          <% end %>
+                        <% end %>
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Transferencias</h4>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Tipo</th>
+                          <th>Meses pagados/Nuevo plan</th>
+                          <th>Monto</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% transfers = @company.billing_wire_transfers.where(approved: true).order('payment_date desc') %>
+                        <% transfers.each do |transfer| %>
+                          <tr>
+                            <td><%= transfer.payment_date.strftime('%d/%m/%Y %R') %></td>
+                            <% if transfer.change_plan %>
+                              <td>Cambio de plan</td>
+                              <td><%= Plan.find(transfer.new_plan).name %></td>
+                            <% else %>
+                              <td>Pago mensualidad(es)</td>
+                              <td><%= transfer.paid_months.to_s %></td>
+                            <% end %>
+                            <td><%= transfer.amount %></td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Otros pagos</h4>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Tipo</th>
+                          <th>Monto</th>
+                          <th>Editar</th>
+                          <th>Eliminar</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% records = @company.billing_records.order('date desc') %>
+                        <% records.each do |record| %>
+                          <tr>
+                            <td><%= record.date.strftime('%d/%m/%Y') %></td>
+                            <td>
+                              <% if !record.transaction_type.nil? %>
+                                <%= record.transaction_type.name %>
+                              <% end %>
+                            </td>
+                            <td><%= record.amount %></td>
+                            <td><%= link_to 'Editar', '/companies/payment/'+record.id.to_s, class: "btn btn-orange btn-sm" %></td>
+                            <td>
+                              <%= form_tag({ :controller => 'companies', :action => 'delete_payment'}, method: "post") do %>
+                                <input type="hidden" name="record_id" value="<%= record.id %>" />
+                                <input type="hidden" name="id" value="<%= @company.id %>" />
+                                <button class="btn btn-red btn-sm" id="deletePayment">Eliminar</button>
+                              <% end %>
+                            </td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+              <div class="tab-pane fade" id="edit">
+                <%= form_tag({ :controller => 'companies', :action => 'update_company'}, method: "post", class: 'form-horizontal') do %>
+                  <input type="hidden" name="id" value="<%= @company.id %>" />
+                  <div class="form-group">
+                    <label class="control-label col-md-2">Plan</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.plan.name %></p>
+                    </div>
+                    <div class="col-md-4">
+                      <select name="new_plan_id" class="form-control">
+                        <% Plan.where('custom = false or name = ?', 'Trial').each do |plan| %>
+                          <% if plan.id == @company.plan_id %>
+                            <option value="<%= plan.id %>" selected><%= plan.name %></option>
+                          <% else %>
+                            <option value="<%= plan.id %>"><%= plan.name %></option>
+                          <% end %>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <% if @company.payment_status_id == PaymentStatus.find_by_name("Trial").id %>
+                    <div class="form-group">
+                      <label class="control-label col-md-2">Plan post trial</label>
+                      <div class="col-md-4">
+                        <p class="form-control-static"><%= @company.default_plan.name %></p>
+                      </div>
+                      <div class="col-md-4">
+                        <select name="new_default_plan_id" class="form-control">
+                          <% Plan.where(custom: false).each do |plan| %>
+                            <% if plan.id == @company.default_plan_id %>
+                              <option value="<%= plan.id %>" selected><%= plan.name %></option>
+                            <% else %>
+                              <option value="<%= plan.id %>"><%= plan.name %></option>
+                            <% end %>
+                          <% end %>
+                        </select>
+                      </div>
+                    </div>
+                  <% end %>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Estado actual</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.payment_status.name %></p>
+                    </div>
+                    <div class="col-md-4">
+                      <select name="new_payment_status_id" class="form-control">
+                        <% PaymentStatus.all.each do |status| %>
+                          <% if status.id == @company.payment_status_id %>
+                            <option value="<%= status.id %>" selected><%= status.name %></option>
+                          <% else %>
+                            <option value="<%= status.id %>"><%= status.name %></option>
+                          <% end %>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Precio base</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.company_plan_setting.base_price.to_s %></p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control" name="new_base_price" value="<%= @company.company_plan_setting.base_price %>" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Mails base</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.company_setting.mails_base_capacity.to_s %></p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control" name="new_mails_base_capacity" value="<%= @company.company_setting.mails_base_capacity %>" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Multiplicador (locales)</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.company_plan_setting.locations_multiplier.to_s %></p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control" name="new_locations_multiplier" value="<%= @company.company_plan_setting.locations_multiplier %>" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Meses activos restantes</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.months_active_left %></p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control" name="new_months_active_left" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Deuda actual</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.due_amount %></p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control" name="new_due_amount" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Comisión pago en línea</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.company_setting.online_payment_commission %>%</p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" name="new_online_payment_commission" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Comisión promociones</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.company_setting.promo_commission %>%</p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" name="new_promo_commission" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Pago en línea</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static">
+                        <% if @company.company_setting.online_payment_capable %>
+                          Activo
+                        <% else %>
+                          Inactivo
+                        <% end %>
+                      </p>
+                    </div>
+                    <div class="col-md-4">
+                      <select name="new_online_payment_capable" class="form-control">
+                        <% if @company.company_setting.online_payment_capable %>
+                          <option value="1">Activar</option>
+                          <option value="0">Desactivar</option>
+                        <% else %>
+                          <option value="0">Desactivar</option>
+                          <option value="1">Activar</option>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Promociones</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static">
+                        <% if @company.company_setting.promo_offerer_capable %>
+                          Activas
+                        <% else %>
+                          Inactivas
+                        <% end %>
+                      </p>
+                    </div>
+                    <div class="col-md-4">
+                      <select name="new_promo_offerer_capable" class="form-control">
+                        <% if @company.company_setting.promo_offerer_capable %>
+                          <option value="1">Activar</option>
+                          <option value="0">Desactivar</option>
+                        <% else %>
+                          <option value="0">Desactivar</option>
+                          <option value="1">Activar</option>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Ejecutivo Comercial</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static">
+                        <%= @company.sales_user_id && User.find(@company.sales_user_id) ? User.find(@company.sales_user_id).email : "" %>
+                      </p>
+                    </div>
+                    <div class="col-md-4">
+                      <select name="sales_user_id" class="form-control">
+                        <option value="">Sin Asignar</option>
+                        <% User.where(role_id: Role.find_by_name("Ventas").id).each do |user| %>
+                        <option value="<%= user.id %>" <%= 'selected' if @company.sales_user_id == user.id %>><%= user.email %></option>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-md-4 col-md-offset-6">
+                      <button class="btn btn-green btn-block">Editar</button>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Última fecha de pago</label>
+                    <div class="col-md-4">
+
+
+                        <p class="form-control-static"><%= @company.last_payment_detail[0] %></p>
+
+                    </div>
+                    <div class="col-md-4">
+                      <%= link_to "Agregar pago", {controller: "companies", action: "new_payment", id: @company.id}, class: "btn btn-white" %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<% content_for :scripts do %>
+  <script type="text/javascript">
+    $("#year-select").on('change', function(){
+      var year = $(this).val();
+      var id = <%= @company.id %>;
+      $.ajax({
+        url: '/get_year_incomes?id=' + id + '&year=' + year,
+        method: 'get',
+        success: function(response){
+          $("#year-incomes table").empty();
+          $("#year-incomes table").append('<thead><tr>');
+          for(i=1; i<=13; i++) {
+            $("#year-incomes table thead tr:first").append('<th>'+response[i]['month']+'</th>');
+          }
+          $("#year-incomes table").append('<tbody><tr>');
+          for(i=1; i<=13; i++) {
+            $("#year-incomes table tbody tr:last").append('<td>'+response[i]['income']+'</td>');
+          }
+          $("#selected-year").empty();
+          $("#selected-year").append(year);
+        }
+      });
+    });
+
+    $("#bookings-year-select").on('change', function(){
+      var year = $(this).val();
+      var id = <%= @company.id %>;
+      $.ajax({
+        url: '/get_year_bookings?id=' + id + '&year=' + year,
+        method: 'get',
+        success: function(response){
+          $("#year-bookings table").empty();
+          $("#year-bookings table").append('<thead><tr>');
+          for(i=1; i<=13; i++) {
+            $("#year-bookings table thead tr:first").append('<th>'+response[i]['month']+'</th>');
+          }
+          $("#year-bookings table").append('<tbody><tr>');
+          for(i=1; i<=13; i++) {
+            $("#year-bookings table tbody tr:last").append('<td>'+response[i]['count']+'</td>');
+          }
+          $("#bookings-selected-year").empty();
+          $("#bookings-selected-year").append(year);
+        }
+      });
+    });
+
+    $("#deactivateBtn").click(function(e){
+      e.preventDefault();
+      swal({
+        title: "¿Estás seguro que deseas desactivarla?",
+        type: "warning",
+        showCancelButton: true
+      },
+      function (isConfirm) {
+        if (isConfirm) {
+          $('#deactivateBtn').closest("form").submit();
+        };
+      });
+    });
+
+    $("#deletePayment").click(function(e){
+      e.preventDefault();
+      swal({
+        title: "¿Estás seguro que deseas eliminarlo?",
+        type: "warning",
+        showCancelButton: true
+      },
+      function (isConfirm) {
+        if (isConfirm) {
+          $('#deletePayment').closest("form").submit();
+        };
+      });
+    });
+
+    $(document).ready(function(){
+      $("#year-select").trigger('change');
+      $("#bookings-year-select").trigger('change');
+    });
+  </script>
+<% end %>

@@ -1,0 +1,78 @@
+<div class="row" id="past-payment-row">
+
+	<% if @payments.count > 0 %>
+
+    <% @payments.each do |payment| %>
+
+      <div class="col-xs-12">
+        <a class="past-payment-title collapsed" data-parent="#past-payment-row" data-toggle="collapse" href="#past-payment-<%= payment.id %>" aria-expanded="false" aria-controls="past-payment-<%= payment.id %>">
+          <span class="past-payment-carets"><i class="fa fa-chevron-right"></i><i class="fa fa-chevron-down hidden-caret"></i></span>Pago del <%= payment.payment_date.strftime('%d/%m/%Y %R') %>
+        </a>
+        <div class="collapse past-payment-collapsible" id="past-payment-<%= payment.id %>">
+          <table class="past-payment-table">
+            <tr>
+              <td><b>Monto:&nbsp;</b></td>
+              <td><%= number_to_currency(payment.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+            </tr>
+            <tr>
+              <td><b>Comprobantes:&nbsp;</b></td>
+              <td>
+                <% payment.receipts.each do |receipt| %>
+                  <%= "#{receipt.receipt_type.name} ##{receipt.number}" %><br />
+                <% end %>
+              </td>
+            </tr>
+            <% if payment.mock_bookings.count > 0 %>
+              <tr>
+                <td>
+                  <b>Servicios sin reserva:&nbsp;</b>
+                </td>
+                <td>
+                  <% payment.mock_bookings.order(:service_id).each do |mock_booking| %>
+                    <% if mock_booking.service_id == @service.id %>
+                      <input type="radio" name="mock-booking-choice" value="<%= mock_booking.id %>" />
+                    <% end %>
+                    <%= "#{mock_booking.service.name}#{mock_booking.service_provider.present? ? ' con' + mock_booking.service_provider.public_name : '' }, a #{number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)}." %><%= mock_booking.price != @booking.price ? " <small>Nota: Al elegir este servicio, el precio de la reserva se actualizará de #{number_to_currency(@booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)} a #{number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)}</small>".html_safe : "" %><br />
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+            <% if payment.bookings.count > 0 %>
+              <tr>
+                <td>
+                  <b>Reservas:&nbsp;</b>
+                </td>
+                <td>
+                  <% payment.bookings.order(start: :desc).each do |booking| %>
+                    <%= "#{booking.service.name} con #{booking.service_provider.public_name}, el #{booking.start.strftime('%d/%m/%Y %R')}." %><br />
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+            <% if payment.payment_products.count > 0 %>
+              <tr>
+                <td>
+                  <b>Productos:&nbsp;</b>
+                </td>
+                <td>
+                  <% payment.payment_products.each do |payment_product| %>
+                    <%= "#{payment_product.quantity} #{payment_product.product.name}, a #{number_to_currency(payment_product.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)} c/u." %><br />
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </table>
+          <br><br>
+          <button class="btn btn-green associatePaymentBtn" payment_id="<%= payment.id %>" booking_id="<%= @booking.id %>">Asociar a este pago</button>
+        </div>
+      </div>
+
+    <% end %>
+
+  <% else %>
+    <div class="col-xs-12">
+      No existen pagos anteriores de este servicio sin reserva.
+    </div>
+  <% end %>
+
+</div>

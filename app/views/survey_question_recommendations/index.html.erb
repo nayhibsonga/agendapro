@@ -1,0 +1,29 @@
+<h1>Listing survey_question_recommendations</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @survey_question_recommendations.each do |survey_question_recommendation| %>
+      <tr>
+        <td><%= survey_question_recommendation.name %></td>
+        <td><%= survey_question_recommendation.description %></td>
+        <td><%= link_to 'Show', survey_question_recommendation %></td>
+        <td><%= link_to 'Edit', edit_survey_question_recommendation_path(survey_question_recommendation) %></td>
+        <td><%= link_to 'Destroy', survey_question_recommendation, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Survey question recommendation', new_survey_question_recommendation_path %>

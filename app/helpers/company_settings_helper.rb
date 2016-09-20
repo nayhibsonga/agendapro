@@ -1,0 +1,2 @@
+module CompanySettingsHelper
+end

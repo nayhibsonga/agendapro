@@ -1,0 +1,14 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Edición de Usuario</h2>
+      <p>Edita los datos del usuario seleccionado.</p>
+    </div>
+  </div>
+</div>
+
+<%= render 'form' %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'user' %>
+<% end %>

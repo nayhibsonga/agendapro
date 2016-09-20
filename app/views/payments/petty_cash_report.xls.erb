@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+
+ 
+
+      <Worksheet ss:Name="Reporte de Caja Chica">
+
+
+        <Table>
+
+            <ss:Column ss:Width="140"/>
+            <ss:Column ss:Width="140"/>
+            <ss:Column ss:Width="140"/>
+            <ss:Column ss:Width="140"/>
+            <ss:Column ss:Width="140"/>
+            <ss:Column ss:Width="140"/>
+
+            <Row>
+              <Cell><Data ss:Type="String">Resumen de Caja Chica</Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Inicio</Data></Cell>
+              <Cell><Data ss:Type="String"><%= @start_date.strftime('%d/%m/%Y') %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Fin</Data></Cell>
+              <Cell><Data ss:Type="String"><%= @end_date.strftime('%d/%m/%Y') %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Ingresos</Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Fecha</Data></Cell>
+              <Cell><Data ss:Type="String">Autor</Data></Cell>
+              <Cell><Data ss:Type="String">Monto</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
+            </Row>
+
+            <% @petty_incomes.each do |petty_income| %>
+
+              <Row>
+                <Cell><Data ss:Type="String"><%= petty_income.date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= petty_income.get_transactioner_details %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= petty_income.amount %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= petty_income.notes %></Data></Cell>
+              </Row>
+            <% end %>
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+
+            <Row>
+              <Cell><Data ss:Type="String">Egresos</Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Fecha</Data></Cell>
+              <Cell><Data ss:Type="String">Autor</Data></Cell>
+              <Cell><Data ss:Type="String">Monto</Data></Cell>
+              <Cell><Data ss:Type="String">N° de comprobante</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
+            </Row>
+
+            <% @petty_outcomes.each do |petty_outcome| %>
+
+              <Row>
+                <Cell><Data ss:Type="String"><%= petty_outcome.date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= petty_outcome.get_transactioner_details %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= petty_outcome.amount %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= petty_outcome.receipt_number %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= petty_outcome.notes %></Data></Cell>
+              </Row>
+            <% end %>
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Totales</Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Ingresos</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= @petty_incomes.sum(:amount).to_s %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Egresos</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= @petty_outcomes.sum(:amount).to_s %></Data></Cell>
+            </Row>
+
+        </Table>
+
+      </Worksheet>
+
+</Workbook>

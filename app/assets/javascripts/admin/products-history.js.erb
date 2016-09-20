@@ -1,0 +1,267 @@
+var ajax_name = "products_history_list";
+function loadHistory()
+{
+  var location_ids = [];
+  var product_ids = [];
+  $('#render_content').empty();
+  $('#summaries_div').hide();
+  $('#download_stats_btn').hide();
+
+  $("#location-select option").each(function(){
+    if ($(this).is(':selected'))
+    {
+        location_ids.push($(this).val());
+    }
+  });
+
+  if(location_ids.length == 0)
+  {
+    return;
+  }
+
+  $("#product-select option").each(function(){
+    if ($(this).is(':selected'))
+    {
+        product_ids.push($(this).val());
+    }
+  });
+
+  if(product_ids.length == 0)
+  {
+    return;
+  }
+
+  var date_from = $('#from').val();
+  var date_to = $('#to').val();
+  var order = $('#order-select').val();
+  var status = $('#status-select').val();
+
+  var ajax_turn = requestAjaxTurn(ajax_name);
+
+  $.ajax({
+    url: '/product_logs_history',
+    method: 'get',
+    data: {location_ids: location_ids, product_ids: product_ids, from: date_from, to: date_to, order: order, status: status},
+    error: function(response){
+      $('#render_content').empty();
+      $('#download_stats_btn').hide();
+    },
+    success: function(response){
+      if(shouldDisplay(ajax_name, ajax_turn))
+      {
+        $('#render_content').empty();
+        $('#render_content').append(response);
+        link_href = '/product_logs_history_excel.xls?location_ids=' + location_ids.join() +'&product_ids=' + product_ids.join() + '&from=' + date_from + '&to=' + date_to + '&order=' + order + "&status=" + status;
+        $('#download-history-link').attr("href", link_href);
+        $('#download_stats_btn').show();
+      }
+    }
+  });
+}
+
+function loadProducts()
+{
+  console.log("Se ejecuta");
+  //categories_products
+  var categories_ids = [];
+  $("#category-select option").each(function(){
+    if ($(this).is(':selected'))
+    {
+        categories_ids.push($(this).val());
+    }
+  });
+
+  $('#product-select option').remove();
+
+  if(categories_ids.length == 0)
+  {
+    $('#product-select').multiselect('rebuild');
+    loadHistory();
+    return;
+  }
+
+  var status = $('#status-select').val();
+
+  $.ajax({
+    url: '/categories_products',
+    method: 'get',
+    data: {categories_ids: categories_ids, status: status},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#product-select option').remove();
+      $.each(response, function (key, product) {
+        $('#product-select').append('<option value="' + product.id + '">' + product.name + '</option>');
+      });
+      $('#product-select').multiselect('rebuild');
+      loadHistory();
+    }
+  })
+
+}
+
+$(function(){
+
+  registerModerator(ajax_name);
+
+  $('#order-select').on('change', function(){
+    loadHistory();
+  });
+
+  $('#from').on('change', function(){
+    loadHistory();
+  });
+
+  $('#to').on('change', function(){
+    loadHistory();
+  });
+
+  $('#status-select').on('change', function(){
+    loadHistory();
+  });
+
+  $('#location-select').multiselect({
+      includeSelectAllOption: true,
+      selectAllText: 'Todos',
+      buttonContainer: '<div style="min-width: 200px;"></div>',
+      enableClickableOptGroups: true,
+      buttonText: function(options, select) {
+
+          if (options.length === 0) {
+            return 'Ninguno';
+          }
+          else if(options.length == select[0].length)
+          {
+            return "Todos";
+          }
+          else if(options.length > 1)
+          {
+            return options.length + " seleccionados";
+          }
+          else {
+            var labels = [];
+            options.each(function() {
+                if ($(this).attr('label') !== undefined) {
+                    labels.push($(this).attr('label'));
+                }
+                else {
+                    labels.push($(this).html());
+                }
+            });
+            return labels.join(', ') + '';
+          }
+      },
+      optionClass: function(element){
+        return 'location-option';
+      },
+      onChange: function(option, checked, select){
+        loadHistory();
+      },
+      onInitialized: function(select, container){
+        $('#location-select').show();
+      }
+  });
+
+  loadHistory();
+
+  $('#category-select').multiselect({
+      includeSelectAllOption: true,
+      selectAllText: 'Todos',
+      buttonContainer: '<div style="min-width: 200px;" class="multiselect-div"></div>',
+      buttonText: function(options, select) {
+
+          if (options.length === 0) {
+            return 'Ninguno';
+          }
+          else if(options.length == select[0].length)
+          {
+            return "Todos";
+          }
+          else if(options.length > 2)
+          {
+            return options.length + " seleccionados";
+          }
+          else {
+            var labels = [];
+            options.each(function() {
+                if ($(this).attr('label') !== undefined) {
+                    labels.push($(this).attr('label'));
+                }
+                else {
+                    labels.push($(this).html());
+                }
+            });
+            return labels.join(', ') + '';
+          }
+      },
+      optionClass: function(element){
+        return 'location-option';
+      },
+      onChange: function(option, checked, select){
+        loadProducts();
+      },
+      onInitialized: function(select, container){
+        $('#category-select').show();
+      }
+  });
+
+  $('#product-select').multiselect({
+      includeSelectAllOption: true,
+      selectAllText: 'Todos',
+      buttonContainer: '<div style="min-width: 200px;" class="multiselect-div"></div>',
+      buttonText: function(options, select) {
+
+          if (options.length === 0) {
+            return 'Ninguno';
+          }
+          else if(options.length == select[0].length)
+          {
+            return "Todos";
+          }
+          else if(options.length > 1)
+          {
+            return options.length + " seleccionados";
+          }
+          else {
+            var labels = [];
+            options.each(function() {
+                if ($(this).attr('label') !== undefined) {
+                    labels.push($(this).attr('label'));
+                }
+                else {
+                    labels.push($(this).html());
+                }
+            });
+            return labels.join(', ') + '';
+          }
+      },
+      optionClass: function(element){
+        return 'location-option';
+      },
+      onChange: function(option, checked, select){
+        loadHistory();
+      },
+      onInitialized: function(select, container){
+        $('#product-select').show();
+      }
+  });
+
+  $(".datepicker").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+});

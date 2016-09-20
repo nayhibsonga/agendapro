@@ -1,0 +1,122 @@
+<style type="text/css">
+.multiselect-container.dropdown-menu{
+  left: auto;
+}
+</style>
+<!-- <div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Ventas</h2>
+    </div>
+  </div>
+</div> -->
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row" style="margin-top: 10px;">
+        <div class="col-sm-2">
+          <label class="control-label">Desde:</label>
+        </div>
+        <div class="col-sm-4">
+          <input type="text" class="form-control datepicker" id="from" value="<%= (DateTime.now - 1.months).strftime('%d/%m/%Y') %>" />
+        </div>
+        <div class="col-sm-2">
+          <label class="control-label">Hasta:</label>
+        </div>
+        <div class="col-sm-4">
+          <input type="text" class="form-control datepicker" id="to" value="<%= (DateTime.now).strftime('%d/%m/%Y') %>" />
+        </div>
+      </div>
+      <div class="row" style="margin-top: 10px;">
+        <div class="col-sm-2">
+          <label class="control-label">Locales:</label>
+        </div>
+        <div class="col-sm-4">
+          <select id="location-select" multiple="multiple" class="form-control" style="display: none;">
+            <optgroup label="Activos">
+              <% @locations.where(active: true).each do |location|
+              %>
+                <option value="<%= location.id %>" selected="selected">
+                  <%= location.name %>
+                </option>
+              <% end %>
+            </optgroup>
+            <optgroup label="Inactivos">
+              <% @locations.where(active: false).each do |location|
+              %>
+                <option value="<%= location.id %>">
+                  <%= location.name %>
+                </option>
+              <% end %>
+            </optgroup>
+          </select>
+        </div>
+        <div class="col-sm-2">
+          <label class="control-label">Estado:</label>
+        </div>
+        <div class="col-sm-4">
+          <select id="status-select" class="form-control">
+            <option value="active">Activos</option>
+            <option value="inactive">Inactivos</option>
+            <option value="all">Todos</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 10px;">
+        <div class="col-sm-4 col-sm-offset-2">
+          <a href="" id="download-stats-link" target="_blank"><button id="download_stats_btn" class="btn btn-green" style="display: none;"><i class="fa fa-file-excel-o"></i>&nbsp;Descargar</button></a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="row" style="margin-top: 10px;" id="summaries_div" hidden>
+        <div class="col-sm-6">
+          <div class="well revenue">
+            <h4>Recaudación:</h4>
+            <p class="revenue-price" id="price_sum_summary"></p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="well revenue">
+            <h4>Cantidad:</h4>
+            <p class="revenue-price" id="quantity_sum_summary"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="render_content">
+
+  </div>
+
+</div>
+
+
+<% content_for :modals do %>
+  <div class="modal fade sellerModal" id="sellerModal" tabindex="-1" role="dialog" aria-labelledby="Resumen de ventas" aria-hidden="true">
+    <div class="modal-dialog" style="width: 70%;">
+      <div class="modal-content">
+
+      </div>
+    </div>
+  </div>
+  <div class="modal fade productModal" id="productModal" tabindex="-1" role="dialog" aria-labelledby="Resumen de ventas" aria-hidden="true">
+    <div class="modal-dialog" style="width: 70%;">
+      <div class="modal-content">
+
+      </div>
+    </div>
+  </div>
+<% end %>
+
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/bootstrap-multiselect" %>
+  <%= javascript_include_tag "admin/products-stats" %>
+<% end %>

@@ -1,0 +1,124 @@
+//====== Map ======//
+var latLongs;
+function initializeMap (lat, lng, mapDiv) {
+
+    var properties = {
+        center: new google.maps.LatLng(lat, lng),
+        zoom:   15,
+        panControl: false,
+        zoomControl: true,
+        zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL
+        },
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+        },
+        scaleControl: false,
+        streetViewControl: false,
+        overviewMapControl: false,
+        mapTypeId:  google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById(mapDiv), properties);
+
+    google.maps.event.addListenerOnce(map, 'bounds_changed', function(event){
+        if (this.getZoom() >= 15){  
+            this.setZoom(15) 
+        }
+    });
+}
+
+function setMarker (latlng, local, n) {
+    var marker;
+    var image_url = 'http://agendapro.co/assets/search/pin_map'+n+'.png';
+    marker = new google.maps.Marker({
+        position: latlng,
+        map: map,
+        icon: image_url
+    });
+    marker.setMap(map);
+    
+    var infowindow = new google.maps.InfoWindow({
+        content: local
+    });
+    google.maps.event.addListener(marker, 'click', function() {
+        infowindow.open(map,marker);
+    });
+}
+
+
+function centerMap (geolocation) {
+	var geocoder = new google.maps.Geocoder();
+	geocoder.geocode( { 'address' : geolocation }, function (results, status) {
+		if (status == google.maps.GeocoderStatus.OK) {
+			map.setCenter(results[0].geometry.location);
+		}
+	});
+}
+
+function fitMarkers (fullBounds) {
+    map.fitBounds(fullBounds);
+}
+
+function geoLocation (position) {
+    var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    map.setCenter(latLng);
+}
+
+function geoerror (error) {
+    var geolocation = $('#geolocation').data('geolocation');
+    centerMap(geolocation);
+}
+
+function reCenter(latitude, longitude){
+    console.log(latitude + " - " + longitude);
+    var newCenter = new google.maps.LatLng(latitude, longitude);
+    map.setCenter(newCenter);
+}
+
+$(function() {
+	var map;
+
+    var latitude = $("#lat").val();
+    var longitude = $("#long").val();
+    console.log(latitude + " / " + longitude);
+    initializeMap(parseFloat(latitude), parseFloat(longitude), 'map');
+    //initializeMap(-33.413084, -70.592161, 'map');
+    
+    var fullBounds = new google.maps.LatLngBounds();
+    latLongs = [];
+
+    var i = 1;
+    $.each($('#results').data('results'), function (key, local) {
+        loadSchedule(local.id);
+        var latLng = new google.maps.LatLng(local.latitude, local.longitude);
+
+        var addLatLng = true;
+        for(l_i = 0; l_i < latLongs.length; l_i++)
+        {
+            if(latLongs[l_i].lat() == latLng.lat() && latLongs[l_i].lng() == latLng.lng())
+            {
+                addLatLng = false;
+                break;
+            } 
+        }
+
+        if (!local.outcall && addLatLng) {
+            latLongs.push(latLng);
+            setMarker(latLng, local.name, i);
+        }
+        i++;
+
+        fullBounds.extend(latLng);
+    });
+
+    console.log(latLongs);
+
+    if (!fullBounds.isEmpty()) {
+        fitMarkers(fullBounds);
+    }
+    else {
+        var geolocation = $('#geolocation').data('geolocation');
+        centerMap(geolocation);
+    }
+});

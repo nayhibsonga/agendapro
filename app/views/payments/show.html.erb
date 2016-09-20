@@ -1,0 +1,59 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @payment.company %>
+</p>
+
+<p>
+  <strong>Amount:</strong>
+  <%= @payment.amount %>
+</p>
+
+<p>
+  <strong>Receipt type:</strong>
+  <%= @payment.receipt_type %>
+</p>
+
+<p>
+  <strong>Receipt number:</strong>
+  <%= @payment.receipt_number %>
+</p>
+
+<p>
+  <strong>Payment method:</strong>
+  <%= @payment.payment_method %>
+</p>
+
+<p>
+  <strong>Payment method number:</strong>
+  <%= @payment.payment_method_number %>
+</p>
+
+<p>
+  <strong>Payment method type:</strong>
+  <%= @payment.payment_method_type %>
+</p>
+
+<p>
+  <strong>Installments:</strong>
+  <%= @payment.installments %>
+</p>
+
+<p>
+  <strong>Payed:</strong>
+  <%= @payment.payed %>
+</p>
+
+<p>
+  <strong>Payment date:</strong>
+  <%= @payment.payment_date %>
+</p>
+
+<p>
+  <strong>Bank:</strong>
+  <%= @payment.bank %>
+</p>
+
+<%= link_to 'Edit', edit_payment_path(@payment) %> |
+<%= link_to 'Back', payments_path %>

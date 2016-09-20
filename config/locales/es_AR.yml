@@ -1,0 +1,30 @@
+es_AR:
+  number:
+    currency:
+      format:
+        delimiter: '.'
+        format: '%u %n'
+        precision: 0
+        separator: ','
+        significant: false
+        strip_insignificant_zeros: false
+        unit: $
+  country:
+    name: 'Argentina'
+    domain: '.co/es_AR'
+  district: 'comuna'
+  ditricts: 'comunas'
+  ci: 'CI'
+  plans:
+    personal: 390
+    normal: 690
+    premium: 990
+    pro: 1890
+  plan_extra_location:
+    personal: 390
+    normal: 345
+    premium: 495
+    pro: 945
+  phones:
+    sales: '+569 4271 7566'
+    support: '+569 4291 7498'

@@ -1,0 +1,15 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Edición de Recursos</h2>
+      <p>Modifica el recurso seleccionado.</p>
+    </div>
+  </div>
+</div>
+
+<%= content_tag "div", id: "id_data", data: { id: @resource.id } do %>
+<% end %>
+<%= content_tag "div", id: "resource_locations_data", data: { resource_locations: @resource.resource_locations.to_json } do %>
+<% end %>
+
+<%= render 'form' %>

@@ -1,0 +1,2 @@
+module MarketplaceCategoriesHelper
+end

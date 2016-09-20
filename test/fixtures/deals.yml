@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+deal_1:
+  code: 76.233.336-8
+  quantity: 0
+  active: true
+  constraint_option: 2
+  constraint_quantity: 2
+  company: company_1

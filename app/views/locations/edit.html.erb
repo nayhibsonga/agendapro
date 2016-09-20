@@ -1,0 +1,158 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-8">
+      <h2 id='title' class="text-green">Editar Local</h2>
+      <p>Modifica la información del local seleccionado.</p>
+    </div>
+    <div class="col-md-4">
+    	<p style="text-align: right; padding-top: 20px;">
+    		<button class="btn btn-green" id="openDayBtn">Abrir día</button>
+    	</p>
+    </div>
+  </div>
+</div>
+
+<%= content_tag "div", id: "id_data", data: { id: @location.id } do %>
+<% end %>
+<%= content_tag "div", id: "location_times_data", data: { location_times: @location.location_times.order(:day_id, :open).to_json } do %>
+<% end %>
+
+<%= render 'form' %>
+
+
+<div class="modal fade" id="openDayModal" tabindex="-1" role="dialog" aria-labelledby="Abrir día" aria-hidden="true">
+  <div class="modal-dialog" style="width: 40%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="openDayModalTitle" style="line-height: 1.1;">Abrir día</h3>
+      </div>
+      <div class="modal-body" id="openDayModalBody">
+        <p>
+          Abrir el horario para este local en la siguiente fecha y horario:
+        </p>
+        <div class="row">
+          <label for="openDayDate" class="col-md-4 control-label">Fecha</label>
+          <div class="col-md-6">
+            <input type="text" class="form-control" id="openDayDate" name="openDayDate" value="" />
+          </div>
+          <div class="col-md-2">
+          	&nbsp;
+          </div>
+        </div>
+        <div style="clear: both; margin-top: 8px;">
+        </div>
+        <%
+        	start_time = @location.company.company_setting.extended_min_hour.strftime("%R").split(":")        	
+        	end_time = @location.company.company_setting.extended_max_hour.strftime("%R").split(":")
+        	
+          #If calendar isn't extended, then get the largest location_time
+          if !@location.company.company_setting.extended_schedule_bool
+            start_time = @location.location_times.order(open: :asc).first.open.strftime("%R").split(":")
+            end_time = @location.location_times.order(close: :desc).first.close.strftime("%R").split(":")
+          end
+
+          start_hour = start_time[0]
+          start_minute = start_time[1]
+          end_hour = end_time[0]
+          end_minute = end_time[1]
+        %>
+        <input type="hidden" id="extendedMinHour" value="<%= start_hour %>" />
+        <input type="hidden" id="extendedMinMinute" value="<%= start_minute %>" />
+        <input type="hidden" id="extendedMaxHour" value="<%= end_hour %>" />
+        <input type="hidden" id="extendedMaxMinute" value="<%= end_minute %>" />
+        <input type="hidden" id="openDayId" value="" />
+        <div class="row">
+          <label for="openDayStartHour" class="col-md-4 control-label">Inicio</label>
+          <div class="col-md-6">
+            <table style="width: 100%;">
+              <tr>
+                <td style="width: 45%;">
+                  <select id="openDayStartHour" name="openDayStartHour" class="form-control">
+                  	<% 
+                  		for i in start_hour.to_i..end_hour.to_i
+                  			hour_value = "" + i.to_s
+                  			if i < 10
+                  				hour_value = "0" + hour_value
+                  			end
+                  	%>
+                  		<option value="<%= hour_value %>"><%= hour_value %></option>
+                  	<% end %>
+                  </select>
+                </td>
+                <td style="width: 5%; text-align: center;">
+                  :
+                </td>
+                <td style="width: 45%;">
+                  <select id="openDayStartMinute" name="openDayStartMinute" class="form-control">
+                    <% 
+                  		for i in 0..59
+                  			minute_value = "" + i.to_s
+                  			if i < 10
+                  				minute_value = "0" + minute_value
+                  			end
+                  	%>
+                  		<option value="<%= minute_value %>"><%= minute_value %></option>
+                  	<% end %>
+                  </select>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-md-2">
+
+          </div>
+        </div>
+        <div style="clear: both; margin-top: 8px;">
+        </div>
+        <div class="row">
+          <label for="openDayEndHour" class="col-md-4 control-label">Fin</label>
+          <div class="col-md-6">
+            <table style="width: 100%;">
+              <tr>
+                <td style="width: 45%;">
+                  <select id="openDayEndHour" name="openDayEndHour" class="form-control">
+                  	<% 
+                  		for i in start_hour.to_i..end_hour.to_i
+                  			hour_value = "" + i.to_s
+                  			if i < 10
+                  				hour_value = "0" + hour_value
+                  			end
+                  	%>
+                  		<option value="<%= hour_value %>"><%= hour_value %></option>
+                  	<% end %>
+                  </select>
+                </td>
+                <td style="width: 5%; text-align: center;">
+                  :
+                </td>
+                <td style="width: 45%;">
+                  <select id="openDayEndMinute" name="openDayEndMinute" class="form-control">
+                    <% 
+                  		for i in 0..59
+                  			minute_value = "" + i.to_s
+                  			if i < 10
+                  				minute_value = "0" + minute_value
+                  			end
+                  	%>
+                  		<option value="<%= minute_value %>"><%= minute_value %></option>
+                  	<% end %>
+                  </select>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-md-2">
+
+          </div>
+        </div>
+        <div style="clear: both; margin-top: 8px;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+        <button type="button" class="btn btn-green" id="saveOpenDayBtn">Abrir</button>
+      </div>
+    </div>
+  </div>
+</div>

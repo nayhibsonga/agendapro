@@ -1,0 +1,29 @@
+<h1>Listing company_payment_methods</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Company</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @company_payment_methods.each do |company_payment_method| %>
+      <tr>
+        <td><%= company_payment_method.name %></td>
+        <td><%= company_payment_method.company %></td>
+        <td><%= link_to 'Show', company_payment_method %></td>
+        <td><%= link_to 'Edit', edit_company_payment_method_path(company_payment_method) %></td>
+        <td><%= link_to 'Destroy', company_payment_method, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Company payment method', new_company_payment_method_path %>

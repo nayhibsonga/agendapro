@@ -1,0 +1,29 @@
+<h1>Listing survey_question_constructs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Survey question</th>
+      <th>Survey construct</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @survey_question_constructs.each do |survey_question_construct| %>
+      <tr>
+        <td><%= survey_question_construct.survey_question %></td>
+        <td><%= survey_question_construct.survey_construct %></td>
+        <td><%= link_to 'Show', survey_question_construct %></td>
+        <td><%= link_to 'Edit', edit_survey_question_construct_path(survey_question_construct) %></td>
+        <td><%= link_to 'Destroy', survey_question_construct, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Survey question construct', new_survey_question_construct_path %>

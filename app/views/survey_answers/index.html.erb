@@ -1,0 +1,142 @@
+<!-- Chartkick se usa antes de q se carge la pagina -->
+<style type="text/css">
+  .panel-green {
+    background: #22c488;
+    border-radius: 0;
+    border:none;
+  }
+  .panel-body {
+    color: #fff;
+    font-weight: bold;
+  }
+  .image_average {
+    margin-top: 65px;
+  }
+  .image_average img {
+    display: block;
+    margin: 0 auto;
+  }
+  .image_average h4 {
+    text-align: center;
+    margin-bottom: 0;
+    margin-top: 15px;
+  }
+  .image_average span {
+    text-align: center;
+    font-style: italic;
+    display: block;
+  }
+  .image_ranking_appreciation {
+    display: inline-block;
+    margin-left: 4%;
+    margin-right: 4%;
+  }
+  .image_ranking_appreciation img{
+    width: 35px;
+  }
+  .container_ranking {
+    width: 75%;
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+  }
+  .char_average {
+    width: 650px;
+    position: relative;
+    float: left;
+  }
+  .average_attribute {
+    border-left: 3px solid #22c488;
+    border-right: 3px solid #22c488;
+    border-top: 3px solid #22c488;
+    border-bottom: 20px solid #22c488;
+    height: 100px;
+    width: 200px;
+  }
+</style>
+<script type="text/javascript">
+  var Chartkick = {"language": "es"};
+</script>
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <label for="from" class="col-md-1 control-label" style="margin-top: 20px;">Desde:</label>
+        <div class="col-md-3">
+          <input type="text" id="from" name="from" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>" style="margin-top: 20px;">
+        </div>
+        <label for="to" class="col-md-1 control-label" style="margin-top: 20px;">Hasta:</label>
+        <div class="col-md-3">
+          <input type="text" id="to" name="to" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>" style="margin-top: 20px;">
+        </div>
+        <div class="col-md-4">
+          <select class="form-control report_select" id="option" style="margin-top: 20px;">
+            <option value="0">Por fecha de creación de la reserva</option>
+            <option value="1">Por fecha de realización de la reserva</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="status_ids[]" class="col-sm-1 control-label" style="margin-top: 20px;">Estado:</label>
+        <div class="col-sm-7">
+          <% for status in Status.all do %>
+            <label class="checkbox-inline" style="margin-top: 20px;">
+              <%= check_box_tag 'status_ids[]', status.id, params[:status_ids].blank? && status.name != 'Cancelado' ? true : params[:status_ids] && params[:status_ids].includes(status.id), {class: "report_select"} %>
+              <%= status.name.humanize %>
+            </label>
+          <% end %>
+        </div>
+        <div class="col-sm-4">
+          <p style="color: #7d7a7a; font-style: italic; text-align: justify; margin-top: 10px; font-size: 13px;">* Este reporte considera todas las reservas y sesiones agendadas, sin importar si tienen un pago asociado o no.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr></hr>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default panel-green">
+        <div class="panel-body">Valoración General</div>
+      </div>
+      <div id="myTabContent" class="tab-content tab-margin">
+        <div class="tab-pane active" id="render_content" style="padding-top: 10px;">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% @survey_attributes_eva.each do |a| %>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default panel-green">
+          <div class="panel-body"><%= a.name.titleize %></div>
+        </div>
+        <div id="myTabContent" class="tab-content tab-margin">
+          <div class="tab-pane active" style="padding-top: 10px;">
+            <div class="average_attribute">
+              <%= @stars = average_attribute(a.name) %>
+              <% (1..5).each do |s| %>
+                <% if @stars >= s %>
+                  <i class="fa fa-star" aria-hidden="true"></i>
+                <% else %>
+
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/survey_answer" %>
+<% end %>

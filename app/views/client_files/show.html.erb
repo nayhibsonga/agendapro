@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Client:</strong>
+  <%= @client_file.client_id %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @client_file.name %>
+</p>
+
+<p>
+  <strong>Full path:</strong>
+  <%= @client_file.full_path %>
+</p>
+
+<p>
+  <strong>Public url:</strong>
+  <%= @client_file.public_url %>
+</p>
+
+<p>
+  <strong>Size:</strong>
+  <%= @client_file.size %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @client_file.description %>
+</p>
+
+<%= link_to 'Edit', edit_client_file_path(@client_file) %> |
+<%= link_to 'Back', client_files_path %>

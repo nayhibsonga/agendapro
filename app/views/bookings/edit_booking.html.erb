@@ -1,0 +1,72 @@
+<%= stylesheet_link_tag "workflow/workflow-style.css" %>
+<input type="hidden" id="after_booking" value="<%= @booking.service.company.company_setting.after_booking %>" />
+
+
+<div class="row" id="navegacion-workflow">
+  <div class="col-md-12">
+    <div class="container" style="color: #505050 !important; padding-top: 5px;">
+
+     <i class="fa fa-clock-o gray-icon">&nbsp;&nbsp;<span style="font-size: 24px !important; margin-top: -11px;">Elegir la nueva hora</span></i>
+
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="container">
+    <div clas="row" id="espacio-workflow">
+      <div class="col-md-12" id="staff-calendar" class="edit-booking-calendar">
+
+          <div class="panel panel-info">
+            <div class="calendar-head">
+              <div class="panel-title">
+                <div class="row">
+                  <div class="col-md-1">
+                    <button type="button" class="btn btn-default" id="prev"><i class="fa fa-chevron-left"></i></button>
+                  </div>
+                  <div class="col-md-8">
+                    <span class="tittle"></span>
+
+                  </div>
+                  <div class="col-md-2">
+                    <span class="date-span">
+                      Ir a fecha&nbsp;<i class="fa fa-calendar-o"></i>
+                      <input type="text" id="datepicker" name="date" />
+                    </span>
+                  </div>
+                  <div class="col-md-1">
+                    <button type="button" class="btn btn-default pull-right" id="next"><i class="fa fa-chevron-right"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="days-row">
+            </div>
+            <div class="panel-body">
+              <div class="horario" style="max-height: 350px; overflow-y: auto;"></div>
+            </div>
+
+          </div>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <%= form_tag("/edited_booking", method: "post", role: "form", class: "form-horizontal", id: "edit_form" ) do %>
+          <input type="hidden" name="id" id="id" value="<%= @booking.id %>">
+          <input type="hidden" name="start" id="start" value="">
+          <input type="hidden" name="end" id="end" value="">
+          <button type="submit" class="submitBtn">Modificar Hora</button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= content_tag "div", id: "booking", data: {booking: @booking} do %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "jquery-ui.min" %>
+  <%= javascript_include_tag 'workflow/booking-edit' %>
+<% end %>

@@ -1,0 +1,533 @@
+<div class="container container-margin">
+  <%= form_tag("book", method: "post", role: "form", id: "bookingForm") do %>
+    <% if @service.has_sessions %>
+      <div class="row">
+        <div class="col-xs-12">
+          Este servicio es por sesiones. Se reservará la primera sesión, y luego podrás reservar las restantes ingresando a tu Agenda desde tu cuenta AgendaPro, o llamando al local que ofrece el servicio. El valor del servicio incluye todas las sesiones.
+          <br />
+        </div>
+      </div>
+    <% end %>
+    <div class="row">
+      <div class="col-xs-12">
+          <%= hidden_field_tag :service, @service.id %>
+          <%= hidden_field_tag :provider, @provider.id %>
+          <%= hidden_field_tag :start, @start %>
+          <%= hidden_field_tag :end, @end %>
+          <%= hidden_field_tag :origin, @origin %>
+          <%= hidden_field_tag :location, @location.id %>
+          <%= hidden_field_tag :provider_lock, @lock %>
+          <%= hidden_field_tag :max_discount, @hour_discount %>
+          <% if @service.has_sessions %>
+            <%= hidden_field_tag :has_sessions, "1" %>
+          <% else %>
+            <%= hidden_field_tag :has_sessions, "0" %>
+          <% end %>
+
+          <%
+            sessions_amount = 0
+            if !@service.sessions_amount.nil?
+              sessions_amount = @service.sessions_amount
+            end
+          %>
+
+          <%= hidden_field_tag :bookings, @bookings %>
+
+          <%= hidden_field_tag :firstName, if user_signed_in? then current_user.first_name else nil end %>
+          <%= hidden_field_tag :lastName, if user_signed_in? then current_user.last_name else nil end %>
+          <div id="user-data">
+            <div class="light-gray" style="display: block; font-size: 14px;">Nombre completo:</div>
+            <div class="form-group">
+              <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo" required <%= 'disabled' if @location.company.company_setting.client_exclusive %>>
+              <span class="help-block"></span>
+            </div>
+            <div class="form-group">
+              <div class="light-gray" style="display: block; font-size: 14px;">Email:</div>
+              <%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control", :placeholder => "Email", :required => true) %>
+              <span class="help-block"></span>
+            </div>
+            <div class="form-group">
+              <div class="light-gray" style="display: block; font-size: 14px;">Teléfono:</div>
+              <%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "Teléfono", :required => true) %>
+              <span class="help-block"></span>
+            </div>
+
+
+            <!-- CUSTOM ATTRIBUTES START -->
+            <% if @location.company.is_plan_capable("Premium") %>
+
+              <%
+
+                att_client = nil
+
+                if user_signed_in?
+
+                  if Client.where(email: current_user.email, company_id: @location.company_id).count > 0
+                    att_client = Client.where(email: current_user.email, company_id: @location.company_id).first
+                  end
+
+                end
+              %>
+
+              <% @location.company.custom_attributes.where(show_on_workflow: true).each do |attribute| %>
+
+                <% if attribute.datatype == "float" %>
+
+                  <%
+
+                    attribute_value = ""
+                    if !att_client.nil?
+
+                      if !att_client.float_attributes.find_by_attribute_id(attribute.id).nil?
+                        client_attribute = att_client.float_attributes.find_by_attribute_id(attribute.id)
+                        if !client_attribute.value.nil?
+                          attribute_value = client_attribute.value
+                        end
+                      end
+
+                    end
+
+                  %>
+
+                  <div class="form-group">
+                      <div class="light-gray" style="display: block; font-size: 14px;"><%= attribute.name %></div>
+                      <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="<%= attribute_value %>" <%= "required" if attribute.mandatory_on_workflow %> />
+                      <span class="help-block"></span>
+
+                  </div>
+
+                <% elsif attribute.datatype == "integer" %>
+
+                  <%
+
+                    attribute_value = ""
+                    if !att_client.nil?
+
+                      if !att_client.integer_attributes.find_by_attribute_id(attribute.id).nil?
+                        client_attribute = att_client.integer_attributes.find_by_attribute_id(attribute.id)
+                        if !client_attribute.value.nil?
+                          attribute_value = client_attribute.value
+                        end
+                      end
+
+                    end
+
+                  %>
+
+                  <div class="form-group">
+                      <div class="light-gray" style="display: block; font-size: 14px;"><%= attribute.name %></div>
+                      <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="<%= attribute_value %>" <%= "required" if attribute.mandatory_on_workflow %> />
+                      <span class="help-block"></span>
+
+                  </div>
+
+                <% elsif attribute.datatype == "text" %>
+
+                  <%
+
+                    attribute_value = ""
+                    if !att_client.nil?
+
+                      if !att_client.text_attributes.find_by_attribute_id(attribute.id).nil?
+                        client_attribute = att_client.text_attributes.find_by_attribute_id(attribute.id)
+                        if !client_attribute.value.nil?
+                          attribute_value = client_attribute.value
+                        end
+                      end
+
+                    end
+
+                  %>
+
+                  <div class="form-group">
+                    <div class="light-gray" style="display: block; font-size: 14px;"><%= attribute.name %></div>
+                    <input type="text" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="<%= attribute_value %>" <%= "required" if attribute.mandatory_on_workflow %> />
+                    <span class="help-block"></span>
+                  </div>
+
+
+                <% elsif attribute.datatype == "textarea" %>
+
+                  <%
+
+                    attribute_value = ""
+                    if !att_client.nil?
+
+                      if !att_client.textarea_attributes.find_by_attribute_id(attribute.id).nil?
+                        client_attribute = att_client.textarea_attributes.find_by_attribute_id(attribute.id)
+                        if !client_attribute.value.nil?
+                          attribute_value = client_attribute.value
+                        end
+                      end
+
+                    end
+
+                  %>
+
+                  <div class="form-group">
+                    <div class="light-gray" style="display: block; font-size: 14px;"><%= attribute.name %></div>
+                    <textarea class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" <%= "required" if attribute.mandatory_on_workflow %> /><%= attribute_value %></textarea>
+                    <span class="help-block"></span>
+                  </div>
+
+                <% elsif attribute.datatype == "boolean" %>
+
+                  <%
+
+                    attribute_value = false
+                    if !att_client.nil?
+
+                      if !att_client.boolean_attributes.find_by_attribute_id(attribute.id).nil?
+                        client_attribute = att_client.boolean_attributes.find_by_attribute_id(attribute.id)
+                        if !client_attribute.value.nil?
+                          attribute_value = client_attribute.value
+                        end
+                      end
+
+                    end
+
+                  %>
+
+                  <div class="form-group">
+                    <div class="light-gray" style="display: block; font-size: 14px;"><%= attribute.name %></div>
+                    <select class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
+                        <% if attribute_value %>
+                          <option value="1" selected>Sí</option>
+                          <option value="0">No</option>
+                        <% else %>
+                          <option value="1">Sí</option>
+                          <option value="0" selected>No</option>
+                        <% end %>
+                    </select>
+                    <span class="help-block"></span>
+                  </div>
+
+                <% elsif attribute.datatype == "date" %>
+
+                  <%
+
+                    attribute_value = ""
+                    if !att_client.nil?
+
+                      if !att_client.date_attributes.find_by_attribute_id(attribute.id).nil?
+                        client_attribute = att_client.date_attributes.find_by_attribute_id(attribute.id)
+                        if !client_attribute.value.nil?
+                          attribute_value = client_attribute.value.strftime('%Y-%m-%d')
+                        end
+                      end
+
+                    end
+
+                  %>
+
+                  <div class="form-group">
+                    <div class="light-gray" style="display: block; font-size: 14px;"><%= attribute.name %></div>
+                    <input type="date" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="<%= attribute_value %>" <%= "required" if attribute.mandatory_on_workflow %> />
+                    <span class="help-block"></span>
+
+                  </div>
+
+                <% elsif attribute.datatype == "datetime" %>
+
+                  <%
+
+                    attribute_value = ""
+                    attr_hour = "00"
+                    attr_minute = "00"
+                    if !att_client.nil?
+
+                      if !att_client.date_time_attributes.find_by_attribute_id(attribute.id).nil?
+                        client_attribute = att_client.date_time_attributes.find_by_attribute_id(attribute.id)
+                        if !client_attribute.value.nil?
+                          attribute_value = client_attribute.value.strftime('%Y-%m-%d')
+                          attr_hour = client_attribute.value.strftime("%R").split(":")[0]
+                          attr_minute = client_attribute.value.strftime("%R").split(":")[1]
+                        end
+                      end
+
+                    end
+
+                  %>
+
+                  <div class="light-gray" style="display: block; font-size: 14px;"><%= attribute.name %> (fecha y hora)</div>
+
+                  <div class="form-group">
+                    <table>
+                      <tr>
+                        <td style="width: 46%; padding-right: 5px; padding-top: 10px;">
+                          <input type="date" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="Fecha" value="<%= attribute_value %>" <%= "required" if attribute.mandatory_on_workflow %> />
+                          <span class="help-block"></span>
+                        </td>
+                        <td style="width: 25%;">
+                          <select class="form-control" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
+                            <%
+                              for i in 0..23
+                                str_hour = i.to_s
+                                if str_hour.length == 1
+                                  str_hour = "0" + str_hour
+                                end
+                                %>
+
+                                  <option value="<%= str_hour %>" <%= "selected" if str_hour == attr_hour %> ><%= str_hour %></option>
+
+                                <%
+                              end
+                            %>
+                          </select>
+                        </td>
+                        <td style="width: 4%; text-align: center;">
+                          &nbsp;:&nbsp;
+                        </td>
+                        <td style="width: 25%;">
+                          <select class="form-control" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
+                            <%
+                              for i in 0..59
+                                str_minute = i.to_s
+                                if str_minute.length == 1
+                                  str_minute = "0" + str_minute
+                                end
+                                %>
+                                  <option value="<%= str_minute %>" <%= "selected" if str_minute == attr_minute %> ><%= str_minute %></option>
+                                <%
+                              end
+                            %>
+                          </select>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                <% elsif attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0 %>
+
+                  <%
+
+                    attribute_value = nil
+                    if !att_client.nil?
+
+                      if !att_client.categoric_attributes.find_by_attribute_id(attribute.id).nil?
+                        client_attribute = att_client.categoric_attributes.find_by_attribute_id(attribute.id)
+                        if !client_attribute.attribute_category_id.nil?
+                          attribute_value = client_attribute.attribute_category_id
+                        end
+                      end
+
+                    end
+
+                  %>
+
+                  <div class="form-group">
+
+                    <div class="light-gray" style="display: block; font-size: 14px;"><%= attribute.name %></div>
+
+                    <select class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
+                      <% attribute.attribute_categories.each do |category| %>
+
+                          <option value="<%= category.id %>" <%= "selected" if category.id == attribute_value %> ><%= category.category %></option>
+
+                      <% end %>
+                    </select>
+                    <span class="help-block"></span>
+
+                  </div>
+
+                <% end %>
+              <% end %>
+            <% end %>
+            <!-- CUSTOM ATTRIBUTES END -->
+
+
+          </div>
+          <% if @location.company.company_setting.client_exclusive || @location.company.company_setting.use_identification_number %>
+          <div class="form-group">
+            <% if user_signed_in? && Client.where(email: current_user.email, company_id: @location.company.id).count > 0
+              client = Client.where(email: current_user.email, company_id: @location.company.id).first
+            %>
+              <%= text_field_tag(:identification_number, client.identification_number, :class => "form-control", :placeholder => (I18n.t('ci')).capitalize ) %>
+            <% else %>
+              <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => (I18n.t('ci')).capitalize ) %>
+            <% end %>
+            <span class="help-block"></span>
+          </div>
+          <% end %>
+          <% if @service.outcall %>
+          <div id="outcallAddress" class="form-group">
+            <%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+            <span class="help-block"></span>
+          </div>
+          <% end %>
+          <div class="form-group">
+            <%= text_area_tag(:comment, @location.company.company_setting.preset_notes, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario..", :rows => 4) %>
+          </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <input type="hidden" id="payment" name="payment" value="0">
+      <!--
+        AGREGAR RESUMEN DE RESERVA
+      -->
+
+      </div>
+    </div>
+
+    <% if @online_payable && params[:bundle].blank? %>
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="form-group">
+            <button type="submit" class="btn btn-green btn-lg btn-block" id="payBtn">Pagar</button>
+          </div>
+          <div class="form-group">
+            <% if @hour_discount.to_f > 0 %>
+              Precio normal:&nbsp;<strike><%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %></strike><br />
+              Descuento: <%= @hour_discount.to_s %>%<br />
+              Precio final:&nbsp;<%= number_to_currency((@service.price*(100-@hour_discount.to_f)/100), unit: "$", separator: ".", delimiter: ",", precision: 0) %>
+            <% else %>
+              Precio:&nbsp;<%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %>
+            <% end %>
+          </div>
+        </div>
+        <div class="col-xs-6">
+
+        <% if !@must_be_paid_online %>
+          <div class="form-group">
+
+            <button type="submit" class="btn btn-orange btn-lg btn-block" id="submitBtn">Reservar</button>
+
+          </div>
+          <div class="form-group">
+              Precio:&nbsp;<%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %>
+          </div>
+
+        <% end %>
+
+        </div>
+      </div>
+    <% else %>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+
+            <button type="submit" class="btn btn-orange btn-lg btn-block" id="submitBtn">Reservar</button>
+
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div id="mp-selector" hidden>
+      <div class="row">
+        <div class="col-xs-10 col-offset-xs-12">
+          <h4 class="modal-title" style="color: #ccc !important;">Elige el medio de pago</h4>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="04" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" />
+        </div>
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="10" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp10.gif" alt="Banco Ripley" class="mp_link" mp = "10" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="03" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" />
+        </div>
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="07" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" />
+        </div>
+      </div>
+      <div class="row">
+
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="05" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" />
+        </div>
+
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="06" class="mp_radio"/>
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" />
+        </div>
+
+
+      </div>
+
+      <div class="row" style="margin-bottom: 10px; margin-top: 5px;">
+        <div class="col-xs-6 col-xs-offset-3">
+          <button class="btn btn-green btn-lg btn-block" id="select-medio">Pagar</button>
+        </div>
+      </div>
+    </div><!-- /.modal-content -->
+
+
+  <% end %>
+</div>
+
+<!--  MODAL MEDIO DE PAGO -->
+
+
+
+<!-- FIN MODAL MEDIO DE PAGO -->
+
+<%= content_tag "div", id: "selectedLocal", data: {local: @location.as_json(methods: :short_address, except: [:address])} do %>
+<% end %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "datepicker" %>
+<% end %>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag 'split-name' %>
+<%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
+<%= javascript_include_tag 'validations/validate' %>
+<%= javascript_include_tag 'validations/home/workflow' %>
+<%= javascript_include_tag "datepicker" %>
+<script type="text/javascript">
+  $(function() {
+    compose_name('#full_name', '#firstName', '#lastName');
+    split_name('#full_name', '#firstName', '#lastName');
+  });
+
+  $(document).ready(function(){
+
+
+    $("#payBtn").click(function(e){
+      e.preventDefault();
+      $("#payment").val("1");
+      $("#mp-selector").show();
+      $("#payBtn").attr("disabled", "true");
+    });
+
+    $("#submitBtn").click(function(e){
+      e.preventDefault();
+      $("#payment").val("0");
+      $("#bookingForm").submit();
+    });
+
+    $('#select-medio').click(function(){
+      console.log('clicked select medio');
+      var is_selected = false;
+      $('.mp_radio').each(function(){
+        if($(this).prop('checked'))
+        {
+          is_selected = true;
+          console.log(is_selected);
+        }
+      });
+      if(is_selected)
+      {
+        //console.log("Entra");
+        $('#bookingForm').submit();
+      }
+    });
+
+  });
+
+</script>
+<% end %>

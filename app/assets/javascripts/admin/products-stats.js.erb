@@ -1,0 +1,218 @@
+var ajax_name = "products_stats_list";
+function loadStats()
+{
+	var location_ids = [];
+	$('#render_content').empty();
+	$('#summaries_div').hide();
+	$('#download_stats_btn').hide();
+
+	$("#location-select option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	location_ids.push($(this).val());
+		}
+	});
+
+	if(location_ids.length == 0)
+	{
+		return;
+	}
+
+	var date_from = $('#from').val();
+	var date_to = $('#to').val();
+	var status = $('#status-select').val();
+
+	var ajax_turn = requestAjaxTurn(ajax_name);
+
+	$.ajax({
+		url: '/locations_products_stats',
+		method: 'get',
+		data: {location_ids: location_ids, from: date_from, to: date_to, status: status},
+		error: function(response){
+			$('#render_content').empty();
+			$('#summaries_div').hide();
+			$('#download_stats_btn').hide();
+		},
+		success: function(response){
+
+			if(shouldDisplay(ajax_name, ajax_turn))
+			{
+				$('#render_content').empty();
+				$('#render_content').append(response);
+				$('#price_sum_summary').html('<strong>' + $('#price_total').val() + '</strong>');
+				$('#quantity_sum_summary').html('<strong>' + $('#quantity_total').val() + '</strong>');
+				$('#summaries_div').show();
+				link_href = '/locations_products_stats_excel.xls?location_ids=' + location_ids.join() + '&from=' + date_from + '&to=' + date_to + "&status=" + status;
+				$('#download-stats-link').attr("href", link_href);
+				$('#download_stats_btn').show();
+			}
+		}
+	})
+}
+
+function loadSellerHistory(seller_id, seller_type)
+{
+
+	$('#sellerModal .modal-content').empty();
+
+	var location_ids = [];
+
+	$("#location-select option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	location_ids.push($(this).val());
+		}
+	});
+
+	if(location_ids.length == 0)
+	{
+		return;
+	}
+
+	var date_from = $('#from').val();
+	var date_to = $('#to').val();
+	var status = $('#status-select').val();
+
+	$.ajax({
+		url: '/seller_history',
+		method: 'get',
+		data: {location_ids: location_ids, from: date_from, to: date_to, seller_id: seller_id, seller_type: seller_type, status: status},
+		error: function(response){
+
+		},
+		success: function(response){
+			$('#sellerModal .modal-content').append(response);
+			$('#sellerModal').modal('show');
+		}
+	})
+
+}
+
+function loadProductHistory(product_id)
+{
+
+	$('#productModal .modal-content').empty();
+
+	var location_ids = [];
+
+	$("#location-select option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	location_ids.push($(this).val());
+		}
+	});
+
+	if(location_ids.length == 0)
+	{
+		return;
+	}
+
+	var date_from = $('#from').val();
+	var date_to = $('#to').val();
+	var status = $('#status-select').val();
+
+	$.ajax({
+		url: '/product_history',
+		method: 'get',
+		data: {location_ids: location_ids, from: date_from, to: date_to, product_id: product_id, status: status},
+		error: function(response){
+
+		},
+		success: function(response){
+			$('#productModal .modal-content').append(response);
+			$('#productModal').modal('show');
+		}
+	})
+
+}
+
+$(function(){
+
+	registerModerator(ajax_name);
+
+	$('#from').on('change', function(){
+    loadStats();
+  });
+
+  $('#to').on('change', function(){
+    loadStats();
+  });
+
+  $('#status-select').on('change', function(){
+  	loadStats();
+  })
+
+
+	$('#location-select').multiselect({
+	    includeSelectAllOption: true,
+	    selectAllText: 'Todos',
+	    buttonContainer: '<div style="min-width: 200px;"></div>',
+	    enableClickableOptGroups: true,
+	    buttonText: function(options, select) {
+
+	      	if (options.length === 0) {
+	        	return 'Ninguno';
+	      	}
+	      	else if(options.length == select[0].length)
+	      	{
+	        	return "Todos";
+	      	}
+	      	else if(options.length > 1)
+	      	{
+	        	return options.length + " seleccionados";
+	      	}
+	      	else {
+	        	var labels = [];
+	        	options.each(function() {
+	           		if ($(this).attr('label') !== undefined) {
+	               		labels.push($(this).attr('label'));
+	           		}
+	           		else {
+	               		labels.push($(this).html());
+	           		}
+	        	});
+	        	return labels.join(', ') + '';
+	      	}
+	    },
+	    optionClass: function(element){
+	    	return 'location-option';
+	    },
+	    onChange: function(option, checked, select){
+	    	loadStats();
+	    },
+	    onInitialized: function(select, container){
+	    	$('#location-select').show();
+	    }
+	});
+
+	loadStats();
+
+	$(".datepicker").datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    autoSize: true,
+	    firstDay: 1,
+	    changeMonth: true,
+	    changeYear: true,
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	        prevText: 'Atrás',
+	        nextText: 'Adelante',
+	        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	        today: 'Hoy',
+	        clear: ''
+	  });
+
+	$('body').on('click', '.seller_link', function(){
+		var seller_id = $(this).attr("seller_id");
+		var seller_type = $(this).attr("seller_type");
+		loadSellerHistory(seller_id, seller_type);
+	});
+
+	$('body').on('click', '.product_link', function(){
+		var product_id = $(this).attr("product_id");
+		loadProductHistory(product_id);
+	});
+
+});

@@ -1,0 +1,34 @@
+
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" width="20%" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:middle; width:20% ">
+    <img src='http://jhosircordova.com/AgendaPro/logo2.png' width="200px">
+  </td>
+  <td colspan="3" width="80%" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:middle; width:80%">
+    <h4 class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-family:inherit; color: #22c488;font-size: 20px;font-weight: normal;margin-bottom: 5px;
+        margin-top: 10px;">Encuesta de Satisfacción <span style="font-weight:bold"><%= @company.name %></span></h4>
+    <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:left;">Mensaje de empresas</p>
+  </td>
+</tr>
+
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;height:30px;width:100%;">
+    <td colspan="5" >
+      <p style="border-top: 1px solid #ccc;padding-top: 45px;margin-bottom: 5px;width: 95%;text-align: left;margin-left: auto;margin-right: auto;">Como calificarias el servicio prestado por la empresa <span style="font-weight:bold;color: #22c488;"><%= @company.name %></span>.</p>
+    </td>
+  </tr>
+</tr>
+
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="5">
+    <p style="width:95%; margin-left:auto; margin-right:auto;">
+      <% (1..5).each do |i| %>
+      <%=link_to(image_tag("http://jhosircordova.com/AgendaPro/0#{i}.png", {width:'100%'}),new_survey_answer_url(:confirmation_code => @book.confirmation_code, :valoration => i), {style:"width:70px; color:#fff; text-align:center;border:none;border-radius:2px;display:inline-block;line-height: 45px;vertical-align: top;text-decoration: none; margin:7px;"}) %>
+      <% end %>
+    </p>
+  </td>
+  <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;height:30px;width:100%;">
+    <td colspan="5" >
+      <p style="border-top: 1px solid #ccc;padding-top: 10px;margin-bottom: 5px;width: 95%;text-align: left;margin-left: auto;margin-right: auto;">Praesent facilisis ligula sit amet sem commodo, eget sagittis lectus tincidunt.</p>
+    </td>
+  </tr>
+</tr>

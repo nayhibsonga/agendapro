@@ -1,0 +1,44 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @chart_field.company %>
+</p>
+
+<p>
+  <strong>Chart group:</strong>
+  <%= @chart_field.chart_group %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @chart_field.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @chart_field.description %>
+</p>
+
+<p>
+  <strong>Datatype:</strong>
+  <%= @chart_field.datatype %>
+</p>
+
+<p>
+  <strong>Slug:</strong>
+  <%= @chart_field.slug %>
+</p>
+
+<p>
+  <strong>Mandatory:</strong>
+  <%= @chart_field.mandatory %>
+</p>
+
+<p>
+  <strong>Order:</strong>
+  <%= @chart_field.order %>
+</p>
+
+<%= link_to 'Edit', edit_chart_field_path(@chart_field) %> |
+<%= link_to 'Back', chart_fields_path %>

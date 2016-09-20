@@ -1,0 +1,95 @@
+<!-- Chartkick se usa antes de q se carge la pagina -->
+<script type="text/javascript">
+	var Chartkick = {"language": "es"};
+</script>
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <label for="from" class="col-md-1 control-label" style="margin-top: 20px;">Desde:</label>
+        <div class="col-md-3">
+          <input type="text" id="from" name="from" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>" style="margin-top: 20px;">
+        </div>
+        <label for="to" class="col-md-1 control-label" style="margin-top: 20px;">Hasta:</label>
+        <div class="col-md-3">
+          <input type="text" id="to" name="to" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>" style="margin-top: 20px;">
+        </div>
+        <div class="col-md-4">
+          <select class="form-control report_select" id="option" style="margin-top: 20px;">
+            <option value="0">Por fecha de creación de la reserva</option>
+            <option value="1">Por fecha de realización de la reserva</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="status_ids[]" class="col-sm-1 control-label" style="margin-top: 20px;">Estado:</label>
+        <div class="col-sm-7">
+          <% for status in Status.all do %>
+            <label class="checkbox-inline" style="margin-top: 20px;">
+              <%= check_box_tag 'status_ids[]', status.id, params[:status_ids].blank? && status.name != 'Cancelado' ? true : params[:status_ids] && params[:status_ids].includes(status.id), {class: "report_select"} %>
+              <%= status.name.humanize %>
+            </label>
+          <% end %>
+        </div>
+        <div class="col-sm-4">
+          <p style="color: #7d7a7a; font-style: italic; text-align: justify; margin-top: 10px; font-size: 13px;">* Este reporte considera todas las reservas y sesiones agendadas, sin importar si tienen un pago asociado o no.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="border-top: 1px solid #e3e3e3; margin-top: 25px;">
+    <div class="col-md-2">
+      <ul id="myTab" class="nav nav-pills nav-stacked tab-margin" role="tablist">
+        <li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="status_details">General</a></li>
+        <li class="dropdown">
+          <a href="#" id="bookingsTabDrop" class="dropdown-toggle" data-toggle="dropdown">Reservas <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="bookingsTabDrop">
+            <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="bookings_history">Historial</a></li>
+            <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="bookings_metrics">Métricas</a></li>
+          </ul>
+        </li>
+        <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="locations">Locales</a></li>
+        <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="services">Servicios</a></li>
+        <li class="dropdown">
+          <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Local <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+            <% @locations.each do |location| %>
+            <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_services<%=location.id%>"><%= location.name %></a></li>
+            <% end %>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Prestadores por Local <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+            <% @locations.each do |location| %>
+            <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_providers<%=location.id%>"><%= location.name %></a></li>
+            <% end %>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Prestador <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+            <% @locations.each do |location| %>
+            <li class="location-listed"> <strong><%= location.name %></strong></li>
+            <% location.service_providers.where(active: true).order(:order, :public_name).each do |service_provider| %>
+            <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="provider_services<%=service_provider.id%>"><%= service_provider.public_name %></a></li>
+            <% end %>
+            <% end %>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-10 left-panel">
+      <div id="myTabContent" class="tab-content tab-margin">
+        <div class="tab-pane active" id="render_content" style="padding-top: 10px;">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/reports" %>
+<% end %>

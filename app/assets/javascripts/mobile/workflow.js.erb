@@ -1,0 +1,258 @@
+function loadSchedule (id) {
+  $.getJSON('/schedule', {local: id}, function (schedule) {
+    $.each(schedule, function (day, hour) {
+      if (hour.open) {
+        $('#schedule-body').append(
+          '<li class="list-group-item">' +
+            day + ': ' +  getHour(hour.open) + ' - ' + getHour(hour.close) +
+          '</li>'
+        );
+      }
+    })
+  });
+}
+
+function getHour (str) {
+  var index = str.indexOf('T'); //2000-1-1T08:00:00Z
+  str = str.substring(index + 1, index + 6); //08:00
+  return str;
+}
+
+var state;
+function loadServices (localId) {
+  $.getJSON('/local_services', {location: localId}, function (categorized_services) {
+    $.each(categorized_services, function (key, service_hash) {
+      if (service_hash.services.length > 0) {
+        var servicesHTML = '';
+        $.each(service_hash.services, function (key, service) {
+          servicesHTML += '<option data-bundle="' + service.bundle + '" value="' + service.id + '">' + service.name + '</option>';
+        });
+        $('#service').append(
+          '<optgroup label="' + service_hash.category + '">' + servicesHTML + '</optgroup>'
+        );
+      };
+    });
+    $('#service').change(function (event) {
+      var serviceId = $(event.target).val();
+      loadProviders(localId, serviceId);
+    });
+    state = window.history.state;
+    if (state) {
+      $('#service').val(state.service).change();
+    }
+  });
+}
+
+function loadProviders (localId, serviceId) {
+  if (serviceId) {
+    $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
+      $('#provider').attr('disabled', true);
+      $('#provider').empty();
+      if ($('#providerPreference').data('provider-preference') != 2) {
+        $.each(providers, function (key, provider) {
+          $('#provider').append(
+            '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+          );
+        });
+      }
+
+      var picker;
+      if ($('#providerPreference').data('provider-preference') != 1) {
+        $('#provider').prepend(
+          '<option value="0">Sin Preferencia</option>'
+        );
+
+        $('#datepicker').attr('disabled', false);
+        picker = datepicker('#datepicker', {
+          format: 'dddd d !de mmmm !de yyyy',
+          min: true,
+          klass: {
+            input: 'datepicker'
+          },
+          onSet: function (context) {
+            window.history.replaceState(
+              {
+                local: localId,
+                service: $('#service').val(),
+                provider: $('#provider').val(),
+                datepicker: picker.get('select', 'yyyy/mm/dd')
+              },
+              null
+            );
+            $('.btn-block').attr('disabled', false);
+          }
+        });
+      }
+      else {
+        $('#provider').prepend(
+          '<option value="0">Selecciona un prestador</option>'
+        );
+        $('#provider').one('change', function (event) {
+          $('#provider option:first').remove();
+        });
+        $('#provider').change(function (event) {
+          var minDate = new Date($('#timeInterval').data('min'));
+          var maxDate = new Date($('#timeInterval').data('max'));
+
+          $('#datepicker').attr('disabled', false);
+          picker = datepicker('#datepicker', {
+            format: 'dddd d !de mmmm !de yyyy',
+            min: minDate,
+            max: maxDate,
+            klass: {
+              input: 'datepicker'
+            },
+            onSet: function (context) {
+              window.history.replaceState(
+                {
+                  local: localId,
+                  service: $('#service').val(),
+                  provider: $('#provider').val(),
+                  datepicker: picker.get('select', 'yyyy/mm/dd')
+                },
+                null
+              );
+              $('.btn-block').attr('disabled', false);
+            }
+          });
+        });
+      }
+      $('#provider').attr('disabled', false);
+      if (state) {
+        $('#provider').val(state.provider).change();
+        picker.set('select', state.datepicker, {format: "yyyy/mm/dd"});
+      }
+    });
+  } else{
+    $('#provider').attr('disabled', true);
+    $('#datepicker').attr('disabled', true);
+  };
+}
+
+function addBooking (date, start, end, provider, has_time_discount, time_discount, has_discount, discount, service_promo_id, bundle_id, bookings) {
+  selected = true;
+  $('#start').val(generateDate(date, start));
+  $('#end').val(generateDate(date, end));
+  $('#staff').val(provider);
+  $("#has_time_discount").val(has_time_discount);
+  $("#time_discount").val(time_discount);
+  $("#has_discount").val(has_discount);
+  $("#discount").val(discount);
+  $("#service_promo_id").val(service_promo_id);
+  $("#bookings").val(JSON.stringify(bookings));
+  $("#bundle").val(bundle_id);
+}
+
+function generateDate(date, time) {
+  var year = date.substring(0, date.indexOf('-'));
+  var month = date.substring(date.indexOf('-') + 1, date.lastIndexOf('-'));
+  var day = date.substring(date.lastIndexOf('-') + 1);
+
+  time += ':00';
+
+  return year + '-' + month + '-' + day + ' ' + time;
+}
+
+function currency(price)
+{
+  var amount = price.toString();
+
+  var j = 0;
+  var stack = new Array();
+  for(i = amount.length-1; i>=0; i--)
+  {
+    j = j+1;
+    stack.push(amount[i]);
+    if(j == 3 && i>0)
+    {
+      stack.push('.');
+      j = 0;
+    }
+  }
+  var formatted_amount = "$ ";
+  for(i = stack.length-1; i >=0 ; i--)
+  {
+    formatted_amount = formatted_amount + stack[i];
+  }
+
+  return formatted_amount;
+}
+
+function loadServiceInfo(service_id){
+
+  var bundle = $("#service").find(':selected').data('bundle');
+  console.log(bundle);
+  var bundle_str = "" + bundle;
+  $('#serviceInfo').empty();
+  $('#serviceInfo').hide();
+  if(service_id != null && service_id > 0)
+  {
+    $.ajax({
+      url: '/service',
+      method: 'get',
+      dataType: 'json',
+      data: {id: service_id, bundle: bundle_str},
+      error: function(response){
+
+      },
+      success: function(response){
+        if(bundle)
+        {
+          var services = response.services;
+          $('#serviceInfo').append('<div class="col-xs-12"><label>Servicios:</label></div><div style="clear: both;"></div>');
+          $.each(services, function (key, service) {
+            $('#serviceInfo').append('<div class="col-xs-12">' + service.name + '</div><div style="clear: both;"></div>');
+          });
+          if(response.show_price)
+          {
+            $('#serviceInfo').append('<br /><div class="col-xs-12">Precio: ' + currency(parseInt(response.price)) + '</div><div style="clear: both;"></div>');
+          }
+          else
+          {
+            $('#serviceInfo').append('<div class="col-xs-12">Precio: Preguntar en local</div><div style="clear: both;"></div>');
+          }
+          $('#serviceInfo').append('<div class="col-xs-12">Duración: ' + response.duration + ' minutos</div><div style="clear: both;"></div>');
+          $('#serviceInfo').show();
+        }
+        else
+        {
+          var service = response;
+          if(service.show_price)
+          {
+            $('#serviceInfo').append('<div class="col-xs-12">Precio: ' + currency(parseInt(service.price)) + '</div><div style="clear: both;"></div>');
+          }
+          else
+          {
+            $('#serviceInfo').append('<div class="col-xs-12">Precio: Preguntar en local</div><div style="clear: both;"></div>');
+          }
+          $('#serviceInfo').append('<div class="col-xs-12">Duración: ' + service.duration + ' minutos</div><div style="clear: both;"></div>');
+          $('#serviceInfo').show();
+        }
+      }
+    });
+  }
+
+}
+
+$(document).ready(function(){
+
+  $("#selectHourNextBtn").on('click', function(e){
+    e.preventDefault();
+    selects = [];
+    selects.push({
+      service: $("#service").val(),
+      provider: $("#provider").val(),
+      bundle: $("#service").find(':selected').data('bundle')
+    });
+
+    $("#serviceStaff").val(JSON.stringify(selects));
+
+    $("#selectHourForm").submit();
+
+  });
+
+  $('#service').on('change', function(){
+    loadServiceInfo($(this).val());
+  });
+
+});

@@ -1,0 +1,47 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Encuestas para clientes</h2>
+      <p>Estas son las encuestas que serán enviadas a tus clientes luego de la asistencia a sus servicios.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="pull-left" style="margin: 10px 0;">
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="pull-right" style="margin: 10px 0;">
+        <%= link_to '<i class="fa fa-plus"></i> Nueva encuesta.'.html_safe, new_survey_construct_path, :class => "btn btn-green" %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-bordered table-green">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Fecha de Publicación</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @survey_constructs.each do |survey_construct| %>
+            <tr>
+              <td><%= survey_construct.name %></td>
+              <td>Hace <%= time_ago_in_words(survey_construct.created_at) %></td>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_survey_construct_path(survey_construct), :class => "btn btn-sm btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, survey_construct, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el aviso seleccionado?' } unless cannot? :destroy, survey_construct %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

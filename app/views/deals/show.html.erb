@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @deal.code %>
+</p>
+
+<p>
+  <strong>Quantity:</strong>
+  <%= @deal.quantity %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @deal.active %>
+</p>
+
+<p>
+  <strong>Constraint option:</strong>
+  <%= @deal.constraint_option %>
+</p>
+
+<p>
+  <strong>Constraint quantity:</strong>
+  <%= @deal.constraint_quantity %>
+</p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @deal.company_id %>
+</p>
+
+<%= link_to 'Edit', edit_deal_path(@deal) %> |
+<%= link_to 'Back', deals_path %>

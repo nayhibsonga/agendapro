@@ -1,0 +1,28 @@
+<div class="background-green">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12">
+				<p class="text-center" style="margin: 0;">Modificar Cliente</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="background-grey">
+        <span class="pull-left" style="margin: 0 5px;"><i class="fa fa-user fa-2x"></i></span>
+        <%= link_to 'Eliminar', @client, :class => "btn btn-sm btn-red pull-right", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene ' + @client.bookings.count.to_s + ' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, @client %>
+        <span><%= @client.first_name %> <%= @client.last_name %></span>
+        <div class="clearfix"></div>
+      </div>
+		</div>
+	</div>
+</div>
+
+<%= render 'form' %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag 'validations/validate' %>
+	<%= javascript_include_tag 'validations/admin/client' %>
+<% end %>

@@ -1,0 +1,66 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 id='title' class="text-green">Editar Notificaciones</h2>
+      <p>Modifica los parámetros de notificación.</p>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <%= render 'form' %>
+    </div>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+  <script type="text/javascript">
+    $(function () {
+      showCheckpoint();
+
+      $('#notification_email_receptor_type').change(function (e) {
+        var val = $(e.target).val();
+        if (val == 1) {
+          $('#local-notification').removeClass('hidden');
+          if (!$('#provider-notification').hasClass('hidden')) {
+            $('#provider-notification').addClass('hidden');
+            uncheckCheckbox($('#provider-notification'));
+          };
+        } else if (val == 2) {
+          $('#provider-notification').removeClass('hidden');
+          if (!$('#local-notification').hasClass('hidden')) {
+            $('#local-notification').addClass('hidden');
+            uncheckCheckbox($('#local-notification'));
+          };
+        } else{
+          if (!$('#provider-notification').hasClass('hidden')) {
+            $('#provider-notification').addClass('hidden');
+            uncheckCheckbox($('#provider-notification'));
+          };
+          if (!$('#local-notification').hasClass('hidden')) {
+            $('#local-notification').addClass('hidden');
+            uncheckCheckbox($('#local-notification'));
+          };
+        };
+      });
+    });
+
+    function uncheckCheckbox (parent) {
+      $.each(parent.find('input[type="checkbox"]'), function (i, checkbox) {
+        $(checkbox).prop('checked', false);
+      });
+    }
+
+    function showCheckpoint () {
+      var receptor = $('#notification_email_receptor_type').val();
+      if (receptor == 1) {
+        $('#local-notification').removeClass('hidden');
+      };
+      if (receptor == 2) {
+        $('#provider-notification').removeClass('hidden');
+      };
+    }
+  </script>
+<% end %>

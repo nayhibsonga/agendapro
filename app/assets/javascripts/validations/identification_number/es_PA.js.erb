@@ -1,0 +1,13 @@
+function rut_clear(value) {
+	return value.replace(/[\.\-]/g, "");
+}
+
+function identification_number_format(value) {
+	var cRut = rut_clear(value);
+	var rutF = "";
+	while(cRut.length > 4) {
+		rutF = "-" + cRut.substr(cRut.length - 4) + rutF;
+		cRut = cRut.substring(0, cRut.length - 4);
+	}
+	return cRut + rutF;
+}

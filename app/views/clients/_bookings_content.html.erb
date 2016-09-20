@@ -1,0 +1,101 @@
+<div class="row">
+  <div class="col-xs-4 col-md-2">
+    <div class="well well-sm">
+      <h4 class="text-center"><strong>Reservadas</strong></h4>
+      <p class="text-center text-green" style="font-size: 20px;"><strong><%= @booked %></strong></p>
+    </div>
+  </div>
+  <div class="col-xs-4 col-md-2">
+    <div class="well well-sm">
+      <h4 class="text-center"><strong>Confirmadas</strong></h4>
+      <p class="text-center text-green" style="font-size: 20px;"><strong><%= @confirmed %></strong></p>
+    </div>
+  </div>
+  <div class="col-xs-4 col-md-2">
+    <div class="well well-sm">
+      <h4 class="text-center"><strong>Asistidas</strong></h4>
+      <p class="text-center text-green" style="font-size: 20px;"><strong><%= @attended %></strong></p>
+    </div>
+  </div>
+  <div class="col-xs-4 col-md-2">
+    <div class="well well-sm">
+      <h4 class="text-center"><strong>Pagadas</strong></h4>
+      <p class="text-center text-green" style="font-size: 20px;"><strong><%= @payed %></strong></p>
+    </div>
+  </div>
+  <div class="col-xs-4 col-md-2">
+    <div class="well well-sm">
+      <h4 class="text-center"><strong>Canceladas</strong></h4>
+      <p class="text-center text-green" style="font-size: 20px;"><strong><%= @cancelled %></strong></p>
+    </div>
+  </div>
+  <div class="col-xs-4 col-md-2">
+    <div class="well well-sm">
+      <h4 class="text-center"><strong>No Asistidas</strong></h4>
+      <p class="text-center text-green" style="font-size: 20px;"><strong><%= @notAttended %></strong></p>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="table-responsive">
+      <table class="table table-hover table-green">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Local</th>
+            <th>Servicio</th>
+            <th>Prestador</th>
+            <th>Estado</th>
+            <th>Nota Cliente</th>
+            <th>Nota Interna</th>
+            <% if @client.company.company_setting.staff_code %>
+            <th>Último Responsable</th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @bookings.each do |booking| %>
+          <tr>
+            <td><%= l booking.start, format: :long %></td>
+            <td><%= booking.location.name %></td>
+            <td>
+              <%= booking.service.name %>
+              <% if booking.is_session && booking.status_id != Status.find_by_name("Cancelado").id %>
+                <%
+                  index = 1
+                  session_index = ""
+                  session_booking = booking.session_booking
+                  session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+                    if b.id == booking.id
+                      session_index = "Sesión #{index}"
+                      break
+                    end
+                    index = index + 1
+                  end
+                  session_index = "#{session_index} de #{session_booking.sessions_amount}"
+                %>
+                <span class="label label-session"><%= "(#{session_index})" %></span>
+              <% end %>
+            </td>
+            <td><%= booking.service_provider.public_name %></td>
+            <td>
+              <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+            </td>
+            <td><%= booking.notes %></td>
+            <td><%= booking.company_comment %></td>
+            <% if @client.company.company_setting.staff_code %>
+            <td><%= if booking.booking_histories.count > 0 && booking.booking_histories.order(:created_at).last.employee_code_id && EmployeeCode.find_by(id: booking.booking_histories.order(:created_at).last.employee_code_id) then EmployeeCode.find(booking.booking_histories.order(:created_at).last.employee_code_id).name end %><%= if booking.booking_histories.count > 0 then (' <small>(' + booking.booking_histories.order(:created_at).last.action + ')</small>').html_safe end %></td>
+            <% end %>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-8">
+    <%= will_paginate @bookings, renderer: BootstrapPagination::Rails %>
+  </div>
+</div>

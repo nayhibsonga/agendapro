@@ -1,0 +1,37 @@
+<h1>Listing client_files</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Client</th>
+      <th>Name</th>
+      <th>Full path</th>
+      <th>Public url</th>
+      <th>Size</th>
+      <th>Description</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @client_files.each do |client_file| %>
+      <tr>
+        <td><%= client_file.client_id %></td>
+        <td><%= client_file.name %></td>
+        <td><%= client_file.full_path %></td>
+        <td><%= client_file.public_url %></td>
+        <td><%= client_file.size %></td>
+        <td><%= client_file.description %></td>
+        <td><%= link_to 'Show', client_file %></td>
+        <td><%= link_to 'Edit', edit_client_file_path(client_file) %></td>
+        <td><%= link_to 'Destroy', client_file, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Client file', new_client_file_path %>

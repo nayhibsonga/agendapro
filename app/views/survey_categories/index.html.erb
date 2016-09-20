@@ -1,0 +1,29 @@
+<h1>Listing survey_categories</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Company</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @survey_categories.each do |survey_category| %>
+      <tr>
+        <td><%= survey_category.name %></td>
+        <td><%= survey_category.company %></td>
+        <td><%= link_to 'Show', survey_category %></td>
+        <td><%= link_to 'Edit', edit_survey_category_path(survey_category) %></td>
+        <td><%= link_to 'Destroy', survey_category, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Survey category', new_survey_category_path %>

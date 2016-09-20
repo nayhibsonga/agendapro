@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Inicia Sesión</h2>
+      <h2 class="section_header">Por favor ingresa tu e-mail y tu contraseña.</h2>
+    </section>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row well">
+    <%= form_for resource, :as => resource_name, :url => session_path(resource_name), :html => { class: 'form-horizontal' } do |f| %>
+        <div class="form-group">
+            <%= f.label :email, 'E-mail', :class => 'col-sm-2 control-label' %>
+            <div class="col-sm-4">
+                <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
+            </div>
+        </div>
+        <div class="form-group">
+            <%= f.label :password, 'Contraseña', :class => 'col-sm-2 control-label' %>
+            <div class="col-sm-4">
+                <%= f.password_field :password, :required => true, :class => 'form-control' %>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <div class="checkbox">
+                    <label>
+                        <%= f.check_box :remember_me %> Recordarme
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <%= f.submit 'Ingresar', :class => 'btn btn-orange', onclick: "ga('send', 'event', 'Usuarios', 'Sign-In Usuarios', 'Ingreso desde Login');" %>
+                <%= link_to "Cancelar", :back, :class => 'btn btn-default' %>
+            </div>
+        </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row well">
+    <p> ¿No recuerdas tu contraseña?
+        <%= link_to "Recuperar Contraseña", new_password_path(resource_name) %><br />
+    </p>
+  </div>
+</div>
+
+

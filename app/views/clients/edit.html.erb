@@ -1,0 +1,12 @@
+<div class="container-fluid">
+
+  <%= render 'client_layout' %>
+
+</div>
+
+<%= render 'form' %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/client' %>
+<% end %>

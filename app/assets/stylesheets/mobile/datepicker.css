@@ -1,0 +1,57 @@
+/**
+ * The month and year selectors.
+ */
+.picker__select--month:focus,
+.picker__select--year:focus {
+  border-color: #1ba970;
+}
+/**
+ * The month navigation buttons.
+ */
+.picker__nav--prev:hover,
+.picker__nav--next:hover {
+  background: #adf0d1;
+}
+/**
+ * The days on the calendar
+ */
+.picker__day--today:before {
+  border-top: 0.5em solid #22c488;
+}
+.picker__day--infocus:hover,
+.picker__day--outfocus:hover {
+  background: #adf0d1;
+}
+.picker__day--highlighted {
+  border-color: #1ba970;
+}
+.picker__day--highlighted:hover,
+.picker--focused .picker__day--highlighted {
+  background: #adf0d1;
+}
+.picker__day--selected,
+.picker__day--selected:hover,
+.picker--focused .picker__day--selected {
+  background: #1ba970;
+}
+/**
+ * The footer containing the "today" and "clear" buttons.
+ */
+.picker__button--today:hover,
+.picker__button--clear:hover,
+.picker__button--close:hover {
+  background: #adf0d1;
+  border-bottom-color: #adf0d1;
+}
+.picker__button--today:focus,
+.picker__button--clear:focus,
+.picker__button--close:hover {
+  background: #adf0d1;
+  border-color: #1ba970;
+}
+.picker__button--today:before {
+  border-top: 0.66em solid #22c488;
+}
+.picker__button--close:before {
+  color: #e55938;
+}

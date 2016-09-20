@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+  <head>
+    <title>Administrador - AgendaPro</title>
+    <!-- start: Meta -->
+    <%= render 'layouts/meta_tags' %>
+    <!-- end: Meta -->
+
+    <!-- start: Mobile Specific -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- end: Mobile Specific -->
+
+    <!-- start: CSS -->
+    <%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
+    <%= stylesheet_link_tag "quickadd" %>
+    <!-- end: CSS -->
+
+    <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+    <!-- Begin Inspectlet Embed Code -->
+    <script type="text/javascript" id="inspectletjs">
+      window.__insp = window.__insp || [];
+      __insp.push(['wid', 1883420541]);
+      (function() {
+      function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+      if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+      else window.addEventListener('load', __ldinsp, false);
+      })();
+    </script>
+    <!-- End Inspectlet Embed Code -->
+    <!-- start: Facebook Tracker-->
+    <%= render 'layouts/facebook_tracker' %>
+    <!-- end: Facebook Tracker-->
+    <% end %>
+
+    <%= yield :head_scripts %>
+
+    <%= render 'layouts/icons' %>
+  </head>
+
+  <body>
+    <!-- start: Header -->
+    <!-- start: Alerts -->
+    <!-- end: Alerts -->
+    <!-- end: Header -->
+
+    <!-- start: content -->
+    <%= yield %>
+    <!-- end: content -->
+
+    <!-- start: JavaScript-->
+    <%= javascript_include_tag "admin" %>
+    <!--[if gte IE 9]><!-->
+      <script type="text/javascript">
+        window.jQuery || document.write("<script src='/assets/jquery-2.1.1.min.js'>" + "<" + "/script>");
+      </script>
+    <!--<![endif]-->
+    <%= render 'layouts/alerts' %>
+    <%= yield :scripts %>
+    <!-- end: JavaScript-->
+  </body>
+</html>

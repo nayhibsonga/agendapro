@@ -1,0 +1,150 @@
+<div style="max-height: 400px; scroll-y: auto;">
+  <div class="container-fluid background-grey">
+    <div class="row">
+      <div class="col-md-12">
+        <h2 class="text-green">
+          Servicios con promociones por aprobar
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid tab-margin">
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-green">
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th>Empresa</th>
+              <th>Opciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @services.each do |service| %>
+              <tr>
+                <td><%= service.name %></td>
+                <td><%= service.company.name %></td>
+                <td>
+                  <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, {controller: "services", action: "manage_service_promotion", id: service.id}, :class => "btn btn-orange" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="max-height: 400px; scroll-y: auto;">
+  <div class="container-fluid background-grey">
+    <div class="row">
+      <div class="col-md-12">
+        <h2 class="text-green">
+          Servicios con promociones aprobadas
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid tab-margin">
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-green">
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th>Empresa</th>
+              <th>Opciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @approvedServices.each do |service| %>
+              <tr>
+                <td><%= service.name %></td>
+                <td><%= service.company.name %></td>
+                <td>
+                  <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, {controller: "services", action: "manage_service_promotion", id: service.id}, :class => "btn btn-orange" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div style="max-height: 400px; scroll-y: auto;">
+  <div class="container-fluid background-grey">
+    <div class="row">
+      <div class="col-md-12">
+        <h2 class="text-green">
+          Tratamientos con promociones por aprobar
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid tab-margin">
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-green">
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th>Empresa</th>
+              <th>Opciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @treatments.each do |service| %>
+              <tr>
+                <td><%= service.name %></td>
+                <td><%= service.company.name %></td>
+                <td>
+                  <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, {controller: "services", action: "manage_treatment_promotion", id: service.id}, :class => "btn btn-orange" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="max-height: 400px; scroll-y: auto;">
+  <div class="container-fluid background-grey">
+    <div class="row">
+      <div class="col-md-12">
+        <h2 class="text-green">
+          Tratamientos con promociones aprobadas
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid tab-margin">
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-green">
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th>Empresa</th>
+              <th>Opciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @approvedTreatments.each do |service| %>
+              <tr>
+                <td><%= service.name %></td>
+                <td><%= service.company.name %></td>
+                <td>
+                  <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, {controller: "services", action: "manage_treatment_promotion", id: service.id}, :class => "btn btn-orange" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
