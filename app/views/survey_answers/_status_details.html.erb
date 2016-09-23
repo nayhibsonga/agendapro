@@ -3,11 +3,11 @@
   <div class="col-md-12">
     <div class="image_average col-md-2">
       <%= image_tag(@image_average) %>
-      <h4>Valoración Promedio <%= @average %></h4>
+      <h4>Valoración Promedio <b><%= @average %></b></h4>
       <span>*Escala del 1 al 5</span>
     </div>
-    <div class="char_average">
-      <%= column_chart  appreciation_survey(current_user.company_id) %>
+    <div class="char_average col-md-7">
+      <%= column_chart  appreciation_survey(current_user.company_id, @from, @to),library: {backgroundColor: "transparent"} %>
       <div class="container_ranking">
         <div class="image_ranking_appreciation"><%= image_tag("appreciation_1.png") %></div>
         <div class="image_ranking_appreciation"><%= image_tag("appreciation_2.png") %></div>
@@ -15,6 +15,85 @@
         <div class="image_ranking_appreciation"><%= image_tag("appreciation_4.png") %></div>
         <div class="image_ranking_appreciation"><%= image_tag("appreciation_5.png") %></div>
       </div>
+
+    </div>
+    <div class="survey_general_status col-md-3 nopadding">
+      <p>Respuestas Recibidas: <span><%= @surveys_respond.count %></span> </p>
+      <p>Encuestas Enviadas: <span><%= @surveys_send.count %></span> </p>
+      <p class="green bold">Porcentaje de Respuestas: <span><%= @surveys_percentil %>%</span> </p>
     </div>
   </div>
 </div>
+<% @survey_attributes_eva.each do |a| %>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default panel-green">
+      <div class="panel-body"><%= a.name.titleize %></div>
+    </div>
+    <div id="myTabContent" class="tab-content tab-margin">
+      <div class="tab-pane active" style="padding-top: 10px;">
+        <div class="col-md-2 nopadding">
+          <div class="average_attribute ">
+            <% @stars = average_attribute(a.id, @from, @to) %>
+            <% (1..5).each do |s| %>
+              <% if @stars >= s %>
+                <i class="fa fa-star" aria-hidden="true"></i>
+              <% else %>
+                <% if @stars >= (s - 0.5) %>
+                  <i class="fa fa-star-half-o" aria-hidden="true"></i>
+                  <% else %>
+                  <i class="fa fa-star-o" aria-hidden="true"></i>
+                <% end %>
+              <% end %>
+            <% end %>
+            <div class="average_internal">
+              <p>Valoración Promedio <b><%= @stars %></b></p>
+            </div>
+          </div>
+          <p style="font-style:italic; margin-top: -20px; font-size:14px;">*Escala del 1 al 5</p>
+        </div>
+
+        <div class="char_average col-md-7 nopadding">
+          <%= column_chart average_status_attribute(a.id,@from, @to),library: {backgroundColor: "transparent"} %>
+        </div>
+
+        <div class="survey_general_status col-md-3 nopadding">
+          <p>Respuestas Recibidas: <span><%= average_attribute_respond(a.id,@from, @to) %></span> </p>
+          <p>Preguntas Enviadas: <span><%= average_attribute_send(a.id,@from, @to) %></span> </p>
+          <p class="green bold">Porcentaje de Respuestas: <span><%= average_attribute_percentil(a.id,@from, @to) %>%</span> </p>
+        </div>
+      </div>
+    </div>
+    <div class="questions_content col-md-12">
+      <div class="panel-group" id="accordion-<%= a.name %>">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion-<%= a.name %>" href="#inner-<%= a.name %>">Detalle de preguntas</a>
+            </h4>
+          </div>
+            <div id="inner-<%= a.name %>" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <div class="panel-group" id="accordion">
+                  <div class="panel panel-default">
+                    <% questions(a.id,@from, @to).each do |q| %>
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" data-parent="#collapseTwo" href="#collapse-<%= q.id %>"><%= q.question %></a>
+                        </h4>
+                      </div>
+                      <div id="collapse-<%= q.id %>" class="panel-collapse collapse">
+                        <div class="panel-body" ><p><%= questions_average(q.id, @from, @to) %></p></div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<% end %>

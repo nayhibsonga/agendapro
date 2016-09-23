@@ -5,7 +5,7 @@ $(function() {
         url: '/survey_report_status_details/?from=' + $('#from').val() + '&to=' + $('#to').val() + '&status_ids=' + $('input:checkbox:checked.report_select').map(function () {return parseInt(this.value);}).get() + '&option=' + $('#option').val(),
         cache: false,
         success: function(html){
-          console.log(html)
+          console.log('/survey_report_status_details/?from=' + $('#from').val() + '&to=' + $('#to').val() + '&status_ids=' + $('input:checkbox:checked.report_select').map(function () {return parseInt(this.value);}).get() + '&option=' + $('#option').val())
           $('#render_content').html(html);
         }
     });

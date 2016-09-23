@@ -14,7 +14,6 @@
 </div>
 <div class="row">
   <div class="col-md-6">
-    <%= status_booking_by_hour(@from, @to, @status_ids, @option, current_user.company_id, Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).pluck(:id)) %>
     <%= pie_chart status_booking_ranking3(@from, @to, @status_ids, @option, current_user.company_id, Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).pluck(:id)), library: { title: "Ranking Servicio Utilizados" } %>
   </div>
   <div class="col-md-6">

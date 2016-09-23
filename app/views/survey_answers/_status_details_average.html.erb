@@ -1,0 +1,27 @@
+<% @survey_attributes_eva.each do |a| %>
+  <div class="panel panel-default panel-green">
+    <div class="panel-body"><%= a.name.titleize %></div>
+  </div>
+  <div id="myTabContent" class="tab-content tab-margin">
+    <div class="tab-pane active" style="padding-top: 10px;">
+      <div class="average_attribute col-md-2 nopadding">
+        <% @stars = average_attribute(a.name) %>
+        <% (1..5).each do |s| %>
+          <% if @stars >= s %>
+            <i class="fa fa-star" aria-hidden="true"></i>
+          <% else %>
+            <% if @stars >= (s - 0.5) %>
+              <i class="fa fa-star-half-o" aria-hidden="true"></i>
+              <% else %>
+              <i class="fa fa-star-o" aria-hidden="true"></i>
+            <% end %>
+          <% end %>
+        <% end %>
+        <div class="average_internal">
+          <p>Valoración Promedio <%= @stars %></p>
+        </div>
+      </div>
+      <p style="font-style:italic; margin-top: -20px; font-size:14px;">*Escala del 1 al 5</p>
+    </div>
+  </div>
+<% end %>

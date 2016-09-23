@@ -10,11 +10,12 @@
     font-weight: bold;
   }
   .image_average {
-    margin-top: 65px;
+    margin-top: 35px;
   }
   .image_average img {
     display: block;
     margin: 0 auto;
+    max-width: 100%;
   }
   .image_average h4 {
     text-align: center;
@@ -37,7 +38,7 @@
   .container_ranking {
     width: 75%;
     position: absolute;
-    bottom: 40px;
+    bottom: 35px;
     left: 0;
     right: 0;
     margin: auto;
@@ -47,14 +48,58 @@
     width: 650px;
     position: relative;
     float: left;
+    margin-top: -65px;
   }
   .average_attribute {
     border-left: 3px solid #22c488;
     border-right: 3px solid #22c488;
     border-top: 3px solid #22c488;
-    border-bottom: 20px solid #22c488;
-    height: 100px;
-    width: 200px;
+    border-bottom: 0px solid #22c488;
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: 70px;
+  }
+  .average_internal {
+    background: #22c488;
+    text-align: center;
+    color: #fff;
+  }
+  .average_internal p{
+    padding: 8px;
+    margin: 0;
+    color: #fff;
+  }
+  .average_attribute i {
+    font-size: 36px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .survey_general_status {
+    border: 1px solid #d2d2d2;
+    border-radius: 1px;
+    margin-top: 70px;
+  }
+  .survey_general_status p {
+    padding: 10px;
+    border-bottom: 1px solid #d2d2d2;
+    margin-bottom: 0px;
+  }
+  .survey_general_status p span {
+    float: right;
+  }
+  .survey_general_status p:last-child {
+    border:none !important;
+  }
+  .accordion-inner .panel-default {
+    border: none;
+    box-shadow: none;
+  }
+  .accordion-inner .panel-heading {
+    border:none;
+    background: none;
+  }
+  .accordion-inner  a.collapsed:after {
+    float: left !important;
   }
 </style>
 <script type="text/javascript">
@@ -112,31 +157,6 @@
     </div>
   </div>
 </div>
-<% @survey_attributes_eva.each do |a| %>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="panel panel-default panel-green">
-          <div class="panel-body"><%= a.name.titleize %></div>
-        </div>
-        <div id="myTabContent" class="tab-content tab-margin">
-          <div class="tab-pane active" style="padding-top: 10px;">
-            <div class="average_attribute">
-              <%= @stars = average_attribute(a.name) %>
-              <% (1..5).each do |s| %>
-                <% if @stars >= s %>
-                  <i class="fa fa-star" aria-hidden="true"></i>
-                <% else %>
-
-                <% end %>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-<% end %>
 <% content_for :scripts do %>
   <%= javascript_include_tag "admin/survey_answer" %>
 <% end %>

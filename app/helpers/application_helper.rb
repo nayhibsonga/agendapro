@@ -489,9 +489,9 @@ module ApplicationHelper
 
 		return by_hour
 	end
-	def appreciation_survey(company_id)
+	def appreciation_survey(company_id, from, to)
 		appreciations = []
-		surveys = Booking.where(location_id: Location.where(company_id: company_id).pluck(:id)).where.not(survey_id:nil).where(survey_id: Survey.where.not(appreciation: nil).pluck(:id))
+		surveys = Booking.where(location_id: Location.where(company_id: company_id).pluck(:id),survey_id: Survey.where(created_at: from.beginning_of_day..to.end_of_day)).where.not(survey_id:nil).where(survey_id: Survey.where.not(appreciation: nil).pluck(:id))
 		(1..5).each do |i|
 			appreciations[i] = 0
 		end
@@ -506,13 +506,81 @@ module ApplicationHelper
 		appreciation = {"1"=>appreciations[1],"2"=>appreciations[2],"3"=>appreciations[3],"4"=>appreciations[4],"5"=>appreciations[5]}
 		return appreciation
 	end
-  def average_attribute(attribute_name)
+  def average_attribute(id, from, to)
     @average_attribute = 0
-    SurveyAnswer.where(booking_id: Booking.where(location_id: Location.where(company_id: current_user.company_id).pluck(:id))).where(survey_question_id: SurveyQuestion.where(survey_attribute_id: SurveyAttribute.where(name:attribute_name))).each do |s|
-        @average_attribute = @average_attribute + s.answer.to_i
+    surveys_answers = SurveyAnswer.where(booking_id: Booking.where(location_id: Location.where(company_id: current_user.company_id).pluck(:id), survey_id: Survey.where(created_at: from.beginning_of_day..to.end_of_day))).where(survey_question_id: SurveyQuestion.where(survey_attribute_id: SurveyAttribute.where(id:id)))
+    if surveys_answers.count > 0
+	    surveys_answers.each do |s|
+	      @average_attribute = @average_attribute + s.answer.to_i
+	    end
+	    @average_attribute = @average_attribute.to_f / surveys_answers.count.to_f
+    end
+
+    return @average_attribute
+  end
+  def average_attribute_send(id, from, to)
+    @average_attribute = 0
+    surveys_answers =	Booking.where(location_id: Location.where(company_id: current_user.company_id).pluck(:id), survey_id: Survey.where(created_at: from.beginning_of_day..to.end_of_day)).where.not(survey_id:nil).where(survey_id: Survey.where(mail_sent: true).pluck(:id))
+    surveys_answers.each do |s|
+    	s.service.service_survey_constructs.each do |a|
+    		a.survey_construct.survey_question_constructs.where(survey_question_id: SurveyQuestion.where(survey_attribute_id: SurveyAttribute.where(id: id))).each do |c|
+    			if c.created_at <= s.survey.created_at
+	    			@average_attribute = @average_attribute + 1
+	    		end
+    		end
+			end
     end
     return @average_attribute
   end
+  def average_attribute_respond(id, from, to)
+    @average_attribute = 0
+    counts = []
+    surveys_answers =	SurveyAnswer.where(booking_id: Booking.where(location_id: Location.where(company_id: current_user.company_id).pluck(:id), survey_id: Survey.where(created_at: from.beginning_of_day..to.end_of_day))).where(survey_question_id: SurveyQuestion.where(survey_attribute_id: SurveyAttribute.where(id:id)))
+    return surveys_answers.count
+  end
+  def questions(id, from, to)
+    @questions = []
+    @count = 1
+    surveys_answers =	Booking.where(location_id: Location.where(company_id: current_user.company_id).pluck(:id), survey_id: Survey.where(created_at: from.beginning_of_day..to.end_of_day, status:"respond")).where.not(survey_id:nil).where(survey_id: Survey.where(mail_sent: true).pluck(:id))
+    surveys_answers.each do |s|
+    	s.service.service_survey_constructs.each do |a|
+  			a.survey_construct.survey_question_constructs.where(survey_question_id: SurveyQuestion.where(survey_attribute_id: SurveyAttribute.where(id: id)).pluck(:id)).each do |q|
+  				if q.created_at <= s.survey.created_at
+	    			@questions << q.survey_question
+	    		end
+  			end
+			end
+    end
+    return @questions
+  end
+  def questions_average(id, from, to)
+		@average_attribute = 0
+    counts = []
+    surveys_answers =	SurveyAnswer.where(booking_id: Booking.where(location_id: Location.where(company_id: current_user.company_id).pluck(:id), survey_id: Survey.where(created_at: from.beginning_of_day..to.end_of_day))).where(survey_question_id: id)
+    return surveys_answers.count
+  end
+  def average_attribute_percentil(id, from, to)
+    @average_attribute = (average_attribute_respond(id, from, to) * 100).to_f / average_attribute_send(id, from, to).to_f
+    return @average_attribute.round(2)
+  end
+  def average_status_attribute(id, from, to)
+    average_attribute = []
+    (1..5).each do |i|
+			average_attribute[i] = 0
+		end
+    surveys_answers = SurveyAnswer.where(booking_id: Booking.where(location_id: Location.where(company_id: current_user.company_id).pluck(:id), survey_id: Survey.where(created_at: from.beginning_of_day..to.end_of_day))).where(survey_question_id: SurveyQuestion.where(survey_attribute_id: SurveyAttribute.where(id:id)))
+    surveys_answers.each do |s|
+			(1..5).each do |index|
+				if index == s.answer.to_i
+					average_attribute[index] = average_attribute[index] + 1
+				end
+			end
+    end
+
+    average_attribute = {"1"=>average_attribute[1],"2"=>average_attribute[2],"3"=>average_attribute[3],"4"=>average_attribute[4],"5"=>average_attribute[5]}
+    return average_attribute
+  end
+
 	def location_booking_by_hour(from, to, status, option, location_id)
 		if location_id == 0
 			location = Location.where(active: true)

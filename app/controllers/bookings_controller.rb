@@ -1464,11 +1464,7 @@ class BookingsController < ApplicationController
 
 
                     #There is session_booking, book a session, unbook for old_treatment
-<<<<<<< HEAD
-=======
 
-
->>>>>>> mailing2
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
                     discharged_booking.destroy
 
@@ -1895,11 +1891,7 @@ class BookingsController < ApplicationController
                   if !session_booking.nil?
 
                     #There is session_booking, book a session, unbook for old_treatment
-<<<<<<< HEAD
-=======
 
-
->>>>>>> mailing2
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
                     logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id). (4)"
 
@@ -2046,12 +2038,7 @@ class BookingsController < ApplicationController
                   session_booking = SessionBooking.find(booking_params[:session_booking_id])
 
                   if !session_booking.nil?
-<<<<<<< HEAD
-=======
 
-
-
->>>>>>> mailing2
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
                     logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id). (5)"
 

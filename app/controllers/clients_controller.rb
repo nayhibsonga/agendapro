@@ -513,14 +513,27 @@ class ClientsController < ApplicationController
   def compose_mail
     attendance = params[:attendance].blank? || params[:attendance] == 'true'
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    mail_list = Client.accessible_by(current_ability).filter(current_user.company_id, params).order(:last_name, :first_name).pluck(:email).uniq
 
+    selected_custom_filters = []
+    if !params[:custom_filters].blank?
+      selected_custom_filters = CustomFilter.find(params[:custom_filters])
+    end
+
+    @mail_list = Client.accessible_by(current_ability)
+
+    selected_custom_filters.each do |custom_filter|
+      @mail_list = Client.custom_filter(@clients, custom_filter).order(:last_name, :first_name).pluck(:email).uniq
+    end
+    if params[:custom_filters].blank?
+      @mail_list = @mail_list.filter(current_user.company_id, params).pluck(:email).uniq
+    end
+    @parametros = params;
     @tmpl = 'basic'
 
     template_selection if current_user.company.is_plan_capable("Premium") || Rails.env === 'development' && params[:full]
 
     tmp_to = Array.new
-    mail_list.each do |email|
+    @mail_list.each do |email|
       tmp_to.push(email) if email=~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
     end
     @to = tmp_to.join(', ')

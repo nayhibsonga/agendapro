@@ -4,8 +4,6 @@ class Email::ContentController < ApplicationController
   before_action :verify_blocked_status
   layout "admin"
 
-  layout "admin"
-
   def new
     content = Email::Content.create(
       template: Email::Template.find(params[:tmpl]),
